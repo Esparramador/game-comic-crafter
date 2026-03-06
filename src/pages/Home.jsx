@@ -78,12 +78,15 @@ export default function Home() {
             🔔
             <div style={{ position: "absolute", top: 0, right: 0, width: 8, height: 8, borderRadius: "50%", background: "#ff00ff", border: "1px solid #080c1a" }} />
           </div>
-          <div style={{
-            width: 32, height: 32, borderRadius: "50%",
-            background: "linear-gradient(135deg,#00f5ff,#7c3aed)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "0.85rem", fontWeight: 700, color: "#080c1a", cursor: "pointer"
-          }}>G</div>
+          <div
+            onClick={() => base44.auth.logout(createPageUrl("Landing"))}
+            title="Cerrar sesión"
+            style={{
+              width: 32, height: 32, borderRadius: "50%",
+              background: "linear-gradient(135deg,#00f5ff,#7c3aed)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "0.85rem", fontWeight: 700, color: "#080c1a", cursor: "pointer"
+            }}>{user?.full_name?.[0]?.toUpperCase() || "G"}</div>
         </div>
       </div>
 
