@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
-import HomeScreenComponent from "../components/gcc/HomeScreen";
+import DashboardHome from "../components/gcc/DashboardHome";
 import PhysicsScreen from "../components/gcc/PhysicsScreen";
 import CharsScreen from "../components/gcc/CharsScreen";
 import EditorScreen from "../components/gcc/EditorScreen";
