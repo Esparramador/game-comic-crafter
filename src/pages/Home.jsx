@@ -34,10 +34,6 @@ const ONLINE = [
 
 export default function Home() {
   const [activeNav, setActiveNav] = useState(0);
-  const [activeTab, setActiveTab] = useState("home");
-
-  // Mobile layout
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   return (
     <div style={{ display: "flex", height: "100vh", background: "#1a0533", color: "#fff", fontFamily: "'Inter', sans-serif", overflow: "hidden" }}>
