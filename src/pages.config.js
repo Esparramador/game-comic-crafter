@@ -49,18 +49,16 @@
  */
 import Landing from './pages/Landing';
 import HomeScreen from './pages/HomeScreen';
-import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Landing": Landing,
     "HomeScreen": HomeScreen,
-    "Home": Home,
 }
 
 export const pagesConfig = {
-    mainPage: "Home",
+    mainPage: "Landing",
     Pages: PAGES,
     Layout: __Layout,
 };
