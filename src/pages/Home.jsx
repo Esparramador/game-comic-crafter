@@ -222,7 +222,7 @@ function CreateScreen() {
             ))}
           </div>
           <button style={{ width: "100%", padding: "0.9rem", background: `linear-gradient(135deg,${C.cyan},${C.purple})`, border: "none", borderRadius: 12, color: C.dark, fontWeight: 700, fontSize: "0.95rem", cursor: "pointer", fontFamily: "'Inter',sans-serif" }}>
-            ✨ Generar con IA
+            🎮 Generar Videojuego con IA
           </button>
         </div>
       )}
