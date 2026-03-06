@@ -22,9 +22,14 @@ export default function Home() {
   const [splash, setSplash] = useState(true);
   const [tab, setTab] = useState("home");
   const [toast, setToast] = useState({ msg: "", show: false });
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const t = setTimeout(() => setSplash(false), 2200);
+    base44.auth.me().then(u => {
+      if (!u) base44.auth.redirectToLogin(createPageUrl("Home"));
+      else setUser(u);
+    }).catch(() => base44.auth.redirectToLogin(createPageUrl("Home")));
     return () => clearTimeout(t);
   }, []);
 
