@@ -126,15 +126,15 @@ function HomeScreen({ onNav }) {
 
 function CreateScreen() {
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState({ title: "", genre: "", style: "", concept: "" });
+  const [form, setForm] = useState({ title: "", genre: "", engine: "", concept: "" });
 
-  const genres = ["Acción", "RPG", "Sci-Fi", "Fantasy", "Horror", "Sport"];
-  const styles = ["Cyberpunk", "Manga", "Western", "Retro Pixel", "Neon Noir", "Anime"];
+  const genres = ["Acción", "RPG", "Open World", "Fighting", "Stealth", "Arcade"];
+  const engines = ["Phaser.js", "Babylon.js", "Three.js"];
 
   const steps = [
     { label: "Concepto", icon: "💡" },
     { label: "Género", icon: "🎭" },
-    { label: "Estilo", icon: "🎨" },
+    { label: "Motor", icon: "⚙️" },
     { label: "Generar", icon: "🤖" },
   ];
 
