@@ -70,14 +70,14 @@ export default function Landing() {
           Transforma tus partidas en cómics épicos. Genera paneles, diálogos y personajes automáticamente con IA. Comparte, vende y conecta con la comunidad gamer.
         </p>
         <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-          <a href={createPageUrl("Home")} style={{
+          <button onClick={() => base44.auth.redirectToLogin(createPageUrl("Home"))} style={{
             background: "linear-gradient(135deg,#7c3aed,#db2777)", color: "#fff",
             borderRadius: 12, padding: "0.9rem 2rem", fontWeight: 700, fontSize: "1rem",
-            cursor: "pointer", textDecoration: "none", display: "inline-block",
+            cursor: "pointer", border: "none",
             boxShadow: "0 0 30px rgba(139,92,246,0.4)"
           }}>
             Empezar Gratis →
-          </a>
+          </button>
           <button style={{
             background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.15)",
             color: "#fff", borderRadius: 12, padding: "0.9rem 2rem", fontWeight: 600,
