@@ -32,6 +32,7 @@ export default function Landing() {
       </div>
     );
   }
+
   return (
     <div style={{minHeight:"100vh",background:"#0d0520",backgroundImage:"radial-gradient(circle,rgba(168,85,247,0.18) 1.5px,transparent 1.5px)",backgroundSize:"12px 12px",display:"flex",flexDirection:"column",alignItems:"center",fontFamily:"'Inter',sans-serif",padding:"2rem",position:"relative",overflow:"hidden"}}>
       <style>{`
