@@ -53,7 +53,7 @@ export default function Landing() {
 
         {/* Google Login Button */}
         <button
-          onClick={() => base44.auth.redirectToLogin(createPageUrl("Home"))}
+          onClick={() => base44.auth.redirectToLogin(createPageUrl("HomeScreen"))}
           style={{
             width: "100%", padding: "0.95rem 1.5rem",
             background: "linear-gradient(135deg,#7c3aed,#e91e8c)",
