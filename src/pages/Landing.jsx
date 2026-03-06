@@ -1,4 +1,4 @@
-import { GoogleLogin } from "@/components/ui/google_login";
+import { GoogleLogin } from "@/components/ui/google_login.jsx";
 
 export const config = { requiresAuth: false };
 
