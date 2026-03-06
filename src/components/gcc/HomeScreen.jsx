@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+// ensure React hooks are imported
 import { base44 } from "@/api/base44Client";
 import { Pill, Btn } from "./shared.jsx";
 
