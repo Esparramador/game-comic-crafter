@@ -289,7 +289,7 @@ function ProfileScreen() {
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.65rem", marginBottom: "1.2rem" }}>
-        {[{val:"2",l:"Proyectos"},{val:"15",l:"Paneles"},{val:"847",l:"Visitas"}].map((s,i)=>(
+        {[{val:"2",l:"Juegos"},{val:"11",l:"Escenas"},{val:"847",l:"Plays"}].map((s,i)=>(
           <div key={i} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "0.9rem 0.5rem", textAlign: "center" }}>
             <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.3rem", fontWeight: 900, color: C.cyan }}>{s.val}</div>
             <div style={{ fontSize: "0.58rem", color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginTop: 2 }}>{s.l}</div>
