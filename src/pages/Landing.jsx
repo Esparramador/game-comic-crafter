@@ -17,11 +17,12 @@ export default function Landing() {
       try {
         const isAuth = await base44.auth.isAuthenticated();
         if (isAuth) {
-          navigate("/home");
+          navigate("/HomeScreen");
+        } else {
+          setLoading(false);
         }
       } catch (e) {
         console.log("Auth check:", e.message);
-      } finally {
         setLoading(false);
       }
     };
