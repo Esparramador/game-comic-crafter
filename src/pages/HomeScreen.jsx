@@ -1,8 +1,8 @@
-export const config = { requiresAuth: true };
-
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
+
+export const config = { requiresAuth: true };
 
 const SUGGESTED = [
   { name:"Comic Legends MOBA", icon:"🏟️", tags:["MOBA","3 carriles"], bg:"linear-gradient(135deg,#1a0338,#0a1628)" },

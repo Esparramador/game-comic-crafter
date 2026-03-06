@@ -1,9 +1,9 @@
-export const config = { requiresAuth: false };
-
 import { GoogleLogin } from "@/components/ui/google_login";
 import { createPageUrl } from "@/utils";
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
+
+export const config = { requiresAuth: false };
 
 const VIDEO1 = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69aa73f013b5c82e8989d6fc/f1f6abb71_Configuracin_lista_triler_generado.mp4";
 const VIDEO2 = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69aa73f013b5c82e8989d6fc/10de00b17_Landing_Videos_y_Tienda_Shopify.mp4";
