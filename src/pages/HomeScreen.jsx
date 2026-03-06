@@ -39,14 +39,13 @@ export default function HomeScreen() {
     (async()=>{
       try {
         const user = await base44.auth.me();
-        const [projs,chars,prof] = await Promise.all([
+        const [projs,chars] = await Promise.all([
           base44.entities.GameProject.list("-created_date",1),
           base44.entities.GameCharacter.list("-created_date",10),
-          user ? base44.auth.updateMe({}, {returnUser: true}) : Promise.resolve(user),
         ]);
         setProject(projs[0]||null);
         setChars(chars||[]);
-        setProfile(prof||user||null);
+        setProfile(user||null);
       } catch(e){console.error(e);}
       setLoading(false);
     })();
