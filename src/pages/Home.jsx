@@ -88,7 +88,7 @@ function HomeScreen({ onNav }) {
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.65rem", padding: "0 1rem 1rem" }}>
-        {[{val:"2", label:"Proyectos"},{val:"15", label:"Paneles"},{val:"5", label:"Chars"}].map((s,i)=>(
+        {[{val:"2", label:"Juegos"},{val:"11", label:"Escenas"},{val:"5", label:"Chars"}].map((s,i)=>(
           <div key={i} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "0.9rem 0.5rem", textAlign: "center" }}>
             <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.4rem", fontWeight: 900, color: C.cyan }}>{s.val}</div>
             <div style={{ fontSize: "0.6rem", color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginTop: 2 }}>{s.label}</div>
