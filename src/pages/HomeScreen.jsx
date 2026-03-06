@@ -96,18 +96,18 @@ export default function HomeScreen() {
           <div style={{padding:"0 1.2rem",marginBottom:"0.8rem"}}>
             <div style={{fontSize:"0.6rem",letterSpacing:"2px",textTransform:"uppercase",color:"#7060a0",marginBottom:"0.5rem",padding:"0 0.4rem"}}>Principal</div>
             {[{icon:"🏠",label:"Dashboard",route:"/home",active:true},{icon:"🎮",label:"Mis Juegos",route:"/home"},{icon:"🏪",label:"Store",route:"/home"},{icon:"👥",label:"Personajes",route:"/home"},{icon:"⚙️",label:"Physics Mixer",route:"/home"},{icon:"▶️",label:"Play & Test",route:"/home"}].map(n=>(
-              <button key={n.route} onClick={()=>navigate(n.route)} className={`sb-item${n.active?" sb-active":""}`} style={{background:"none",border:"none",padding:"0.6rem 0.8rem",textAlign:"left",cursor:"pointer",width:"100%"}}>
+              <div key={n.route} onClick={()=>navigate(n.route)} className={`sb-item${n.active?" sb-active":""}`} style={{display:"flex",alignItems:"center",gap:"0.7rem",padding:"0.6rem 0.8rem",borderRadius:8,cursor:"pointer",fontSize:"0.82rem",color:"#7060a0",transition:"all 0.2s",marginBottom:"2px"}}>
                 <span style={{fontSize:"1rem",width:20,textAlign:"center"}}>{n.icon}</span>{n.label}
-              </button>
+              </div>
             ))}
           </div>
           <div style={{height:1,background:"rgba(124,58,237,0.2)",margin:"0 1.2rem"}}/>
           <div style={{padding:"0.8rem 1.2rem 0"}}>
             <div style={{fontSize:"0.6rem",letterSpacing:"2px",textTransform:"uppercase",color:"#7060a0",marginBottom:"0.5rem",padding:"0 0.4rem"}}>Herramientas</div>
             {[{icon:"🎙️",label:"Voces",route:"/home"},{icon:"🗂️",label:"Assets",route:"/home"},{icon:"📣",label:"Marketing",route:"/home"}].map(n=>(
-              <button key={n.route} onClick={()=>navigate(n.route)} className="sb-item" style={{background:"none",border:"none",padding:"0.6rem 0.8rem",textAlign:"left",cursor:"pointer",width:"100%"}}>
+              <div key={n.route} onClick={()=>navigate(n.route)} className="sb-item" style={{display:"flex",alignItems:"center",gap:"0.7rem",padding:"0.6rem 0.8rem",borderRadius:8,cursor:"pointer",fontSize:"0.82rem",color:"#7060a0",transition:"all 0.2s",marginBottom:"2px"}}>
                 <span style={{fontSize:"1rem",width:20,textAlign:"center"}}>{n.icon}</span>{n.label}
-              </button>
+              </div>
             ))}
           </div>
           <div style={{height:1,background:"rgba(124,58,237,0.2)",margin:"0.8rem 1.2rem"}}/>
