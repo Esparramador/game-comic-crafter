@@ -211,10 +211,10 @@ function CreateScreen() {
           <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🤖</div>
           <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1rem", color: C.cyan, marginBottom: "0.5rem" }}>Listo para Generar</div>
           <div style={{ fontSize: "0.82rem", color: C.muted, marginBottom: "1.5rem", lineHeight: 1.6 }}>
-            La IA creará tu cómic con paneles, diálogos y arte generativo basado en tu concepto.
+            La IA generará el código, los personajes, el mundo y la lógica de tu videojuego listo para jugar.
           </div>
           <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "1rem", textAlign: "left", marginBottom: "1.5rem" }}>
-            {[["Título", form.title || "—"], ["Género", form.genre || "—"], ["Estilo", form.style || "—"]].map(([k,v]) => (
+            {[["Título", form.title || "—"], ["Género", form.genre || "—"], ["Motor", form.engine || "—"]].map(([k,v]) => (
               <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "0.4rem 0", borderBottom: `1px solid ${C.border}`, fontSize: "0.82rem" }}>
                 <span style={{ color: C.muted }}>{k}</span>
                 <span style={{ color: C.cyan, fontWeight: 600 }}>{v}</span>
