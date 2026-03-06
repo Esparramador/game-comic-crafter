@@ -93,7 +93,7 @@ export default function PhysicsScreen({ showToast }) {
             <div style={{ display: "flex", gap: "0.6rem", overflowX: "auto", paddingBottom: "0.3rem" }}>
               {cat.refs.map((ref, i) => (
                 <div key={i} onClick={() => { setSelected(s => ({ ...s, [cat.id]: i })); showToast(`⚙️ Referencia: ${ref.name}`); }} style={{
-                  flexShrink: 0, width: 90, background: C.card,
+                  flexShrink: 0, width: 90,
                   border: `1px solid ${selected[cat.id] === i ? "rgba(0,245,255,0.5)" : C.border}`,
                   background: selected[cat.id] === i ? "rgba(0,245,255,0.06)" : C.card,
                   borderRadius: 12, padding: "0.7rem 0.5rem", textAlign: "center", cursor: "pointer",
