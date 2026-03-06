@@ -1,415 +1,240 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { createPageUrl } from "@/utils";
+
+const GAMES_LIBRARY = [
+  { title: "Clash of Clan Emulator", genre: "Strategy", tag: "Battle Royale", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=80&q=80" },
+  { title: "NFS Hot Pursuit", genre: "Racing", tag: "2/4", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&q=80" },
+  { title: "Ghost of Tsushima", genre: "Strategy", tag: "Open World", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=80&q=80" },
+  { title: "Overwatch Two", genre: "Strategy", tag: "Shooter", img: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=80&q=80" },
+];
+
+const SUGGESTED = [
+  { title: "Apex Legends Season IX", genre: "Strategy", tag: "Battle Royale", players: "1.2k Players", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&q=80" },
+  { title: "Overwatch: Strategic Gameplay", genre: "Strategy", tag: "Shooter", players: "274 Players", img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=300&q=80" },
+  { title: "Marvel Rivals Gameplay", genre: "Video Game", tag: "Multiplayer", players: "3.5k Players", img: "https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?w=300&q=80" },
+  { title: "Street Fighter Four: Clash of Empire", genre: "Strategy", tag: "Fighting", players: "2.9k Players", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&q=80" },
+];
+
+const NAV_ITEMS = [
+  { icon: "⊞", label: "My Dashboard", active: true },
+  { icon: "🎮", label: "Game's List" },
+  { icon: "🔭", label: "Explore Store" },
+  { icon: "⭐", label: "Promoted" },
+  { icon: "👥", label: "Friends" },
+  { icon: "💳", label: "Play now" },
+  { icon: "🔔", label: "Notification" },
+];
+
+const ONLINE = [
+  { name: "Dalton Howard", avatar: "DH", color: "#a855f7" },
+  { name: "Jacob Jones", avatar: "JJ", color: "#ec4899" },
+  { name: "Cody Fisher", avatar: "CF", color: "#3b82f6" },
+  { name: "Alex Peynes", avatar: "AP", color: "#10b981" },
+];
 
 export default function Home() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [activeNav, setActiveNav] = useState(0);
   const [activeTab, setActiveTab] = useState("home");
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 2200);
-    return () => clearTimeout(timer);
-  }, []);
+  // Mobile layout
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
   return (
-    <div style={{ height: "100vh", overflow: "hidden", background: "#080c1a", fontFamily: "'Inter', sans-serif", color: "#e0e8ff" }}>
-      {/* Splash */}
-      {showSplash && (
+    <div style={{ display: "flex", height: "100vh", background: "#1a0533", color: "#fff", fontFamily: "'Inter', sans-serif", overflow: "hidden" }}>
+      
+      {/* SIDEBAR */}
+      <div style={{
+        width: 220, flexShrink: 0, background: "rgba(10,2,20,0.95)",
+        borderRight: "1px solid rgba(139,92,246,0.15)",
+        display: "flex", flexDirection: "column", padding: "1.5rem 0",
+        overflowY: "auto"
+      }} className="sidebar-desktop">
+        {/* Logo */}
+        <div style={{ padding: "0 1.2rem", marginBottom: "2rem" }}>
+          <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.85rem", fontWeight: 900, background: "linear-gradient(135deg,#a855f7,#ec4899)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            GameComicCrafter
+          </div>
+        </div>
+
+        {/* Nav */}
+        {NAV_ITEMS.map((item, i) => (
+          <div
+            key={i}
+            onClick={() => setActiveNav(i)}
+            style={{
+              display: "flex", alignItems: "center", gap: "0.75rem",
+              padding: "0.7rem 1.2rem", cursor: "pointer", borderRadius: "0 10px 10px 0",
+              marginRight: "0.8rem", marginBottom: 2,
+              background: activeNav === i ? "linear-gradient(135deg,rgba(168,85,247,0.25),rgba(236,72,153,0.15))" : "transparent",
+              borderLeft: activeNav === i ? "2px solid #a855f7" : "2px solid transparent",
+              color: activeNav === i ? "#fff" : "rgba(255,255,255,0.45)",
+              fontSize: "0.8rem", transition: "all 0.2s"
+            }}
+          >
+            <span style={{ fontSize: "1rem" }}>{item.icon}</span>
+            {item.label}
+          </div>
+        ))}
+
+        {/* Online Friends */}
+        <div style={{ marginTop: "auto", padding: "1rem 1.2rem 0" }}>
+          <div style={{ fontSize: "0.6rem", letterSpacing: 2, textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: "0.8rem" }}>
+            Online Friends
+          </div>
+          {ONLINE.map((u, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.7rem" }}>
+              <div style={{ width: 28, height: 28, borderRadius: "50%", background: u.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: 700, flexShrink: 0 }}>{u.avatar}</div>
+              <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.55)" }}>{u.name}</span>
+            </div>
+          ))}
+          <button style={{
+            width: "100%", marginTop: "1rem", padding: "0.6rem", border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: 8, background: "transparent", color: "rgba(255,255,255,0.4)", fontSize: "0.75rem",
+            cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem"
+          }}>
+            ↓ Log Out
+          </button>
+        </div>
+      </div>
+
+      {/* MAIN */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        
+        {/* TOPBAR */}
         <div style={{
-          position: "fixed", inset: 0, zIndex: 9999, background: "#080c1a",
-          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem"
+          flexShrink: 0, height: 56, background: "rgba(10,2,20,0.8)", backdropFilter: "blur(12px)",
+          borderBottom: "1px solid rgba(139,92,246,0.1)",
+          display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 1.5rem"
         }}>
           <div style={{
-            width: 70, height: 70, borderRadius: "50%", background: "rgba(0,245,255,0.05)",
-            border: "2px solid rgba(0,245,255,0.3)", display: "flex", alignItems: "center",
-            justifyContent: "center", fontSize: "2.2rem"
-          }}>🎮</div>
-          <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", fontWeight: 900, color: "#00f5ff", letterSpacing: 3 }}>
-            GCC
+            display: "flex", alignItems: "center", gap: "0.5rem",
+            background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 8, padding: "0.45rem 1rem", flex: 1, maxWidth: 340
+          }}>
+            <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.9rem" }}>🔍</span>
+            <span style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.3)" }}>Search for games...</span>
           </div>
-          <div style={{ color: "#5a7090", fontSize: "0.75rem", letterSpacing: 2, textTransform: "uppercase" }}>
-            Game Comic Crafter
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <span style={{ cursor: "pointer", fontSize: "1.1rem", color: "rgba(255,255,255,0.5)" }}>🔔</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", cursor: "pointer" }}>
+              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,#a855f7,#ec4899)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 700 }}>AR</div>
+              <div>
+                <div style={{ fontSize: "0.78rem", fontWeight: 600 }}>Alex Ryan</div>
+                <div style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.4)" }}>gamer pro</div>
+              </div>
+            </div>
+            <span style={{ cursor: "pointer", fontSize: "1.1rem", color: "rgba(255,255,255,0.5)" }}>⚙️</span>
           </div>
-          <div style={{ width: 220, height: 3, background: "rgba(0,245,255,0.1)", borderRadius: 2, overflow: "hidden" }}>
-            <div style={{
-              height: "100%", borderRadius: 2,
-              background: "linear-gradient(90deg,#00f5ff,#7c3aed)",
-              animation: "loadBar 1.8s ease forwards"
-            }} />
-          </div>
-          <style>{`@keyframes loadBar{0%{width:0}100%{width:100%}}`}</style>
         </div>
-      )}
 
-      {/* App Shell */}
-      {!showSplash && (
-        <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-          {/* Topbar */}
+        {/* CONTENT AREA */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "1.5rem" }}>
+          
+          {/* HERO BANNER */}
           <div style={{
-            flexShrink: 0, height: 56, background: "rgba(8,12,26,0.95)", backdropFilter: "blur(12px)",
-            borderBottom: "1px solid rgba(0,245,255,0.12)", display: "flex", alignItems: "center",
-            justifyContent: "space-between", padding: "0 1rem"
+            borderRadius: 16, overflow: "hidden", position: "relative",
+            background: "linear-gradient(135deg,#3b0764 0%,#1e1b4b 50%,#0c0a1e 100%)",
+            marginBottom: "1.5rem", minHeight: 220,
+            display: "flex", alignItems: "center"
           }}>
-            <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.95rem", fontWeight: 900, color: "#00f5ff", letterSpacing: 2 }}>
-              GCC
-            </span>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
-              <div style={{ position: "relative", cursor: "pointer", fontSize: "1.2rem" }}>
-                🔔
-                <div style={{
-                  position: "absolute", top: 0, right: 0, width: 8, height: 8, borderRadius: "50%",
-                  background: "#ff00ff", border: "1px solid #080c1a"
-                }} />
+            <div style={{ padding: "2rem", flex: 1, zIndex: 2, position: "relative" }}>
+              <div style={{ display: "inline-block", background: "rgba(234,179,8,0.2)", border: "1px solid rgba(234,179,8,0.4)", borderRadius: 4, padding: "2px 8px", fontSize: "0.6rem", color: "#fbbf24", fontWeight: 700, letterSpacing: 1, marginBottom: "0.8rem" }}>
+                ⭐ FEATURED
               </div>
-              <div style={{
-                width: 32, height: 32, borderRadius: "50%",
-                background: "linear-gradient(135deg,#00f5ff,#7c3aed)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "0.85rem", fontWeight: 700, color: "#080c1a", cursor: "pointer"
-              }}>U</div>
+              <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.2rem,3vw,2rem)", fontWeight: 900, marginBottom: "0.7rem", lineHeight: 1.2 }}>
+                Marvel's Spider-Man<br />Remastered
+              </h1>
+              <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.55)", maxWidth: 320, lineHeight: 1.6, marginBottom: "1rem" }}>
+                An Open World Adventure game developed and published by Insomniac Games. In the game, players take control of Spider-Man and its alias...
+              </p>
+              <button style={{
+                background: "linear-gradient(135deg,#7c3aed,#db2777)", border: "none",
+                color: "#fff", borderRadius: 8, padding: "0.6rem 1.4rem",
+                fontWeight: 700, fontSize: "0.82rem", cursor: "pointer"
+              }}>
+                Read Now
+              </button>
             </div>
+            <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "45%", background: "linear-gradient(90deg,#3b0764,transparent)", zIndex: 1 }} />
+            <img
+              src="https://images.unsplash.com/photo-1608889476561-6242cfdbf622?w=500&q=80"
+              alt="hero"
+              style={{ position: "absolute", right: 0, top: 0, width: "50%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+            />
+            {/* Slide indicators */}
+            <div style={{ position: "absolute", bottom: 12, left: "2rem", display: "flex", gap: 6, zIndex: 3 }}>
+              {[0,1,2].map(i => <div key={i} style={{ width: i===0?20:6, height: 6, borderRadius: 3, background: i===0?"#a855f7":"rgba(255,255,255,0.3)" }} />)}
+            </div>
+            <div style={{ position: "absolute", bottom: 12, right: "2rem", fontSize: "0.7rem", color: "rgba(255,255,255,0.4)", zIndex: 3 }}>1/6</div>
           </div>
 
-          {/* Content */}
-          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
-            {activeTab === "home" && <HomeScreen />}
-            {activeTab === "create" && <CreateScreen />}
-            {activeTab === "explore" && <ExploreScreen />}
-            {activeTab === "profile" && <ProfileScreen />}
-          </div>
-
-          {/* FAB */}
-          {activeTab === "home" && (
-            <button
-              onClick={() => setActiveTab("create")}
-              style={{
-                position: "fixed", bottom: "calc(74px)", right: "1.2rem",
-                width: 52, height: 52, borderRadius: "50%",
-                background: "linear-gradient(135deg,#00f5ff,#7c3aed)",
-                border: "none", cursor: "pointer", fontSize: "1.4rem", color: "#080c1a",
-                boxShadow: "0 4px 20px rgba(0,245,255,0.4)",
-                display: "flex", alignItems: "center", justifyContent: "center", zIndex: 99
-              }}
-            >+</button>
-          )}
-
-          {/* Bottom Nav */}
-          <div style={{
-            position: "fixed", bottom: 0, left: 0, right: 0, height: 60,
-            background: "rgba(8,12,26,0.97)", backdropFilter: "blur(20px)",
-            borderTop: "1px solid rgba(0,245,255,0.12)", display: "flex",
-            alignItems: "center", justifyContent: "space-around", zIndex: 100
-          }}>
-            {[
-              { id: "home", icon: "🏠", label: "Inicio" },
-              { id: "create", icon: "✏️", label: "Crear" },
-              { id: "explore", icon: "🔍", label: "Explorar" },
-              { id: "profile", icon: "👤", label: "Perfil" },
-            ].map(item => (
-              <div
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                style={{
-                  flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
-                  justifyContent: "center", gap: 3, cursor: "pointer", padding: "8px 0",
-                  color: activeTab === item.id ? "#00f5ff" : "#5a7090",
-                  fontSize: "0.58rem", letterSpacing: "0.5px", textTransform: "uppercase",
-                  position: "relative", transition: "all 0.2s"
-                }}
-              >
-                <span style={{ fontSize: "1.25rem", transform: activeTab === item.id ? "scale(1.15)" : "scale(1)", transition: "transform 0.2s" }}>
-                  {item.icon}
-                </span>
-                {item.label}
-                {activeTab === item.id && (
-                  <div style={{
-                    position: "absolute", bottom: 0, left: "50%", transform: "translateX(-50%)",
-                    width: 22, height: 2, background: "#00f5ff", borderRadius: 2
-                  }} />
-                )}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "1.5rem" }}>
+            
+            {/* LEFT: Suggested */}
+            <div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
+                <h2 style={{ fontSize: "1rem", fontWeight: 700 }}>You Might Also Like</h2>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.08)", border: "none", color: "#fff", cursor: "pointer", fontSize: "0.8rem" }}>‹</button>
+                  <button style={{ width: 28, height: 28, borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#db2777)", border: "none", color: "#fff", cursor: "pointer", fontSize: "0.8rem" }}>›</button>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function HomeScreen() {
-  return (
-    <div style={{ paddingBottom: 80 }}>
-      {/* Hero */}
-      <div style={{ background: "linear-gradient(180deg,rgba(0,245,255,0.06) 0%,transparent 100%)", padding: "1.2rem 1rem 1rem", borderBottom: "1px solid rgba(0,245,255,0.12)" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.7rem", color: "#5a7090", letterSpacing: 2, textTransform: "uppercase" }}>
-              Bienvenido de vuelta
-            </div>
-            <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.3rem", fontWeight: 900, color: "#00f5ff" }}>
-              Creator Pro
-            </div>
-          </div>
-          <span style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", padding: "2px 9px", borderRadius: 50, fontSize: "0.62rem", letterSpacing: "0.8px", textTransform: "uppercase", fontWeight: 600 }}>
-            PRO
-          </span>
-        </div>
-        {/* Engine status */}
-        <div style={{ marginTop: "0.8rem", background: "rgba(0,245,255,0.04)", border: "1px solid rgba(0,245,255,0.15)", borderRadius: 10, padding: "0.8rem", display: "flex", alignItems: "center", gap: "0.8rem" }}>
-          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 8px #22c55e", flexShrink: 0 }} />
-          <div>
-            <div style={{ fontSize: "0.78rem", fontWeight: 600 }}>Motor IA Online</div>
-            <div style={{ fontSize: "0.65rem", color: "#5a7090" }}>Listo para generar</div>
-          </div>
-          <div style={{ display: "flex", gap: 3, marginLeft: "auto" }}>
-            {[1,2,3].map(i => <div key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: "#00f5ff", boxShadow: "0 0 4px #00f5ff" }} />)}
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.65rem", padding: "1rem" }}>
-        {[
-          { icon: "🎨", label: "Nuevo Cómic" },
-          { icon: "⚡", label: "Quick Gen" },
-          { icon: "🎭", label: "Personajes" },
-          { icon: "🗺️", label: "Escenas" },
-          { icon: "💬", label: "Diálogos" },
-          { icon: "📤", label: "Exportar" },
-        ].map((a, i) => (
-          <div key={i} style={{
-            background: "#111827", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 12,
-            padding: "0.9rem 0.4rem", display: "flex", flexDirection: "column", alignItems: "center",
-            gap: "0.45rem", cursor: "pointer", transition: "all 0.2s"
-          }}>
-            <div style={{ fontSize: "1.5rem" }}>{a.icon}</div>
-            <div style={{ fontSize: "0.6rem", letterSpacing: "0.5px", textAlign: "center", color: "#5a7090" }}>{a.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Stats */}
-      <div style={{ fontSize: "0.68rem", letterSpacing: 2, textTransform: "uppercase", color: "#5a7090", marginBottom: "0.7rem", padding: "0 1rem" }}>
-        Tus Estadísticas
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.65rem", padding: "0 1rem 1rem" }}>
-        {[
-          { val: "12", label: "Cómics" },
-          { val: "47", label: "Paneles" },
-          { val: "8.4K", label: "Vistas" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#111827", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 12, padding: "0.9rem 0.5rem", textAlign: "center" }}>
-            <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.4rem", fontWeight: 900, color: "#00f5ff" }}>{s.val}</div>
-            <div style={{ fontSize: "0.62rem", color: "#5a7090", letterSpacing: 1, textTransform: "uppercase", marginTop: 4 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Recent Project */}
-      <div style={{ fontSize: "0.68rem", letterSpacing: 2, textTransform: "uppercase", color: "#5a7090", marginBottom: "0.7rem", padding: "0 1rem" }}>
-        Proyecto Reciente
-      </div>
-      <div style={{ margin: "0 1rem 1rem", borderRadius: 14, overflow: "hidden", border: "1px solid rgba(0,245,255,0.12)", cursor: "pointer" }}>
-        <img src="https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?w=600&q=80" alt="project" style={{ width: "100%", aspectRatio: "16/6", objectFit: "cover", display: "block" }} />
-        <div style={{ padding: "1rem" }}>
-          <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.88rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-            Leyendas del Pixel
-          </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div style={{ display: "flex", gap: 8 }}>
-              <span style={{ background: "rgba(0,245,255,0.12)", color: "#00f5ff", padding: "2px 9px", borderRadius: 50, fontSize: "0.62rem", fontWeight: 600 }}>En Progreso</span>
-              <span style={{ background: "rgba(124,58,237,0.15)", color: "#a78bfa", padding: "2px 9px", borderRadius: 50, fontSize: "0.62rem", fontWeight: 600 }}>RPG</span>
-            </div>
-            <div style={{ fontSize: "0.72rem", color: "#5a7090" }}>8 paneles</div>
-          </div>
-          <div style={{ marginTop: "0.8rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.65rem", color: "#5a7090", marginBottom: 4 }}>
-              <span>Progreso</span><span style={{ color: "#00f5ff" }}>65%</span>
-            </div>
-            <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden" }}>
-              <div style={{ width: "65%", height: "100%", background: "linear-gradient(90deg,#00f5ff,#7c3aed)", borderRadius: 2 }} />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CreateScreen() {
-  const [step, setStep] = useState(1);
-  const [genre, setGenre] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-
-  return (
-    <div style={{ padding: "1rem", paddingBottom: 80 }}>
-      <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 900, color: "#00f5ff", marginBottom: "1.5rem" }}>
-        Crear Nuevo Cómic
-      </div>
-
-      {/* Steps */}
-      <div style={{ display: "flex", gap: 8, marginBottom: "1.5rem" }}>
-        {[1,2,3].map(s => (
-          <div key={s} style={{ flex: 1, height: 4, borderRadius: 2, background: s <= step ? "linear-gradient(90deg,#00f5ff,#7c3aed)" : "rgba(255,255,255,0.08)" }} />
-        ))}
-      </div>
-
-      {step === 1 && (
-        <div>
-          <div style={{ fontSize: "0.72rem", color: "#5a7090", letterSpacing: 1, textTransform: "uppercase", marginBottom: "0.4rem" }}>Título</div>
-          <input
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            placeholder="Nombre de tu cómic..."
-            style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 10, padding: "0.7rem 1rem", color: "#e0e8ff", fontFamily: "'Inter',sans-serif", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
-          />
-          <div style={{ fontSize: "0.72rem", color: "#5a7090", letterSpacing: 1, textTransform: "uppercase", margin: "1rem 0 0.4rem" }}>Género</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem" }}>
-            {["RPG","Acción","Aventura","Sci-Fi","Fantasy","Horror"].map(g => (
-              <div
-                key={g}
-                onClick={() => setGenre(g)}
-                style={{
-                  background: genre === g ? "rgba(0,245,255,0.15)" : "#111827",
-                  border: genre === g ? "1px solid rgba(0,245,255,0.5)" : "1px solid rgba(0,245,255,0.12)",
-                  borderRadius: 10, padding: "0.7rem", textAlign: "center", cursor: "pointer",
-                  fontSize: "0.82rem", color: genre === g ? "#00f5ff" : "#e0e8ff"
-                }}
-              >{g}</div>
-            ))}
-          </div>
-          <button
-            onClick={() => setStep(2)}
-            disabled={!title || !genre}
-            style={{
-              width: "100%", marginTop: "1.5rem", padding: "0.9rem", border: "none", borderRadius: 12,
-              background: title && genre ? "linear-gradient(135deg,#00f5ff,#7c3aed)" : "rgba(255,255,255,0.05)",
-              color: title && genre ? "#080c1a" : "#5a7090", fontWeight: 600, fontSize: "0.95rem", cursor: title && genre ? "pointer" : "not-allowed"
-            }}
-          >Siguiente →</button>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div>
-          <div style={{ fontSize: "0.72rem", color: "#5a7090", letterSpacing: 1, textTransform: "uppercase", marginBottom: "0.4rem" }}>Descripción de la Historia</div>
-          <textarea
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            placeholder="Describe tu historia, personajes principales, mundo..."
-            style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 10, padding: "0.7rem 1rem", color: "#e0e8ff", fontFamily: "'Inter',sans-serif", fontSize: "0.88rem", outline: "none", resize: "none", minHeight: 120, boxSizing: "border-box" }}
-          />
-          <div style={{ fontSize: "0.72rem", color: "#5a7090", letterSpacing: 1, textTransform: "uppercase", margin: "1rem 0 0.4rem" }}>Estilo Visual</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.65rem" }}>
-            {["Anime","Pixel Art","3D","Retro","Noir","Kawaii"].map(s => (
-              <div key={s} style={{ background: "#111827", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 10, padding: "0.7rem", textAlign: "center", cursor: "pointer", fontSize: "0.82rem" }}>{s}</div>
-            ))}
-          </div>
-          <div style={{ display: "flex", gap: "0.8rem", marginTop: "1.5rem" }}>
-            <button onClick={() => setStep(1)} style={{ flex: 1, padding: "0.9rem", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 12, background: "transparent", color: "#e0e8ff", fontWeight: 600, cursor: "pointer" }}>← Atrás</button>
-            <button onClick={() => setStep(3)} style={{ flex: 2, padding: "0.9rem", border: "none", borderRadius: 12, background: "linear-gradient(135deg,#00f5ff,#7c3aed)", color: "#080c1a", fontWeight: 600, cursor: "pointer" }}>Generar IA ✨</button>
-          </div>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✨</div>
-          <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1rem", color: "#00f5ff", marginBottom: "0.5rem" }}>¡Generando tu Cómic!</div>
-          <div style={{ color: "#5a7090", fontSize: "0.82rem", marginBottom: "2rem" }}>La IA está creando los paneles de "{title}"...</div>
-          <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden", marginBottom: "2rem" }}>
-            <div style={{ width: "75%", height: "100%", background: "linear-gradient(90deg,#00f5ff,#7c3aed)", borderRadius: 2, transition: "width 2s" }} />
-          </div>
-          {[1,2,3].map(i => (
-            <div key={i} style={{ background: "#111827", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 12, padding: "1rem", marginBottom: "0.8rem", display: "flex", alignItems: "center", gap: "0.8rem" }}>
-              <div style={{ width: 40, height: 40, borderRadius: 8, background: "linear-gradient(135deg,rgba(0,245,255,0.2),rgba(124,58,237,0.2))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem" }}>🖼️</div>
-              <div style={{ textAlign: "left" }}>
-                <div style={{ fontSize: "0.82rem", fontWeight: 600 }}>Panel {i}</div>
-                <div style={{ fontSize: "0.65rem", color: "#5a7090" }}>Generando...</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(160px,1fr))", gap: "1rem" }}>
+                {SUGGESTED.map((g, i) => (
+                  <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(139,92,246,0.15)", borderRadius: 12, overflow: "hidden", cursor: "pointer", transition: "all 0.2s" }}>
+                    <div style={{ position: "relative" }}>
+                      <img src={g.img} alt={g.title} style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover", display: "block" }} />
+                      <div style={{ position: "absolute", top: 6, left: 6, background: "rgba(0,0,0,0.6)", borderRadius: 4, padding: "2px 6px", fontSize: "0.55rem", color: "rgba(255,255,255,0.8)" }}>👤 {g.players}</div>
+                    </div>
+                    <div style={{ padding: "0.7rem" }}>
+                      <div style={{ fontSize: "0.78rem", fontWeight: 600, marginBottom: 4, lineHeight: 1.3 }}>{g.title}</div>
+                      <div style={{ display: "flex", gap: 4 }}>
+                        <span style={{ background: "rgba(139,92,246,0.2)", color: "#a78bfa", padding: "1px 6px", borderRadius: 4, fontSize: "0.55rem", fontWeight: 600 }}>{g.genre}</span>
+                        <span style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.5)", padding: "1px 6px", borderRadius: 4, fontSize: "0.55rem" }}>{g.tag}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div style={{ marginLeft: "auto", width: 8, height: 8, borderRadius: "50%", background: "#00f5ff", boxShadow: "0 0 8px #00f5ff" }} />
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
-function ExploreScreen() {
-  const comics = [
-    { title: "Dragon's Quest", genre: "RPG", author: "PixelMaster", views: "12.4K", cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80", badge: "TRENDING" },
-    { title: "Neon Samurai", genre: "Acción", author: "CyberArt", views: "8.9K", cover: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&q=80", badge: "NUEVO" },
-    { title: "Space Pirates", genre: "Sci-Fi", author: "GalaxyDev", views: "6.2K", cover: "https://images.unsplash.com/photo-1462536943532-57a629f6cc60?w=400&q=80", badge: "" },
-    { title: "Pixel Kingdom", genre: "Fantasy", author: "RetroKing", views: "15.1K", cover: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&q=80", badge: "TOP" },
-  ];
-
-  return (
-    <div style={{ padding: "1rem", paddingBottom: 80 }}>
-      <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 900, color: "#00f5ff", marginBottom: "1rem" }}>
-        Explorar
-      </div>
-      <input placeholder="Buscar cómics..." style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 10, padding: "0.7rem 1rem", color: "#e0e8ff", fontFamily: "'Inter',sans-serif", fontSize: "0.88rem", outline: "none", boxSizing: "border-box", marginBottom: "1rem" }} />
-      <div style={{ display: "flex", gap: 8, marginBottom: "1rem", overflowX: "auto" }}>
-        {["Todos","RPG","Acción","Sci-Fi","Fantasy","Horror"].map((f, i) => (
-          <div key={i} style={{ background: i === 0 ? "rgba(0,245,255,0.15)" : "rgba(255,255,255,0.05)", border: i === 0 ? "1px solid rgba(0,245,255,0.4)" : "1px solid rgba(0,245,255,0.12)", borderRadius: 50, padding: "4px 14px", fontSize: "0.72rem", color: i === 0 ? "#00f5ff" : "#5a7090", cursor: "pointer", whiteSpace: "nowrap", fontWeight: 600 }}>{f}</div>
-        ))}
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem" }}>
-        {comics.map((c, i) => (
-          <div key={i} style={{ background: "#111827", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 12, overflow: "hidden", cursor: "pointer" }}>
-            <div style={{ position: "relative" }}>
-              <img src={c.cover} alt={c.title} style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover", display: "block" }} />
-              {c.badge && <div style={{ position: "absolute", top: 6, left: 6, background: c.badge === "TRENDING" ? "rgba(255,0,255,0.8)" : c.badge === "NUEVO" ? "rgba(0,245,255,0.8)" : "rgba(255,215,0,0.8)", color: "#080c1a", padding: "1px 7px", borderRadius: 4, fontSize: "0.55rem", fontWeight: 900, letterSpacing: 1 }}>{c.badge}</div>}
-            </div>
-            <div style={{ padding: "0.65rem" }}>
-              <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.72rem", fontWeight: 700, marginBottom: 3 }}>{c.title}</div>
-              <div style={{ fontSize: "0.6rem", color: "#5a7090" }}>@{c.author}</div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: "0.6rem", color: "#5a7090" }}>
-                <span>{c.genre}</span>
-                <span>👁 {c.views}</span>
+            {/* RIGHT: In Library */}
+            <div>
+              <h2 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "1rem" }}>In Library</h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                {GAMES_LIBRARY.map((g, i) => (
+                  <div key={i} style={{
+                    display: "flex", alignItems: "center", gap: "0.75rem",
+                    background: "rgba(255,255,255,0.03)", border: "1px solid rgba(139,92,246,0.12)",
+                    borderRadius: 10, padding: "0.65rem", cursor: "pointer"
+                  }}>
+                    <img src={g.img} alt={g.title} style={{ width: 44, height: 44, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: "0.78rem", fontWeight: 600, marginBottom: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{g.title}</div>
+                      <div style={{ display: "flex", gap: 4 }}>
+                        <span style={{ background: "rgba(139,92,246,0.2)", color: "#a78bfa", padding: "1px 5px", borderRadius: 3, fontSize: "0.52rem", fontWeight: 600 }}>{g.genre}</span>
+                        <span style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.45)", padding: "1px 5px", borderRadius: 3, fontSize: "0.52rem" }}>{g.tag}</span>
+                      </div>
+                    </div>
+                    <button style={{ background: "linear-gradient(135deg,#7c3aed,#db2777)", border: "none", color: "#fff", width: 26, height: 26, borderRadius: "50%", cursor: "pointer", fontSize: "0.9rem", flexShrink: 0 }}>↓</button>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        ))}
+        </div>
       </div>
-    </div>
-  );
-}
 
-function ProfileScreen() {
-  return (
-    <div style={{ paddingBottom: 80 }}>
-      <div style={{ background: "linear-gradient(180deg,rgba(0,245,255,0.08) 0%,transparent 100%)", padding: "2rem 1rem 1.5rem", textAlign: "center" }}>
-        <div style={{ width: 72, height: 72, borderRadius: "50%", background: "linear-gradient(135deg,#00f5ff,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", margin: "0 auto 1rem", boxShadow: "0 0 20px rgba(0,245,255,0.3)" }}>🎮</div>
-        <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 900, color: "#00f5ff" }}>Creator Pro</div>
-        <div style={{ fontSize: "0.75rem", color: "#5a7090", marginTop: 4 }}>@gamecreator · Nivel 12</div>
-        <div style={{ display: "flex", justifyContent: "center", gap: "1.5rem", marginTop: "1.2rem" }}>
-          {[{val:"12",label:"Cómics"},{val:"847",label:"Seguidores"},{val:"234",label:"Siguiendo"}].map((s,i) => (
-            <div key={i} style={{ textAlign: "center" }}>
-              <div style={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 900, color: "#00f5ff" }}>{s.val}</div>
-              <div style={{ fontSize: "0.62rem", color: "#5a7090" }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ padding: "1rem" }}>
-        <div style={{ background: "#111827", border: "1px solid rgba(0,245,255,0.12)", borderRadius: 14, overflow: "hidden", marginBottom: "1rem" }}>
-          {[
-            { icon: "🏆", label: "Logros", val: "24 desbloqueados" },
-            { icon: "⭐", label: "XP Total", val: "12,450 pts" },
-            { icon: "🔥", label: "Racha", val: "7 días" },
-          ].map((item, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", padding: "0.9rem 1rem", borderBottom: i < 2 ? "1px solid rgba(0,245,255,0.08)" : "none" }}>
-              <span style={{ fontSize: "1.2rem", marginRight: "0.8rem" }}>{item.icon}</span>
-              <span style={{ flex: 1, fontSize: "0.85rem" }}>{item.label}</span>
-              <span style={{ fontSize: "0.78rem", color: "#00f5ff" }}>{item.val}</span>
-            </div>
-          ))}
-        </div>
-        <button style={{ width: "100%", padding: "0.9rem", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 12, background: "rgba(239,68,68,0.08)", color: "#ef4444", fontWeight: 600, cursor: "pointer", fontSize: "0.88rem" }}>
-          Cerrar Sesión
-        </button>
-      </div>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
+        * { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 2px; }
+        @media (max-width: 768px) {
+          .sidebar-desktop { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }
