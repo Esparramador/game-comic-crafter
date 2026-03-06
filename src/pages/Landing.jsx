@@ -1,6 +1,6 @@
 import { GoogleLogin } from "@/components/ui/google_login";
-import { createPageUrl } from "@/utils";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 
 export const config = { requiresAuth: false };
@@ -9,6 +9,7 @@ const VIDEO1 = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/publi
 const VIDEO2 = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69aa73f013b5c82e8989d6fc/10de00b17_Landing_Videos_y_Tienda_Shopify.mp4";
 
 export default function Landing() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,7 +17,7 @@ export default function Landing() {
       try {
         const isAuth = await base44.auth.isAuthenticated();
         if (isAuth) {
-          window.location.href = createPageUrl("HomeScreen");
+          navigate("/home");
         }
       } catch (e) {
         console.log("Auth check:", e.message);
@@ -25,7 +26,7 @@ export default function Landing() {
       }
     };
     checkAuth();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (
