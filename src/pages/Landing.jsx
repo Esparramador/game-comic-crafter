@@ -74,7 +74,7 @@ export default function Landing() {
         </button>
 
         {/* Feature Pills */}
-        <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", flexWrap: "wrap", marginBottom: "2.5rem" }}>
           {[
             { icon: "⚙️", label: "Physics Mixer AAA" },
             { icon: "🎙️", label: "ElevenLabs Voices" },
@@ -89,6 +89,34 @@ export default function Landing() {
               {pill.icon} {pill.label}
             </div>
           ))}
+        </div>
+
+        {/* Videos Section */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem" }}>
+          <div style={{
+            borderRadius: 12, overflow: "hidden",
+            border: "1px solid rgba(124,58,237,0.25)", background: "#160d2e"
+          }}>
+            <video
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69aa73f013b5c82e8989d6fc/f1f6abb71_Configuracin_lista_triler_generado.mp4"
+              style={{ width: "100%", height: 160, objectFit: "cover" }}
+              muted
+              autoPlay
+              loop
+            />
+          </div>
+          <div style={{
+            borderRadius: 12, overflow: "hidden",
+            border: "1px solid rgba(124,58,237,0.25)", background: "#160d2e"
+          }}>
+            <video
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69aa73f013b5c82e8989d6fc/10de00b17_Landing_Videos_y_Tienda_Shopify.mp4"
+              style={{ width: "100%", height: 160, objectFit: "cover" }}
+              muted
+              autoPlay
+              loop
+            />
+          </div>
         </div>
       </div>
 
