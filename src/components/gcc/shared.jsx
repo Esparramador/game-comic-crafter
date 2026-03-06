@@ -1,5 +1,3 @@
-import React from "react";
-
 export const C = {
   dark: "#080c1a",
   bg: "#0f0a1e",
