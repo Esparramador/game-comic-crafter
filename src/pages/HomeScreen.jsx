@@ -38,60 +38,89 @@ export default function HomeScreen() {
     setTimeout(() => setToast(t => ({ ...t, show: false })), 2400);
   };
 
+  const BG = "#0d0520";
+  const CARD = "#160d2e";
+  const PURPLE = "#7c3aed";
+  const CYAN = "#c084fc";
+  const PINK = "#e91e8c";
+  const MUTED = "#5a7090";
+
   return (
     <div style={{
-      height: "100vh", background: "#080c1a", color: "#e0e8ff",
+      height: "100vh", background: BG, color: "#e0e8ff",
       fontFamily: "'Inter', sans-serif", display: "flex", flexDirection: "column",
       overflow: "hidden", maxWidth: 480, margin: "0 auto", position: "relative"
     }}>
+      {/* Halftone dots bg */}
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
+        backgroundImage: "radial-gradient(circle, rgba(124,58,237,0.15) 1px, transparent 1px)",
+        backgroundSize: "28px 28px"
+      }} />
+      {/* Glow */}
+      <div style={{
+        position: "fixed", top: "20%", left: "50%", transform: "translate(-50%,-50%)",
+        width: 400, height: 400, borderRadius: "50%",
+        background: "radial-gradient(ellipse, rgba(124,58,237,0.18) 0%, transparent 70%)",
+        zIndex: 0, pointerEvents: "none"
+      }} />
+
       {/* SPLASH */}
       {splash && (
         <div style={{
-          position: "fixed", inset: 0, zIndex: 9999, background: "#080c1a",
+          position: "fixed", inset: 0, zIndex: 9999, background: BG,
           display: "flex", flexDirection: "column", alignItems: "center",
           justifyContent: "center", gap: "1.5rem"
         }}>
           <div style={{
             width: 70, height: 70, borderRadius: "50%",
-            background: "rgba(0,245,255,0.05)", border: "2px solid rgba(0,245,255,0.3)",
+            background: "rgba(124,58,237,0.08)", border: "2px solid rgba(124,58,237,0.4)",
             display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.2rem",
             animation: "pingAnim 2s ease-in-out infinite"
-          }}>🧠</div>
-          <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "2rem", fontWeight: 900, color: "#00f5ff", textShadow: "0 0 40px rgba(0,245,255,0.8)", letterSpacing: 3 }}>GCC</div>
-          <div style={{ fontSize: "0.75rem", color: "#5a7090", letterSpacing: 2, textTransform: "uppercase" }}>Game Comic Crafter</div>
-          <div style={{ width: 220, height: 3, background: "rgba(0,245,255,0.1)", borderRadius: 2, overflow: "hidden" }}>
-            <div style={{ height: "100%", background: "linear-gradient(90deg,#00f5ff,#7c3aed)", animation: "loadBar 1.8s ease forwards" }} />
+          }}>🐧</div>
+          <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "2rem", fontWeight: 900, color: "#c084fc", textShadow: "0 0 40px rgba(124,58,237,0.8)", letterSpacing: 3 }}>GCC</div>
+          <div style={{ fontSize: "0.75rem", color: MUTED, letterSpacing: 2, textTransform: "uppercase" }}>Game Comic Crafter</div>
+          <div style={{ width: 220, height: 3, background: "rgba(124,58,237,0.1)", borderRadius: 2, overflow: "hidden" }}>
+            <div style={{ height: "100%", background: "linear-gradient(90deg,#7c3aed,#e91e8c)", animation: "loadBar 1.8s ease forwards" }} />
           </div>
-          <div style={{ fontSize: "0.62rem", color: "#5a7090", letterSpacing: 2, textTransform: "uppercase", opacity: 0.5 }}>6-AI CLUSTER INICIANDO...</div>
+          <div style={{ fontSize: "0.62rem", color: MUTED, letterSpacing: 2, textTransform: "uppercase", opacity: 0.5 }}>6-AI CLUSTER INICIANDO...</div>
         </div>
       )}
 
       {/* TOPBAR */}
       <div style={{
-        flexShrink: 0, height: 56, background: "rgba(8,12,26,0.95)",
-        backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(0,245,255,0.12)",
-        display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 1rem"
+        flexShrink: 0, height: 56, background: "rgba(13,5,32,0.97)",
+        backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(124,58,237,0.2)",
+        display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 1rem",
+        position: "relative", zIndex: 10
       }}>
-        <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.95rem", fontWeight: 900, color: "#00f5ff", letterSpacing: 2 }}>GCC</div>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: "50%",
+            background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.4)",
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem"
+          }}>🐧</div>
+          <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.95rem", fontWeight: 900, color: "#c084fc", letterSpacing: 2 }}>GCC</div>
+        </div>
         <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
-          <div style={{ position: "relative", cursor: "pointer", fontSize: "1.2rem" }}>
+          <div style={{ position: "relative", cursor: "pointer", fontSize: "1.1rem" }}>
             🔔
-            <div style={{ position: "absolute", top: 0, right: 0, width: 8, height: 8, borderRadius: "50%", background: "#ff00ff", border: "1px solid #080c1a" }} />
+            <div style={{ position: "absolute", top: 0, right: 0, width: 7, height: 7, borderRadius: "50%", background: PINK, border: "1px solid #0d0520" }} />
           </div>
           <div
             onClick={() => base44.auth.logout(createPageUrl("Landing"))}
             title="Cerrar sesión"
             style={{
               width: 32, height: 32, borderRadius: "50%",
-              background: "linear-gradient(135deg,#00f5ff,#7c3aed)",
+              background: "linear-gradient(135deg,#7c3aed,#e91e8c)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "0.85rem", fontWeight: 700, color: "#080c1a", cursor: "pointer"
+              fontSize: "0.85rem", fontWeight: 700, color: "#fff", cursor: "pointer"
             }}>{user?.full_name?.[0]?.toUpperCase() || "G"}</div>
         </div>
       </div>
 
       {/* CONTENT */}
-      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+      <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", position: "relative", zIndex: 1 }}>
         <div style={{ paddingBottom: 72 }}>
           {tab === "home" && <DashboardHome onNav={setTab} showToast={showToast} user={user} />}
           {tab === "physics" && <PhysicsScreen showToast={showToast} />}
@@ -107,9 +136,9 @@ export default function HomeScreen() {
         <button onClick={() => setTab("create")} style={{
           position: "fixed", bottom: 74, right: "calc(50% - 240px + 1.2rem)",
           width: 52, height: 52, borderRadius: "50%",
-          background: "linear-gradient(135deg,#00f5ff,#7c3aed)",
-          border: "none", cursor: "pointer", fontSize: "1.2rem", color: "#080c1a",
-          boxShadow: "0 4px 20px rgba(0,245,255,0.4)", display: "flex",
+          background: "linear-gradient(135deg,#7c3aed,#e91e8c)",
+          border: "none", cursor: "pointer", fontSize: "1.2rem", color: "#fff",
+          boxShadow: "0 4px 20px rgba(124,58,237,0.5)", display: "flex",
           alignItems: "center", justifyContent: "center", zIndex: 99
         }}>🎤</button>
       )}
@@ -118,20 +147,20 @@ export default function HomeScreen() {
       <div style={{
         position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
         width: "100%", maxWidth: 480, height: 60,
-        background: "rgba(8,12,26,0.97)", backdropFilter: "blur(20px)",
-        borderTop: "1px solid rgba(0,245,255,0.12)",
+        background: "rgba(13,5,32,0.97)", backdropFilter: "blur(20px)",
+        borderTop: "1px solid rgba(124,58,237,0.2)",
         display: "flex", alignItems: "center", justifyContent: "space-around", zIndex: 100
       }}>
         {TABS.map(t => (
           <div key={t.id} onClick={() => setTab(t.id)} style={{
             flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
             justifyContent: "center", gap: 3, cursor: "pointer", padding: "8px 0",
-            color: tab === t.id ? "#00f5ff" : "#5a7090",
+            color: tab === t.id ? "#c084fc" : MUTED,
             fontSize: "0.55rem", letterSpacing: 0.5, textTransform: "uppercase", position: "relative"
           }}>
             <span style={{ fontSize: "1.2rem", transform: tab === t.id ? "scale(1.15)" : "scale(1)", transition: "transform 0.2s" }}>{t.icon}</span>
             <span>{t.label}</span>
-            {tab === t.id && <div style={{ position: "absolute", bottom: 0, width: 22, height: 2, background: "#00f5ff", borderRadius: 2 }} />}
+            {tab === t.id && <div style={{ position: "absolute", bottom: 0, width: 22, height: 2, background: PURPLE, borderRadius: 2 }} />}
           </div>
         ))}
       </div>
@@ -141,12 +170,11 @@ export default function HomeScreen() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
         @keyframes loadBar { 0%{width:0} 100%{width:100%} }
-        @keyframes pingAnim { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(0,245,255,0.4)} 50%{transform:scale(1.05);box-shadow:0 0 0 14px rgba(0,245,255,0)} }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @keyframes pingAnim { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(124,58,237,0.4)} 50%{transform:scale(1.05);box-shadow:0 0 0 14px rgba(124,58,237,0)} }
         @keyframes spin { 100%{transform:rotate(360deg)} }
         * { box-sizing: border-box; }
         ::-webkit-scrollbar { display: none; }
-        input::placeholder, textarea::placeholder { color: #5a7090; }
+        input::placeholder, textarea::placeholder, select { color: #5a7090; background: transparent; }
       `}</style>
     </div>
   );
