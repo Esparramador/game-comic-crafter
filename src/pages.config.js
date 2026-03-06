@@ -47,18 +47,18 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Landing from './pages/Landing';
 import HomeScreen from './pages/HomeScreen';
+import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Landing": Landing,
     "HomeScreen": HomeScreen,
+    "Landing": Landing,
 }
 
 export const pagesConfig = {
-    mainPage: "Landing",
+    mainPage: "HomeScreen",
     Pages: PAGES,
     Layout: __Layout,
 };

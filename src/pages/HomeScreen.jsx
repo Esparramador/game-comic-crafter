@@ -42,7 +42,7 @@ export default function HomeScreen() {
         const [projs,chars,profs] = await Promise.all([
           GameProject.list("-created_date",1),
           GameCharacter.list("-created_date",10),
-          SuperUserProfile.filter({email:"sadiagiljoan@[gmail.com](https://gmail.com)"}),
+          SuperUserProfile.filter({email:"sadiagiljoan@gmail.com"}),
         ]);
         setProject(projs[0]||null);
         setChars(chars||[]);
