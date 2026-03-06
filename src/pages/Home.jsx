@@ -253,7 +253,7 @@ function ExploreScreen() {
           style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 10, padding: "0.7rem 1rem", color: C.text, fontFamily: "'Inter',sans-serif", fontSize: "0.88rem", outline: "none" }} />
       </div>
 
-      <div style={{ padding: "0 1rem", fontSize: "0.68rem", letterSpacing: 2, textTransform: "uppercase", color: C.muted, margin: "0.8rem 0 0.7rem" }}>Tendencias</div>
+      <div style={{ padding: "0 1rem", fontSize: "0.68rem", letterSpacing: 2, textTransform: "uppercase", color: C.muted, margin: "0.8rem 0 0.7rem" }}>Juegos Populares</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.8rem", padding: "0 1rem 1rem" }}>
         {EXPLORE.filter(e => !search || e.title.toLowerCase().includes(search.toLowerCase())).map((e, i) => (
           <div key={i} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, overflow: "hidden", cursor: "pointer" }}>
@@ -263,7 +263,7 @@ function ExploreScreen() {
               <div style={{ fontSize: "0.65rem", color: C.muted, marginBottom: 6 }}>por {e.author}</div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 {pill(C.cyan, "rgba(0,245,255,0.12)", e.genre)}
-                <span style={{ fontSize: "0.65rem", color: C.muted }}>❤️ {e.likes}</span>
+                <span style={{ fontSize: "0.65rem", color: C.muted }}>▶ {e.plays}</span>
               </div>
             </div>
           </div>
