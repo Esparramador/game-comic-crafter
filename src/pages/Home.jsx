@@ -156,11 +156,11 @@ function CreateScreen() {
 
       {step === 0 && (
         <div>
-          <div style={{ fontSize: "0.72rem", color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: "0.4rem" }}>Título del Cómic</div>
+          <div style={{ fontSize: "0.72rem", color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: "0.4rem" }}>Título del Videojuego</div>
           <input placeholder="Ej: Cyber Warrior X" value={form.title} onChange={e => setForm({...form, title: e.target.value})}
             style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 10, padding: "0.7rem 1rem", color: C.text, fontFamily: "'Inter',sans-serif", fontSize: "0.88rem", outline: "none", marginBottom: "1rem" }} />
-          <div style={{ fontSize: "0.72rem", color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: "0.4rem" }}>Concepto / Historia</div>
-          <textarea placeholder="Describe tu historia, personajes y universo..." value={form.concept} onChange={e => setForm({...form, concept: e.target.value})}
+          <div style={{ fontSize: "0.72rem", color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: "0.4rem" }}>Concepto / Mecánicas</div>
+          <textarea placeholder="Describe tu juego, mecánicas, mundo y personajes..." value={form.concept} onChange={e => setForm({...form, concept: e.target.value})}
             style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 10, padding: "0.7rem 1rem", color: C.text, fontFamily: "'Inter',sans-serif", fontSize: "0.88rem", outline: "none", resize: "none", minHeight: 100 }} />
         </div>
       )}
