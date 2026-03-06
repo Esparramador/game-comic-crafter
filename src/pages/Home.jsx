@@ -2,17 +2,17 @@ import { useState } from "react";
 import { createPageUrl } from "@/utils";
 
 const GAMES_LIBRARY = [
-  { title: "Clash of Clan Emulator", genre: "Strategy", tag: "Battle Royale", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=80&q=80" },
-  { title: "NFS Hot Pursuit", genre: "Racing", tag: "2/4", img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=80&q=80" },
-  { title: "Ghost of Tsushima", genre: "Strategy", tag: "Open World", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=80&q=80" },
-  { title: "Overwatch Two", genre: "Strategy", tag: "Shooter", img: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=80&q=80" },
+  { title: "Clash of Clan Emulator", genre: "Strategy", tag: "Battle Royale", img: "https://picsum.photos/seed/clash/80/80" },
+  { title: "NFS Hot Pursuit", genre: "Racing", tag: "2/4", img: "https://picsum.photos/seed/nfs/80/80" },
+  { title: "Ghost of Tsushima", genre: "Strategy", tag: "Open World", img: "https://picsum.photos/seed/ghost/80/80" },
+  { title: "Overwatch Two", genre: "Strategy", tag: "Shooter", img: "https://picsum.photos/seed/ow2/80/80" },
 ];
 
 const SUGGESTED = [
-  { title: "Apex Legends Season IX", genre: "Strategy", tag: "Battle Royale", players: "1.2k Players", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=300&q=80" },
-  { title: "Overwatch: Strategic Gameplay", genre: "Strategy", tag: "Shooter", players: "274 Players", img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=300&q=80" },
-  { title: "Marvel Rivals Gameplay", genre: "Video Game", tag: "Multiplayer", players: "3.5k Players", img: "https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?w=300&q=80" },
-  { title: "Street Fighter Four: Clash of Empire", genre: "Strategy", tag: "Fighting", players: "2.9k Players", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&q=80" },
+  { title: "Apex Legends Season IX", genre: "Strategy", tag: "Battle Royale", players: "1.2k Players", img: "https://picsum.photos/seed/apex/300/225" },
+  { title: "Overwatch: Strategic Gameplay", genre: "Strategy", tag: "Shooter", players: "274 Players", img: "https://picsum.photos/seed/overwatch/300/225" },
+  { title: "Marvel Rivals Gameplay", genre: "Video Game", tag: "Multiplayer", players: "3.5k Players", img: "https://picsum.photos/seed/marvel/300/225" },
+  { title: "Street Fighter Four: Clash of Empire", genre: "Strategy", tag: "Fighting", players: "2.9k Players", img: "https://picsum.photos/seed/street/300/225" },
 ];
 
 const NAV_ITEMS = [
@@ -153,7 +153,7 @@ export default function Home() {
             </div>
             <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "45%", background: "linear-gradient(90deg,#3b0764,transparent)", zIndex: 1 }} />
             <img
-              src="https://images.unsplash.com/photo-1608889476561-6242cfdbf622?w=500&q=80"
+              src="https://picsum.photos/seed/spiderman/500/300"
               alt="hero"
               style={{ position: "absolute", right: 0, top: 0, width: "50%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
             />
