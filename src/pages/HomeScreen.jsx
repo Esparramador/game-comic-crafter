@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { GameProject } from "@/api/entities";
-import { GameCharacter } from "@/api/entities";
-import { SuperUserProfile } from "@/api/entities";
+import { base44 } from "@/api/base44Client";
+import { createPageUrl } from "@/utils";
 
 const SUGGESTED = [
   { name:"Comic Legends MOBA", icon:"🏟️", tags:["MOBA","3 carriles"], bg:"linear-gradient(135deg,#1a0338,#0a1628)" },
@@ -39,14 +38,15 @@ export default function HomeScreen() {
   useEffect(()=>{
     (async()=>{
       try {
-        const [projs,chars,profs] = await Promise.all([
-          GameProject.list("-created_date",1),
-          GameCharacter.list("-created_date",10),
-          SuperUserProfile.filter({email:"sadiagiljoan@gmail.com"}),
+        const user = await base44.auth.me();
+        const [projs,chars,prof] = await Promise.all([
+          base44.entities.GameProject.list("-created_date",1),
+          base44.entities.GameCharacter.list("-created_date",10),
+          user ? base44.auth.updateMe({}, {returnUser: true}) : Promise.resolve(user),
         ]);
         setProject(projs[0]||null);
         setChars(chars||[]);
-        setProfile(profs[0]||null);
+        setProfile(prof||user||null);
       } catch(e){console.error(e);}
       setLoading(false);
     })();
@@ -93,8 +93,8 @@ export default function HomeScreen() {
           </div>
           <div style={{padding:"0 1.2rem",marginBottom:"0.8rem"}}>
             <div style={{fontSize:"0.6rem",letterSpacing:"2px",textTransform:"uppercase",color:"#7060a0",marginBottom:"0.5rem",padding:"0 0.4rem"}}>Principal</div>
-            {[{icon:"🏠",label:"Dashboard",href:"/home",active:true},{icon:"🎮",label:"Mis Juegos",href:"/projects"},{icon:"🏪",label:"Store",href:"/store"},{icon:"👥",label:"Personajes",href:"/characters"},{icon:"⚙️",label:"Physics Mixer",href:"/physics"},{icon:"▶️",label:"Play & Test",href:"/test"}].map(n=>(
-              <a key={n.href} href={n.href} className={`sb-item${n.active?" sb-active":""}`}>
+            {[{icon:"🏠",label:"Dashboard",href:"HomeScreen",active:true},{icon:"🎮",label:"Mis Juegos",href:"Projects"},{icon:"🏪",label:"Store",href:"Store"},{icon:"👥",label:"Personajes",href:"Characters"},{icon:"⚙️",label:"Physics Mixer",href:"Physics"},{icon:"▶️",label:"Play & Test",href:"TestScreen"}].map(n=>(
+              <a key={n.href} href={createPageUrl(n.href)} className={`sb-item${n.active?" sb-active":""}`}>
                 <span style={{fontSize:"1rem",width:20,textAlign:"center"}}>{n.icon}</span>{n.label}
               </a>
             ))}
@@ -102,8 +102,8 @@ export default function HomeScreen() {
           <div style={{height:1,background:"rgba(124,58,237,0.2)",margin:"0 1.2rem"}}/>
           <div style={{padding:"0.8rem 1.2rem 0"}}>
             <div style={{fontSize:"0.6rem",letterSpacing:"2px",textTransform:"uppercase",color:"#7060a0",marginBottom:"0.5rem",padding:"0 0.4rem"}}>Herramientas</div>
-            {[{icon:"🎙️",label:"Voces",href:"/voices"},{icon:"🗂️",label:"Assets",href:"/assets"},{icon:"📣",label:"Marketing",href:"/marketing"}].map(n=>(
-              <a key={n.href} href={n.href} className="sb-item">
+            {[{icon:"🎙️",label:"Voces",href:"VoicesScreen"},{icon:"🗂️",label:"Assets",href:"AssetsScreen"},{icon:"📣",label:"Marketing",href:"MarketingScreen"}].map(n=>(
+              <a key={n.href} href={createPageUrl(n.href)} className="sb-item">
                 <span style={{fontSize:"1rem",width:20,textAlign:"center"}}>{n.icon}</span>{n.label}
               </a>
             ))}
@@ -156,7 +156,7 @@ export default function HomeScreen() {
 
             {/* HERO */}
             {project&&(
-              <div style={{borderRadius:16,overflow:"hidden",position:"relative",height:280,marginBottom:"1.5rem",cursor:"pointer"}} onClick={()=>window.location.href="/test"}>
+              <div style={{borderRadius:16,overflow:"hidden",position:"relative",height:280,marginBottom:"1.5rem",cursor:"pointer"}} onClick={()=>window.location.href=createPageUrl("TestScreen")}>
                 {project.cover_image_url
                   ?<img src={project.cover_image_url} alt={project.title} style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
                   :<div style={{width:"100%",height:"100%",background:"linear-gradient(135deg,#1a0a3e,#0a1628,#2a0a1e)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"5rem"}}>🐧</div>
@@ -166,7 +166,7 @@ export default function HomeScreen() {
                   <div style={{display:"inline-flex",background:"#e91e8c",color:"#fff",padding:"0.25rem 0.8rem",borderRadius:4,fontSize:"0.68rem",fontWeight:700,marginBottom:"0.8rem",width:"fit-content"}}>🔥 En juego ahora</div>
                   <div style={{fontFamily:"monospace",fontSize:"1.8rem",fontWeight:900,lineHeight:1.2,marginBottom:"0.8rem"}}>{project.title}</div>
                   <div style={{fontSize:"0.82rem",color:"rgba(232,224,245,0.75)",lineHeight:1.6,marginBottom:"1.2rem",maxWidth:360}}>{(project.description||"").slice(0,110)}...</div>
-                  <button style={{display:"inline-flex",alignItems:"center",gap:"0.5rem",background:"linear-gradient(135deg,#7c3aed,#e91e8c)",color:"#fff",border:"none",borderRadius:8,padding:"0.6rem 1.4rem",fontSize:"0.85rem",fontWeight:700,cursor:"pointer",width:"fit-content"}} onClick={e=>{e.stopPropagation();window.location.href="/test"}}>▶ Jugar ahora</button>
+                  <button style={{display:"inline-flex",alignItems:"center",gap:"0.5rem",background:"linear-gradient(135deg,#7c3aed,#e91e8c)",color:"#fff",border:"none",borderRadius:8,padding:"0.6rem 1.4rem",fontSize:"0.85rem",fontWeight:700,cursor:"pointer",width:"fit-content"}} onClick={e=>{e.stopPropagation();window.location.href=createPageUrl("TestScreen")}}>▶ Jugar ahora</button>
                 </div>
                 <div style={{position:"absolute",bottom:"1.2rem",left:"2rem",display:"flex",gap:"0.5rem"}}>
                   {[project.genre,project.engine,project.format,project.price&&`€${project.price}`].filter(Boolean).map(p=>(
@@ -179,12 +179,12 @@ export default function HomeScreen() {
             {/* STATS */}
             <div className="stats-grid" style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"1rem",marginBottom:"1.5rem"}}>
               {[
-                {icon:"🗂️",bg:"rgba(124,58,237,0.15)",val:profile?.total_assets||25,lbl:"Assets",href:"/assets"},
-                {icon:"🎙️",bg:"rgba(0,245,255,0.08)",val:profile?.total_voice_assets||18,lbl:"Voces",href:"/voices"},
-                {icon:"👥",bg:"rgba(233,30,140,0.1)",val:characters.length||2,lbl:"Personajes",href:"/characters"},
-                {icon:"💰",bg:"rgba(255,215,0,0.08)",val:`€${profile?.total_revenue||15}`,lbl:"Shopify",href:"/marketing",gold:true},
+                {icon:"🗂️",bg:"rgba(124,58,237,0.15)",val:profile?.total_assets||25,lbl:"Assets",href:"AssetsScreen"},
+                {icon:"🎙️",bg:"rgba(0,245,255,0.08)",val:profile?.total_voice_assets||18,lbl:"Voces",href:"VoicesScreen"},
+                {icon:"👥",bg:"rgba(233,30,140,0.1)",val:characters.length||2,lbl:"Personajes",href:"Characters"},
+                {icon:"💰",bg:"rgba(255,215,0,0.08)",val:`€${profile?.total_revenue||15}`,lbl:"Shopify",href:"MarketingScreen",gold:true},
               ].map(s=>(
-                <div key={s.lbl} className="stat-card" onClick={()=>window.location.href=s.href}>
+                <div key={s.lbl} className="stat-card" onClick={()=>window.location.href=createPageUrl(s.href)}>
                   <div style={{width:40,height:40,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.2rem",flexShrink:0,background:s.bg}}>{s.icon}</div>
                   <div>
                     <div style={{fontFamily:"monospace",fontSize:s.gold?"1.1rem":"1.3rem",fontWeight:900,color:s.gold?"#ffd700":"#00f5ff"}}>{s.val}</div>
@@ -199,7 +199,7 @@ export default function HomeScreen() {
               <div>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"1rem"}}>
                   <div style={{fontSize:"0.95rem",fontWeight:700}}>✨ También te puede gustar</div>
-                  <div style={{fontSize:"0.75rem",color:"#9d5cf5",cursor:"pointer"}}>Ver más →</div>
+                  <div style={{fontSize:"0.75rem",color:"#9d5cf5",cursor:"pointer"}} onClick={()=>window.location.href=createPageUrl("Projects")}>Ver más →</div>
                 </div>
                 <div style={{display:"flex",gap:"1rem",overflowX:"auto",paddingBottom:"0.5rem"}}>
                   {SUGGESTED.map((g,i)=>(
@@ -215,7 +215,7 @@ export default function HomeScreen() {
 
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",margin:"1.5rem 0 1rem"}}>
                   <div style={{fontSize:"0.95rem",fontWeight:700}}>⚙️ Physics Mix Activo</div>
-                  <div style={{fontSize:"0.75rem",color:"#9d5cf5",cursor:"pointer"}}>Editar →</div>
+                  <div style={{fontSize:"0.75rem",color:"#9d5cf5",cursor:"pointer"}} onClick={()=>window.location.href=createPageUrl("Physics")}>Editar →</div>
                 </div>
                 <div style={{background:"#1a1035",border:"1px solid rgba(124,58,237,0.2)",borderRadius:12,padding:"1rem",display:"flex",flexWrap:"wrap",gap:"0.5rem",alignItems:"center"}}>
                   <span style={pill("purple")}>🐾 Crash (mov)</span>
@@ -244,11 +244,11 @@ export default function HomeScreen() {
               <div>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"1rem"}}>
                   <div style={{fontSize:"0.95rem",fontWeight:700}}>📚 Mi Biblioteca</div>
-                  <div style={{fontSize:"0.75rem",color:"#9d5cf5",cursor:"pointer"}}>Ver todo →</div>
+                  <div style={{fontSize:"0.75rem",color:"#9d5cf5",cursor:"pointer"}} onClick={()=>window.location.href=createPageUrl("Projects")}>Ver todo →</div>
                 </div>
                 <div style={{background:"#1a1035",border:"1px solid rgba(124,58,237,0.2)",borderRadius:12,padding:"1rem"}}>
                   {project&&(
-                    <div className="lib-item" onClick={()=>window.location.href="/test"}>
+                    <div className="lib-item" onClick={()=>window.location.href=createPageUrl("TestScreen")}>
                       <div style={{width:48,height:36,borderRadius:6,flexShrink:0,overflow:"hidden",background:"linear-gradient(135deg,#1a0a3e,#0a1628)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.2rem"}}>
                         {project.cover_image_url?<img src={project.cover_image_url} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:"🐧"}
                       </div>
@@ -263,7 +263,7 @@ export default function HomeScreen() {
                     </div>
                   )}
                   {characters.map(c=>(
-                    <div key={c.id} className="lib-item" onClick={()=>window.location.href="/characters"}>
+                    <div key={c.id} className="lib-item" onClick={()=>window.location.href=createPageUrl("Characters")}>
                       <div style={{width:48,height:36,borderRadius:6,flexShrink:0,overflow:"hidden",background:"linear-gradient(135deg,#1a0a3e,#0a1628)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.2rem"}}>
                         {c.concept_image_url?<img src={c.concept_image_url} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:(c.archetype==="Warrior"?"⚔️":"🔮")}
                       </div>
