@@ -50,6 +50,7 @@
 import HomeScreen from './pages/HomeScreen';
 import Landing from './pages/Landing';
 import Error401 from './pages/Error401';
+import Error403 from './pages/Error403';
 import __Layout from './Layout.jsx';
 
 
@@ -57,6 +58,7 @@ export const PAGES = {
     "HomeScreen": HomeScreen,
     "Landing": Landing,
     "Error401": Error401,
+    "Error403": Error403,
 }
 
 export const pagesConfig = {
