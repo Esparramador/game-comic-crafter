@@ -112,9 +112,9 @@ export default function Landing() {
             <video
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69aa73f013b5c82e8989d6fc/10de00b17_Landing_Videos_y_Tienda_Shopify.mp4"
               style={{ width: "100%", height: 160, objectFit: "cover" }}
-              muted
-              autoPlay
-              loop
+              muted={true}
+              autoPlay={true}
+              loop={true}
             />
           </div>
         </div>
