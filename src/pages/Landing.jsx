@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createPageUrl } from "@/utils";
+import { base44 } from "@/api/base44Client";
 
 export default function Landing() {
   const [activeVideo, setActiveVideo] = useState(0);
