@@ -2,30 +2,30 @@ import { useState, useEffect } from "react";
 
 // ── DATOS MOCK ──────────────────────────────────────────────────
 const QUICK_ACTIONS = [
-  { icon: "🎮", label: "Nuevo Proyecto" },
+  { icon: "🎮", label: "Nuevo Juego" },
   { icon: "🦸", label: "Personaje" },
-  { icon: "📖", label: "Mis Cómics" },
-  { icon: "🎨", label: "Panel IA" },
-  { icon: "🔊", label: "Voz IA" },
-  { icon: "🛍️", label: "Tienda" },
+  { icon: "🌍", label: "Mundo" },
+  { icon: "🤖", label: "IA Código" },
+  { icon: "🔊", label: "Audio IA" },
+  { icon: "🚀", label: "Publicar" },
 ];
 
 const PROJECTS = [
-  { name: "CYBER WARRIOR X", genre: "Acción", status: "En progreso", cover: "https://picsum.photos/seed/cyber/600/200", progress: 65, panels: 12, chars: 3 },
-  { name: "SPACE ODYSSEY", genre: "Sci-Fi", status: "Borrador", cover: "https://picsum.photos/seed/space/600/200", progress: 30, panels: 5, chars: 2 },
+  { name: "CYBER WARRIOR X", genre: "Acción", engine: "Phaser.js", cover: "https://picsum.photos/seed/cyber/600/200", progress: 65, scenes: 8, chars: 3 },
+  { name: "SPACE ODYSSEY", genre: "Sci-Fi", engine: "Three.js", cover: "https://picsum.photos/seed/space/600/200", progress: 30, scenes: 3, chars: 2 },
 ];
 
 const EXPLORE = [
-  { title: "NEON BLADE", author: "GamerX", img: "https://picsum.photos/seed/neon/300/200", likes: "2.4k", genre: "Acción" },
-  { title: "DARK REALM", author: "PixelDev", img: "https://picsum.photos/seed/dark/300/200", likes: "1.8k", genre: "RPG" },
-  { title: "TURBO RUSH", author: "SpeedCraft", img: "https://picsum.photos/seed/turbo/300/200", likes: "3.1k", genre: "Racing" },
-  { title: "GHOST CITY", author: "ShadowArt", img: "https://picsum.photos/seed/ghost2/300/200", likes: "987", genre: "Stealth" },
+  { title: "NEON BLADE", author: "GamerX", img: "https://picsum.photos/seed/neon/300/200", plays: "2.4k", genre: "Acción" },
+  { title: "DARK REALM", author: "PixelDev", img: "https://picsum.photos/seed/dark/300/200", plays: "1.8k", genre: "RPG" },
+  { title: "TURBO RUSH", author: "SpeedCraft", img: "https://picsum.photos/seed/turbo/300/200", plays: "3.1k", genre: "Racing" },
+  { title: "GHOST CITY", author: "ShadowArt", img: "https://picsum.photos/seed/ghost2/300/200", plays: "987", genre: "Stealth" },
 ];
 
 const CHARS = [
-  { name: "Kira", role: "Héroe", img: "https://picsum.photos/seed/kira/80/80", tags: ["Guerrera", "Cyber"] },
-  { name: "Dex", role: "Villano", img: "https://picsum.photos/seed/dex/80/80", tags: ["Hacker", "IA"] },
-  { name: "Nova", role: "Aliada", img: "https://picsum.photos/seed/nova/80/80", tags: ["Piloto", "Mech"] },
+  { name: "Kira", role: "Protagonista", img: "https://picsum.photos/seed/kira/80/80", tags: ["Guerrera", "Cyber"] },
+  { name: "Dex", role: "Antagonista", img: "https://picsum.photos/seed/dex/80/80", tags: ["Hacker", "IA"] },
+  { name: "Nova", role: "NPC", img: "https://picsum.photos/seed/nova/80/80", tags: ["Piloto", "Mech"] },
 ];
 
 // ── COLORES / TOKENS ─────────────────────────────────────────────
