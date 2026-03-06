@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { C, Btn } from "./shared";
+import { C, Btn } from "./shared.jsx";
 
 const INFO = [
   { val: "17", lbl: "Plataformas" },
@@ -20,7 +20,6 @@ export default function TestScreen({ showToast }) {
         <Btn onClick={() => setGameStarted(true)}>▶ Jugar</Btn>
       </div>
 
-      {/* Game frame */}
       <div style={{ background: "#000", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 320 }}>
         {!gameStarted ? (
           <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1rem", background: "linear-gradient(135deg,rgba(8,12,26,0.9),rgba(26,10,46,0.9))" }}>
@@ -48,7 +47,6 @@ export default function TestScreen({ showToast }) {
         )}
       </div>
 
-      {/* Info bar */}
       <div style={{ padding: "0.6rem 1rem", background: C.card, borderTop: `1px solid ${C.border}`, display: "flex", gap: "1.2rem", overflowX: "auto", scrollbarWidth: "none" }}>
         {INFO.map((item, i) => (
           <div key={i} style={{ flexShrink: 0, textAlign: "center" }}>
@@ -58,7 +56,6 @@ export default function TestScreen({ showToast }) {
         ))}
       </div>
 
-      {/* Director Neuronal */}
       <div style={{ padding: "0.8rem 1rem", background: C.card, borderTop: `1px solid ${C.border}` }}>
         <div style={{ fontSize: "0.68rem", letterSpacing: "1.5px", textTransform: "uppercase", color: C.muted, marginBottom: "0.6rem" }}>Director Neuronal Live</div>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>

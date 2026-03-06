@@ -1,4 +1,4 @@
-import { C, Pill, Btn } from "./shared";
+import { C, Pill, Btn } from "./shared.jsx";
 
 export default function MarketingScreen({ showToast }) {
   return (

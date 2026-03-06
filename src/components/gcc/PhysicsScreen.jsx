@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { C, Pill, Btn } from "./shared";
+import { C, Pill, Btn } from "./shared.jsx";
 
 const CATEGORIES = [
   {
@@ -109,7 +109,6 @@ export default function PhysicsScreen({ showToast }) {
           </div>
         ))}
 
-        {/* Result */}
         <div style={{ background: C.card, border: "1px solid rgba(0,245,255,0.2)", borderRadius: 12, padding: "1rem", marginBottom: "1rem" }}>
           <div style={{ fontSize: "0.68rem", letterSpacing: "1.5px", textTransform: "uppercase", color: C.cyan, marginBottom: "0.8rem" }}>🎯 Mix Actual del Proyecto</div>
           {PARAMS.map((p, i) => (

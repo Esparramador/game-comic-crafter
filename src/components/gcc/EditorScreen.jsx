@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { C, Pill, Btn, InputField } from "./shared";
+import { C, Pill, Btn, InputField } from "./shared.jsx";
 
 const TABS_DEF = [
   { id: "gdd", label: "📋 GDD" },
@@ -38,12 +38,6 @@ const MODES = [
   { icon: "🏰", name: "RTS" },
 ];
 
-function WaveBar() {
-  return (
-    <div style={{ flex: 1, background: "rgba(0,245,255,0.2)", borderRadius: 2, height: `${15 + Math.random() * 85}%` }} />
-  );
-}
-
 export default function EditorScreen({ onNav, showToast }) {
   const [activeTab, setActiveTab] = useState("gdd");
   const [selectedMode, setSelectedMode] = useState(0);
@@ -80,7 +74,6 @@ export default function EditorScreen({ onNav, showToast }) {
         <Btn onClick={() => showToast("✅ Guardado")}>Guardar</Btn>
       </div>
 
-      {/* Editor Tabs */}
       <div style={{ display: "flex", background: C.card, borderBottom: `1px solid ${C.border}`, overflowX: "auto", scrollbarWidth: "none" }}>
         {TABS_DEF.map(t => (
           <div key={t.id} onClick={() => setActiveTab(t.id)} style={{
@@ -94,7 +87,6 @@ export default function EditorScreen({ onNav, showToast }) {
       </div>
 
       <div style={{ padding: "1rem" }}>
-        {/* GDD */}
         {activeTab === "gdd" && (
           <div>
             <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "1rem", marginBottom: "1rem" }}>
@@ -125,7 +117,6 @@ export default function EditorScreen({ onNav, showToast }) {
           </div>
         )}
 
-        {/* VOICES */}
         {activeTab === "voice" && (
           <div>
             <div style={{ fontSize: "0.72rem", letterSpacing: 1, textTransform: "uppercase", color: C.muted, marginBottom: "0.7rem" }}>Adrián Voss — 3 voces</div>
@@ -146,7 +137,6 @@ export default function EditorScreen({ onNav, showToast }) {
           </div>
         )}
 
-        {/* ASSETS */}
         {activeTab === "assets" && (
           <div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.55rem", marginBottom: "1rem" }}>
@@ -162,7 +152,6 @@ export default function EditorScreen({ onNav, showToast }) {
           </div>
         )}
 
-        {/* BUILD */}
         {activeTab === "build" && (
           <div>
             {platforms.map((p, i) => (
@@ -188,7 +177,6 @@ export default function EditorScreen({ onNav, showToast }) {
           </div>
         )}
 
-        {/* MIC */}
         {activeTab === "mic" && (
           <div>
             <div style={{ textAlign: "center", padding: "1.5rem 0 1rem" }}>
@@ -218,7 +206,6 @@ export default function EditorScreen({ onNav, showToast }) {
         )}
       </div>
 
-      {/* Asset Modal */}
       {showAssetModal && (
         <div onClick={() => setShowAssetModal(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 200, display: "flex", alignItems: "flex-end", justifyContent: "center", backdropFilter: "blur(4px)" }}>
           <div onClick={e => e.stopPropagation()} style={{ background: C.card, borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 480, padding: "1.5rem 1rem" }}>

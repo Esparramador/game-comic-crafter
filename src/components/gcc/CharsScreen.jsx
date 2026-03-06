@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { C, Pill, Btn } from "./shared";
+import { C, Pill, Btn } from "./shared.jsx";
 
 const CHARS = [
   {
@@ -50,7 +50,6 @@ export default function CharsScreen({ showToast }) {
         <Btn onClick={() => setShowModal(true)}>+ Añadir</Btn>
       </div>
 
-      {/* Filter tabs */}
       <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto", padding: "0.5rem 1rem 0.8rem", scrollbarWidth: "none" }}>
         {FILTERS.map(f => (
           <div key={f.id} onClick={() => setFilter(f.id)} style={{
@@ -114,7 +113,6 @@ export default function CharsScreen({ showToast }) {
           </div>
         ))}
 
-        {/* Add card */}
         <div onClick={() => setShowModal(true)} style={{
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
           gap: "0.4rem", border: "2px dashed rgba(0,245,255,0.15)", borderRadius: 14,
@@ -126,7 +124,6 @@ export default function CharsScreen({ showToast }) {
         </div>
       </div>
 
-      {/* New Char Modal */}
       {showModal && (
         <div onClick={() => setShowModal(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 200, display: "flex", alignItems: "flex-end", justifyContent: "center", backdropFilter: "blur(4px)" }}>
           <div onClick={e => e.stopPropagation()} style={{ background: C.card, borderRadius: "20px 20px 0 0", width: "100%", maxWidth: 480, maxHeight: "85vh", overflowY: "auto", padding: "1.5rem 1rem" }}>
