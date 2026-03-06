@@ -49,12 +49,14 @@
  */
 import HomeScreen from './pages/HomeScreen';
 import Landing from './pages/Landing';
+import Error401 from './pages/Error401';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "HomeScreen": HomeScreen,
     "Landing": Landing,
+    "Error401": Error401,
 }
 
 export const pagesConfig = {
