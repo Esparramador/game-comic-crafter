@@ -93,7 +93,7 @@ export default function HomeScreen() {
       {/* CONTENT */}
       <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
         <div style={{ paddingBottom: 72 }}>
-          {tab === "home" && <HomeScreenComponent onNav={setTab} showToast={showToast} />}
+          {tab === "home" && <DashboardHome onNav={setTab} showToast={showToast} user={user} />}
           {tab === "physics" && <PhysicsScreen showToast={showToast} />}
           {tab === "chars" && <CharsScreen showToast={showToast} />}
           {tab === "create" && <EditorScreen onNav={setTab} showToast={showToast} />}
