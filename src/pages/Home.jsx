@@ -183,15 +183,24 @@ function CreateScreen() {
 
       {step === 2 && (
         <div>
-          <div style={{ fontSize: "0.72rem", color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: "0.8rem" }}>Estilo Visual</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.7rem" }}>
-            {styles.map(s => (
-              <div key={s} onClick={() => setForm({...form, style: s})} style={{
-                background: form.style === s ? "rgba(0,245,255,0.1)" : C.card,
-                border: `1px solid ${form.style === s ? C.cyan : C.border}`,
-                borderRadius: 12, padding: "1rem", textAlign: "center", cursor: "pointer", fontSize: "0.85rem",
-                color: form.style === s ? C.cyan : C.text, fontWeight: form.style === s ? 700 : 400
-              }}>{s}</div>
+          <div style={{ fontSize: "0.72rem", color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: "0.8rem" }}>Motor de Juego</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.7rem" }}>
+            {engines.map(eng => (
+              <div key={eng} onClick={() => setForm({...form, engine: eng})} style={{
+                background: form.engine === eng ? "rgba(0,245,255,0.1)" : C.card,
+                border: `1px solid ${form.engine === eng ? C.cyan : C.border}`,
+                borderRadius: 12, padding: "1rem 1.2rem", cursor: "pointer",
+                color: form.engine === eng ? C.cyan : C.text, fontWeight: form.engine === eng ? 700 : 400,
+                display: "flex", alignItems: "center", gap: "0.8rem"
+              }}>
+                <span style={{ fontSize: "1.4rem" }}>{eng === "Phaser.js" ? "⚡" : eng === "Babylon.js" ? "🔷" : "🌐"}</span>
+                <div>
+                  <div style={{ fontSize: "0.88rem" }}>{eng}</div>
+                  <div style={{ fontSize: "0.65rem", color: C.muted, marginTop: 2 }}>
+                    {eng === "Phaser.js" ? "2D · Ideal para plataformas y arcade" : eng === "Babylon.js" ? "3D · Motor WebGL avanzado" : "3D · Gráficos personalizados"}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
