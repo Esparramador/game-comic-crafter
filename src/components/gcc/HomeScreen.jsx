@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { Pill, Btn } from "./shared.jsx";
 
 const T = {
   bg: "#0f0a1e",
@@ -12,38 +13,8 @@ const T = {
   muted: "#6b7280",
   text: "#e0e8ff",
   border: "rgba(124,58,237,0.2)",
-  borderCyan: "rgba(0,245,255,0.15)",
-};
-
-const PILL_COLORS = {
-  cyan: { bg: "rgba(0,245,255,0.12)", color: "#00f5ff" },
-  purple: { bg: "rgba(124,58,237,0.2)", color: "#a78bfa" },
-  green: { bg: "rgba(34,197,94,0.12)", color: "#22c55e" },
-  gold: { bg: "rgba(255,215,0,0.12)", color: "#ffd700" },
-  pink: { bg: "rgba(233,30,140,0.15)", color: "#e91e8c" },
-};
-
-function Pill({ color = "cyan", children }) {
-  const s = PILL_COLORS[color] || PILL_COLORS.cyan;
-  return (
-    <span style={{
-      background: s.bg, color: s.color,
-      padding: "2px 8px", borderRadius: 20,
-      fontSize: "0.6rem", fontWeight: 700,
-      letterSpacing: "0.8px", textTransform: "uppercase",
-    }}>{children}</span>
-  );
-}
-
-const SUGGESTED_GAMES = [
-  { title: "Neon Rider X", genre: "Racing", img: "https://images.unsplash.com/photo-1614294149010-950b698f72c0?w=200&q=80", price: "€9.99" },
-  { title: "Shadow Realm", genre: "RPG", img: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=200&q=80", price: "€12.00" },
-  { title: "Pixel Warriors", genre: "Fighting", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=200&q=80", price: "€7.50" },
-  { title: "Astro Drift", genre: "Arcade", img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&q=80", price: "€5.00" },
-];
-
-const ACTIVITY_ICONS = {
-  voice: "🎙️", physics: "⚙️", character: "👤", publish: "🛍️", asset: "🎨", default: "✨"
+  green: "#22c55e",
+  gold: "#ffd700",
 };
 
 const ENGINE_NODES = [
@@ -58,32 +29,28 @@ const ENGINE_NODES = [
 export default function HomeScreen({ onNav, showToast }) {
   const [projects, setProjects] = useState([]);
   const [characters, setCharacters] = useState([]);
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       base44.entities.GameProject.list("-updated_date", 10),
-      base44.entities.GameCharacter.list("-updated_date", 10),
-    ]).then(([p, c]) => {
+      base44.entities.GameCharacter.list("-updated_date", 20),
+      base44.entities.SuperUserProfile.filter({ email: "sadiagiljoan@gmail.com" }, "-created_date", 1),
+    ]).then(([p, c, prof]) => {
       setProjects(p);
       setCharacters(c);
+      setProfile(prof[0] || null);
     }).finally(() => setLoading(false));
   }, []);
 
   const activeProject = projects[0] || null;
 
   const stats = [
-    { val: "25", label: "Assets" },
-    { val: "18", label: "Voces" },
-    { val: String(characters.length || 2), label: "Chars" },
-    { val: activeProject?.price ? `€${activeProject.price}` : "€15", label: "Precio" },
-  ];
-
-  const recentActivity = [
-    { icon: "🎙️", title: "Voice asset generado", sub: "GCC_Trinity_Engine · score 98", pill: { color: "green", label: "✓" } },
-    { icon: "⚙️", title: "Physics Mixer configurado", sub: "Base: Crash + Riot + GoW", pill: { color: "purple", label: "Mix" } },
-    ...(characters[0] ? [{ icon: "👤", title: `Personaje: ${characters[0].name}`, sub: characters[0].archetype || "Protagonista", pill: { color: "cyan", label: "3D" } }] : []),
-    ...(activeProject?.price ? [{ icon: "🛍️", title: "Publicado en tienda", sub: activeProject.title || "Proyecto activo", pill: { color: "gold", label: `€${activeProject.price}` } }] : []),
+    { val: loading ? "—" : String(profile?.total_assets ?? 0), label: "Assets", color: T.cyan },
+    { val: loading ? "—" : String(profile?.total_voices ?? 0), label: "Voces", color: T.cyan },
+    { val: loading ? "—" : String(characters.length), label: "Chars", color: T.cyan },
+    { val: loading ? "—" : profile?.total_revenue ? `€${profile.total_revenue}` : "€0", label: "Revenue", color: T.pink },
   ];
 
   return (
@@ -92,44 +59,45 @@ export default function HomeScreen({ onNav, showToast }) {
       {/* HERO BANNER */}
       <div style={{ position: "relative", margin: "1rem", borderRadius: 16, overflow: "hidden", border: `1px solid ${T.border}` }}>
         {activeProject?.cover_image_url ? (
-          <img src={activeProject.cover_image_url} alt="cover" style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} />
+          <img src={activeProject.cover_image_url} alt="cover" style={{ width: "100%", height: 180, objectFit: "cover", display: "block" }} />
         ) : (
           <div style={{
-            height: 160, display: "flex", alignItems: "center", justifyContent: "center",
-            background: "linear-gradient(135deg,#160d2e,#0f0a1e)",
+            height: 180, display: "flex", alignItems: "center", justifyContent: "center",
+            background: "linear-gradient(135deg,#160d2e 0%,#0f0a1e 50%,#1a0535 100%)",
           }}>
-            <span style={{ fontSize: "3rem" }}>🎮</span>
+            {loading
+              ? <span style={{ fontSize: "0.8rem", color: T.muted }}>Cargando...</span>
+              : <span style={{ fontSize: "3rem" }}>🎮</span>
+            }
           </div>
         )}
         <div style={{
           position: "absolute", inset: 0,
-          background: "linear-gradient(to top,rgba(15,10,30,0.98) 0%,rgba(15,10,30,0.4) 50%,transparent 100%)"
+          background: "linear-gradient(to top,rgba(15,10,30,0.97) 0%,rgba(15,10,30,0.3) 50%,transparent 100%)"
         }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "1rem" }}>
-          {loading ? (
-            <div style={{ fontSize: "0.8rem", color: T.muted }}>Cargando proyecto...</div>
-          ) : activeProject ? (
+          {!loading && activeProject ? (
             <>
-              <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.9rem", fontWeight: 900, marginBottom: "0.4rem", textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}>
-                {activeProject.title}
+              <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1rem", fontWeight: 900, marginBottom: "0.5rem", textShadow: "0 2px 8px rgba(0,0,0,0.9)" }}>
+                {activeProject.title || "Sin título"}
               </div>
               <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
                 {activeProject.genre && <Pill color="purple">{activeProject.genre}</Pill>}
                 {activeProject.format && <Pill color="cyan">{activeProject.format}</Pill>}
+                {activeProject.engine && <Pill color="gold">{activeProject.engine}</Pill>}
                 {activeProject.status && <Pill color="green">{activeProject.status}</Pill>}
-                {activeProject.price && <Pill color="gold">€{activeProject.price}</Pill>}
               </div>
             </>
-          ) : (
-            <div style={{ fontSize: "0.8rem", color: T.muted }}>Sin proyectos aún. ¡Crea el primero!</div>
-          )}
+          ) : !loading ? (
+            <div style={{ fontSize: "0.85rem", color: T.muted }}>Sin proyectos aún — ¡crea el primero!</div>
+          ) : null}
         </div>
         <button
           onClick={() => onNav("create")}
           style={{
             position: "absolute", top: 12, right: 12,
             background: "rgba(124,58,237,0.7)", backdropFilter: "blur(6px)",
-            border: "1px solid rgba(124,58,237,0.4)", borderRadius: 8,
+            border: "1px solid rgba(124,58,237,0.5)", borderRadius: 8,
             color: "#fff", fontSize: "0.65rem", fontWeight: 700,
             padding: "4px 10px", cursor: "pointer", letterSpacing: 1
           }}>
@@ -144,66 +112,63 @@ export default function HomeScreen({ onNav, showToast }) {
             background: T.card, border: `1px solid ${T.border}`,
             borderRadius: 12, padding: "0.75rem 0.3rem", textAlign: "center"
           }}>
-            <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 900, color: i === 3 ? T.pink : T.cyan }}>{s.val}</div>
-            <div style={{ fontSize: "0.55rem", color: T.muted, letterSpacing: 1, textTransform: "uppercase", marginTop: 2 }}>{s.label}</div>
+            <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 900, color: s.color }}>{s.val}</div>
+            <div style={{ fontSize: "0.52rem", color: T.muted, letterSpacing: 1, textTransform: "uppercase", marginTop: 2 }}>{s.label}</div>
           </div>
         ))}
       </div>
 
-      {/* TWO COLUMN LAYOUT */}
+      {/* TWO COLUMN */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", padding: "0 1rem 1rem" }}>
 
-        {/* LEFT: Suggested Games + Activity */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-
-          {/* También te puede gustar */}
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: "0.75rem" }}>
-            <div style={{ fontSize: "0.6rem", letterSpacing: 2, textTransform: "uppercase", color: T.muted, marginBottom: "0.7rem" }}>
-              También te puede gustar
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.55rem" }}>
-              {SUGGESTED_GAMES.map((g, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.55rem", cursor: "pointer" }}
-                  onClick={() => showToast(`🎮 ${g.title}`)}>
-                  <img src={g.img} alt={g.title} style={{ width: 38, height: 38, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "0.72rem", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{g.title}</div>
-                    <div style={{ fontSize: "0.58rem", color: T.muted }}>{g.genre}</div>
-                  </div>
-                  <div style={{ fontSize: "0.6rem", color: T.pink, fontWeight: 700, flexShrink: 0 }}>{g.price}</div>
-                </div>
-              ))}
-            </div>
+        {/* LEFT: Characters */}
+        <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: "0.75rem" }}>
+          <div style={{ fontSize: "0.6rem", letterSpacing: 2, textTransform: "uppercase", color: T.muted, marginBottom: "0.7rem" }}>
+            Personajes
           </div>
-
-          {/* Activity Feed */}
-          <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: "0.75rem" }}>
-            <div style={{ fontSize: "0.6rem", letterSpacing: 2, textTransform: "uppercase", color: T.muted, marginBottom: "0.7rem" }}>
-              Actividad
-            </div>
+          {loading ? (
+            <div style={{ fontSize: "0.7rem", color: T.muted }}>Cargando...</div>
+          ) : characters.length === 0 ? (
+            <div style={{ fontSize: "0.7rem", color: T.muted }}>Sin personajes</div>
+          ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "0.55rem" }}>
-              {recentActivity.map((a, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+              {characters.slice(0, 5).map((ch, i) => (
+                <div key={ch.id || i} onClick={() => onNav("chars")} style={{
+                  display: "flex", alignItems: "center", gap: "0.5rem",
+                  cursor: "pointer", padding: "0.3rem", borderRadius: 8,
+                  background: i === 0 ? "rgba(0,245,255,0.05)" : "transparent",
+                }}>
                   <div style={{
-                    width: 28, height: 28, borderRadius: 8,
-                    background: "rgba(124,58,237,0.12)", display: "flex",
-                    alignItems: "center", justifyContent: "center",
-                    fontSize: "0.85rem", flexShrink: 0
-                  }}>{a.icon}</div>
+                    width: 34, height: 34, borderRadius: 8, flexShrink: 0, overflow: "hidden",
+                    background: "linear-gradient(135deg,#160d2e,#7c3aed22)",
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.9rem"
+                  }}>
+                    {ch.concept_image_url
+                      ? <img src={ch.concept_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      : "👤"}
+                  </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "0.7rem", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.title}</div>
-                    <div style={{ fontSize: "0.58rem", color: T.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.sub}</div>
+                    <div style={{ fontSize: "0.7rem", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {ch.name || "Sin nombre"}
+                    </div>
+                    <div style={{ fontSize: "0.55rem", color: i === 0 ? T.cyan : T.muted }}>
+                      {ch.archetype || ch.behavior_logic || "Personaje"}
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          )}
+          <button onClick={() => onNav("chars")} style={{
+            marginTop: "0.7rem", width: "100%", background: "rgba(0,245,255,0.06)",
+            border: "1px solid rgba(0,245,255,0.2)", borderRadius: 8,
+            color: T.cyan, fontSize: "0.65rem", fontWeight: 700,
+            padding: "0.5rem", cursor: "pointer", letterSpacing: 1
+          }}>+ NUEVO PERSONAJE</button>
         </div>
 
-        {/* RIGHT: Library + Engine Status */}
+        {/* RIGHT: Projects Library + Engine */}
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-
-          {/* Library */}
           <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: "0.75rem" }}>
             <div style={{ fontSize: "0.6rem", letterSpacing: 2, textTransform: "uppercase", color: T.muted, marginBottom: "0.7rem" }}>
               Mi Biblioteca
@@ -217,23 +182,23 @@ export default function HomeScreen({ onNav, showToast }) {
                 {projects.slice(0, 4).map((p, i) => (
                   <div key={p.id || i} onClick={() => onNav("create")} style={{
                     display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer",
-                    padding: "0.4rem", borderRadius: 8,
+                    padding: "0.3rem", borderRadius: 8,
                     background: i === 0 ? "rgba(124,58,237,0.1)" : "transparent",
-                    border: i === 0 ? "1px solid rgba(124,58,237,0.25)" : "1px solid transparent"
                   }}>
                     <div style={{
-                      width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                      width: 30, height: 30, borderRadius: 6, flexShrink: 0, overflow: "hidden",
                       background: "linear-gradient(135deg,#160d2e,#7c3aed22)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "0.9rem", overflow: "hidden"
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.85rem"
                     }}>
                       {p.cover_image_url
-                        ? <img src={p.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }} />
+                        ? <img src={p.cover_image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         : "🎮"}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: "0.68rem", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.title || "Sin título"}</div>
-                      <div style={{ fontSize: "0.55rem", color: i === 0 ? T.cyan : T.muted }}>{p.status || "draft"}</div>
+                      <div style={{ fontSize: "0.65rem", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {p.title || "Sin título"}
+                      </div>
+                      <div style={{ fontSize: "0.52rem", color: i === 0 ? T.cyan : T.muted }}>{p.status || "draft"}</div>
                     </div>
                   </div>
                 ))}
@@ -244,7 +209,7 @@ export default function HomeScreen({ onNav, showToast }) {
               border: "1px solid rgba(124,58,237,0.3)", borderRadius: 8,
               color: "#a78bfa", fontSize: "0.65rem", fontWeight: 700,
               padding: "0.5rem", cursor: "pointer", letterSpacing: 1
-            }}>+ NUEVO</button>
+            }}>+ NUEVO PROYECTO</button>
           </div>
 
           {/* Engine Status */}
@@ -252,16 +217,16 @@ export default function HomeScreen({ onNav, showToast }) {
             <div style={{ fontSize: "0.6rem", letterSpacing: 2, textTransform: "uppercase", color: T.muted, marginBottom: "0.7rem" }}>
               6-AI Cluster
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
               {ENGINE_NODES.map((n, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
                   <div style={{
-                    width: 7, height: 7, borderRadius: "50%", flexShrink: 0,
+                    width: 6, height: 6, borderRadius: "50%", flexShrink: 0,
                     background: n.status === "online" ? "#22c55e" : "#f97316",
-                    boxShadow: n.status === "online" ? "0 0 6px #22c55e" : "0 0 6px #f97316",
+                    boxShadow: n.status === "online" ? "0 0 5px #22c55e" : "0 0 5px #f97316",
                   }} />
-                  <div style={{ fontSize: "0.62rem", color: n.status === "online" ? T.text : T.muted, flex: 1 }}>{n.label}</div>
-                  <div style={{ fontSize: "0.52rem", color: n.status === "online" ? "#22c55e" : "#f97316", fontWeight: 700 }}>
+                  <div style={{ fontSize: "0.6rem", color: n.status === "online" ? T.text : T.muted, flex: 1 }}>{n.label}</div>
+                  <div style={{ fontSize: "0.5rem", color: n.status === "online" ? "#22c55e" : "#f97316", fontWeight: 700 }}>
                     {n.status === "online" ? "ON" : "IDLE"}
                   </div>
                 </div>
@@ -270,6 +235,23 @@ export default function HomeScreen({ onNav, showToast }) {
           </div>
         </div>
       </div>
+
+      {/* Profile strip */}
+      {profile && (
+        <div style={{ margin: "0 1rem 1rem", background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: "0.75rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          {profile.avatar_url
+            ? <img src={profile.avatar_url} alt="" style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover" }} />
+            : <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,#00f5ff,#7c3aed)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.9rem", fontWeight: 700, color: "#080c1a" }}>
+                {(profile.display_name || profile.email || "U")[0].toUpperCase()}
+              </div>
+          }
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: "0.8rem", fontWeight: 700 }}>{profile.display_name || profile.email}</div>
+            <div style={{ fontSize: "0.6rem", color: T.muted }}>{profile.plan ? profile.plan.toUpperCase() : "FREE"} · {profile.email}</div>
+          </div>
+          <Pill color="cyan">{profile.plan || "free"}</Pill>
+        </div>
+      )}
     </div>
   );
 }
