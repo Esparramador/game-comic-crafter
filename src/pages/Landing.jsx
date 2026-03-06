@@ -37,7 +37,7 @@ export default function Landing() {
           <span style={{ cursor: "pointer" }}>Precios</span>
           <span style={{ cursor: "pointer" }}>Galería</span>
         </div>
-        <button onClick={() => base44.auth.redirectToLogin(createPageUrl("Home"))} style={{
+        <button onClick={() => base44.auth.redirectToLogin(createPageUrl("HomeScreen"))} style={{
           background: "linear-gradient(135deg,#7c3aed,#db2777)", color: "#fff",
           border: "none", borderRadius: 8, padding: "0.5rem 1.2rem", cursor: "pointer",
           fontWeight: 600, fontSize: "0.85rem"
@@ -70,7 +70,7 @@ export default function Landing() {
           Transforma tus partidas en cómics épicos. Genera paneles, diálogos y personajes automáticamente con IA. Comparte, vende y conecta con la comunidad gamer.
         </p>
         <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-          <button onClick={() => base44.auth.redirectToLogin(createPageUrl("Home"))} style={{
+          <button onClick={() => base44.auth.redirectToLogin(createPageUrl("HomeScreen"))} style={{
             background: "linear-gradient(135deg,#7c3aed,#db2777)", color: "#fff",
             borderRadius: 12, padding: "0.9rem 2rem", fontWeight: 700, fontSize: "1rem",
             cursor: "pointer", border: "none",
@@ -175,7 +175,7 @@ export default function Landing() {
         <p style={{ color: "rgba(255,255,255,0.5)", marginBottom: "2rem", fontSize: "1rem" }}>
           Únete a miles de gamers que ya crean su historia
         </p>
-        <button onClick={() => base44.auth.redirectToLogin(createPageUrl("Home"))} style={{
+        <button onClick={() => base44.auth.redirectToLogin(createPageUrl("HomeScreen"))} style={{
           background: "linear-gradient(135deg,#7c3aed,#db2777)", color: "#fff",
           borderRadius: 12, padding: "1rem 2.5rem", fontWeight: 700, fontSize: "1.1rem",
           cursor: "pointer", border: "none",
