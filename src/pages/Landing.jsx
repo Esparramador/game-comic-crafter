@@ -36,13 +36,13 @@ export default function Landing() {
           <span style={{ cursor: "pointer" }}>Precios</span>
           <span style={{ cursor: "pointer" }}>Galería</span>
         </div>
-        <a href={createPageUrl("Home")} style={{
+        <button onClick={() => base44.auth.redirectToLogin(createPageUrl("Home"))} style={{
           background: "linear-gradient(135deg,#7c3aed,#db2777)", color: "#fff",
           border: "none", borderRadius: 8, padding: "0.5rem 1.2rem", cursor: "pointer",
-          fontWeight: 600, fontSize: "0.85rem", textDecoration: "none", display: "inline-block"
+          fontWeight: 600, fontSize: "0.85rem"
         }}>
-          Entrar a la App →
-        </a>
+          Login con Google →
+        </button>
       </nav>
 
       {/* HERO */}
