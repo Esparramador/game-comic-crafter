@@ -280,7 +280,7 @@ function ProfileScreen() {
       <div style={{ textAlign: "center", padding: "1rem 0 1.5rem" }}>
         <div style={{ width: 80, height: 80, borderRadius: "50%", background: `linear-gradient(135deg,${C.cyan},${C.purple})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", margin: "0 auto 0.8rem", border: `2px solid ${C.cyan}`, boxShadow: `0 0 20px rgba(0,245,255,0.3)` }}>👤</div>
         <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1rem", fontWeight: 900, color: C.cyan }}>GAME CREATOR</div>
-        <div style={{ fontSize: "0.75rem", color: C.muted, marginTop: 4 }}>Nivel 7 • Comic Master</div>
+        <div style={{ fontSize: "0.75rem", color: C.muted, marginTop: 4 }}>Nivel 7 • Game Dev Master</div>
         <div style={{ display: "flex", gap: 6, justifyContent: "center", marginTop: "0.7rem" }}>
           {pill(C.gold, "rgba(255,215,0,0.12)", "PRO")}
           {pill(C.cyan, "rgba(0,245,255,0.12)", "IA ACCESS")}
