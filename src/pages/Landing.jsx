@@ -100,9 +100,9 @@ export default function Landing() {
             <video
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69aa73f013b5c82e8989d6fc/f1f6abb71_Configuracin_lista_triler_generado.mp4"
               style={{ width: "100%", height: 160, objectFit: "cover" }}
-              muted
-              autoPlay
-              loop
+              muted={true}
+              autoPlay={true}
+              loop={true}
             />
           </div>
           <div style={{
