@@ -1,3 +1,5 @@
+export const config = { requiresAuth: true };
+
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";

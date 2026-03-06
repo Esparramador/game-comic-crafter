@@ -1,3 +1,5 @@
+export const config = { requiresAuth: false };
+
 import { GoogleLogin } from "@/components/ui/google_login";
 import { createPageUrl } from "@/utils";
 import { useEffect, useState } from "react";
