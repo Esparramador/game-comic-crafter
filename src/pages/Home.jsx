@@ -97,20 +97,23 @@ function HomeScreen({ onNav }) {
       </div>
 
       {/* Projects */}
-      <div style={{ padding: "0 1rem", fontSize: "0.68rem", letterSpacing: 2, textTransform: "uppercase", color: C.muted, marginBottom: "0.7rem" }}>Mis Proyectos</div>
+      <div style={{ padding: "0 1rem", fontSize: "0.68rem", letterSpacing: 2, textTransform: "uppercase", color: C.muted, marginBottom: "0.7rem" }}>Mis Videojuegos</div>
       {PROJECTS.map((p, i) => (
         <div key={i} style={{ margin: "0 1rem 1rem", borderRadius: 14, overflow: "hidden", border: `1px solid ${C.border}`, cursor: "pointer" }}>
           <img src={p.cover} alt={p.name} style={{ width: "100%", aspectRatio: "16/6", objectFit: "cover", display: "block" }} />
           <div style={{ padding: "1rem", background: C.card }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
               <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.88rem", fontWeight: 700 }}>{p.name}</div>
-              {pill(C.cyan, "rgba(0,245,255,0.12)", p.genre)}
+              <div style={{ display: "flex", gap: 4 }}>
+                {pill(C.cyan, "rgba(0,245,255,0.12)", p.genre)}
+                {pill(C.purple, "rgba(124,58,237,0.15)", p.engine)}
+              </div>
             </div>
             <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2, overflow: "hidden", marginBottom: "0.5rem" }}>
               <div style={{ height: "100%", width: `${p.progress}%`, background: `linear-gradient(90deg,${C.cyan},${C.purple})`, borderRadius: 2 }} />
             </div>
             <div style={{ display: "flex", gap: "1rem", fontSize: "0.7rem", color: C.muted }}>
-              <span>📖 {p.panels} paneles</span>
+              <span>🎬 {p.scenes} escenas</span>
               <span>🦸 {p.chars} chars</span>
               <span style={{ marginLeft: "auto", color: C.cyan }}>{p.progress}%</span>
             </div>
