@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { createPageUrl } from "@/utils";
 
 const GAMES_LIBRARY = [
   { title: "Clash of Clan Emulator", genre: "Strategy", tag: "Battle Royale", img: "https://picsum.photos/seed/clash/80/80" },
