@@ -61,7 +61,7 @@ function HomeScreen({ onNav }) {
       <div style={{ background: "linear-gradient(180deg,rgba(0,245,255,0.06),transparent)", padding: "1.2rem 1rem 1rem", borderBottom: `1px solid ${C.border}` }}>
         <div style={{ fontSize: "0.68rem", color: C.muted, letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>Bienvenido de vuelta</div>
         <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.15rem", fontWeight: 900, color: C.cyan, marginBottom: "0.8rem" }}>
-          GameComicCrafter
+          GameCrafter IA
         </div>
         {/* Engine status */}
         <div style={{ background: "rgba(0,245,255,0.04)", border: "1px solid rgba(0,245,255,0.15)", borderRadius: 10, padding: "0.8rem", display: "flex", alignItems: "center", gap: "0.8rem" }}>
