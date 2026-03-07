@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { createPageUrl } from "@/utils";
 import { initGCC } from "@/api/services";
+import { autoInitKeys } from "@/api/initKeys";
+import { initHyperBrain } from "@/api/hyperBrain";
 import DashboardHome  from "@/components/gcc/DashboardHome";
 import CharsScreen    from "@/components/gcc/CharsScreen";
 import EditorScreen   from "@/components/gcc/EditorScreen";
@@ -11,6 +13,7 @@ import AssetsScreen   from "@/components/gcc/AssetsScreen";
 import PromptsScreen  from "@/components/gcc/PromptsScreen";
 import VoiceScreen    from "@/components/gcc/VoiceScreen";
 import ConfigScreen   from "@/components/gcc/ConfigScreen";
+import HyperBrainScreen from "@/components/gcc/HyperBrainScreen";
 import Toast          from "@/components/gcc/Toast";
 
 export const config = { requiresAuth: true };
@@ -31,6 +34,7 @@ const NAV = [
   { id:"marketing", icon:"📣", label:"Marketing"   },
   { id:"test",      icon:"▶️", label:"Play"        },
   { id:"config",    icon:"🔑", label:"Config API"  },
+  { id:"brain",     icon:"🧠", label:"Hyper Brain" },
 ];
 
 // Cargar config guardada al inicio
@@ -43,7 +47,7 @@ export default function HomeScreen() {
   const [toast, setToast] = useState(null);
 
   // Aplicar keys guardadas al arrancar
-  useEffect(() => { initGCC(loadSavedConfig()); }, []);
+  useEffect(() => { autoInitKeys(); }, []);
 
   const showToast = (msg, type="info") => {
     setToast({ msg, type, key: Date.now() });
@@ -61,6 +65,7 @@ export default function HomeScreen() {
     marketing:  <MarketingScreen onNav={setTab} showToast={showToast} />,
     test:       <TestScreen     onNav={setTab} showToast={showToast} />,
     config:     <ConfigScreen   onNav={setTab} showToast={showToast} />,
+    brain:      <HyperBrainScreen onNav={setTab} showToast={showToast} />,
   };
 
   const current = NAV.find(n => n.id === tab);
@@ -168,6 +173,11 @@ export default function HomeScreen() {
                 borderRadius:20, padding:"2px 9px", fontSize:"0.55rem",
                 color:"#ffd700", fontWeight:700, cursor:"pointer", fontFamily:"inherit"
               }}>⚙️ APIs</button>
+              <button onClick={() => setTab("brain")} style={{
+                background:"linear-gradient(135deg,rgba(124,58,237,0.2),rgba(0,245,255,0.1))", border:"1px solid rgba(124,58,237,0.4)",
+                borderRadius:20, padding:"2px 9px", fontSize:"0.55rem",
+                color:"#c084fc", fontWeight:900, cursor:"pointer", fontFamily:"inherit"
+              }}>🧠 BRAIN</button>
             </div>
           </div>
 

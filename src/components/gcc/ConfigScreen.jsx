@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { C, SectionTitle, labelStyle, inputStyle } from "./shared";
 import { initGCC, ElevenService, ShopifyService, TripoService } from "@/api/services";
+import { initHyperBrain, ReplicateService, ManusService } from "@/api/hyperBrain";
 
 const STORAGE_KEY = "gcc_api_config";
 
@@ -10,6 +11,7 @@ function loadConfig() {
 function saveConfig(cfg) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
   initGCC(cfg);
+  initHyperBrain(cfg);
 }
 
 export default function ConfigScreen({ onNav, showToast }) {
@@ -19,7 +21,7 @@ export default function ConfigScreen({ onNav, showToast }) {
   const [show, setShow] = useState({});
 
   // Aplicar config guardada al montar
-  useEffect(() => { initGCC(cfg); }, []);
+  useEffect(() => { initGCC(cfg); initHyperBrain(cfg); }, []);
 
   const set = (k, v) => setCfg(c => ({ ...c, [k]: v }));
   const toggleShow = (k) => setShow(s => ({ ...s, [k]: !s[k] }));
@@ -113,6 +115,48 @@ export default function ConfigScreen({ onNav, showToast }) {
         { label:"Shopify Admin", url:"https://comic-crafter.myshopify.com/admin" },
         { label:"Crear App / Token", url:"https://comic-crafter.myshopify.com/admin/settings/apps" }
       ]
+    },
+    {
+      id: "replicate",
+      icon: "🎨",
+      title: "Replicate AI",
+      color: "#f59e0b",
+      fields: [{ key:"replicateKey", label:"API Token", placeholder:"r8_...", type:"password" }],
+      onTest: async () => {
+        if (!cfg.replicateKey) { showToast("⚠️ Escribe tu Replicate token primero", "warning"); return; }
+        setTesting(t => ({ ...t, replicate: true }));
+        try {
+          initHyperBrain(cfg);
+          const r = await fetch("https://api.replicate.com/v1/account", { headers: { Authorization: `Bearer ${cfg.replicateKey}` } });
+          const d = await r.json();
+          if (!r.ok) throw new Error(d.detail || `Replicate ${r.status}`);
+          setStatus(s => ({ ...s, replicate: { ok:true, msg:`✅ Conectado — @${d.username}` } }));
+          showToast("✅ Replicate conectado", "success");
+        } catch(e) { setStatus(s => ({ ...s, replicate: { ok:false, msg:`❌ ${e.message}` } })); }
+        setTesting(t => ({ ...t, replicate: false }));
+      },
+      note: "Genera imágenes con FLUX Schnell, FLUX Dev y Stable Diffusion.",
+      links: [{ label:"Conseguir Token", url:"https://replicate.com/account/api-tokens" }, { label:"Explorar Modelos", url:"https://replicate.com/explore" }]
+    },
+    {
+      id: "manus",
+      icon: "🧠",
+      title: "Manus AI",
+      color: "#c084fc",
+      fields: [{ key:"manusKey", label:"API Key", placeholder:"sk-...", type:"password" }],
+      onTest: async () => {
+        if (!cfg.manusKey) { showToast("⚠️ Escribe tu Manus key primero", "warning"); return; }
+        setTesting(t => ({ ...t, manus: true }));
+        try {
+          initHyperBrain(cfg);
+          const text = await ManusService.generate("Responde solo: OK", "", { maxTokens: 10 });
+          setStatus(s => ({ ...s, manus: { ok:true, msg:`✅ Conectado — respuesta: ${text}` } }));
+          showToast("✅ Manus AI conectado", "success");
+        } catch(e) { setStatus(s => ({ ...s, manus: { ok:false, msg:`❌ ${e.message}` } })); }
+        setTesting(t => ({ ...t, manus: false }));
+      },
+      note: "LLM avanzado para lore, GDD, copy y razonamiento creativo.",
+      links: [{ label:"Manus Dashboard", url:"https://manus.im" }]
     }
   ];
 
