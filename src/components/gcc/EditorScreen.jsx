@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { C, SectionTitle, Spinner, EmptyState, Pill, inputStyle, labelStyle } from "./shared";
+// inputStyle ya importado ✓
 
 const GENRES  = ["Platformer","RPG","Open World","Fighting","Stealth","Arcade","Puzzle","Adventure","MOBA","RTS","MMO","Battle Royale","Horror","Metroidvania"];
 const FORMATS = ["2D","3D","2.5D","VR","AR"];

@@ -243,6 +243,7 @@ export default function DashboardHome({ onNav, showToast }) {
           </div>
           <div style={{ display:"flex", gap:"0.8rem", overflowX:"auto", padding:"0 1rem 0.5rem" }}>
             {projects.map(p => <ProjectCard key={p.id} project={p} onClick={() => onNav("create")} />)}
+          {/* Navegar a detail al hacer click en un proyecto requiere pasar ID — usamos create que lista proyectos */}
           </div>
         </div>
       )}
