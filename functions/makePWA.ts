@@ -48,12 +48,16 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Upload falló' }, { status: 500 });
     }
 
-    // 4. Actualizar el proyecto si se pasó project_id
+    // 4. Actualizar el proyecto si se pasó project_id — user-scoped (respeta RLS)
     if (project_id) {
-      await base44.asServiceRole.entities.GameProject.update(project_id, {
-        playable_url: newUrl,
-        status: 'playable'
-      });
+      try {
+        await base44.entities.GameProject.update(project_id, {
+          playable_url: newUrl,
+          status: 'playable'
+        });
+      } catch (_) {
+        // Si falla el update de DB, igual devolvemos la URL para que el frontend lo haga
+      }
     }
 
     return Response.json({ success: true, pwa_url: newUrl });
