@@ -97,8 +97,9 @@ export default function HomeScreen() {
     marketing:  <MarketingScreen  {...screenProps} />,
     test:       <TestScreen       {...screenProps} />,
     guide:      <GuideScreen      {...screenProps} />,
-    brain:      <HyperBrainScreen {...screenProps} />,
-    config:     <ConfigScreen     {...screenProps} />,
+    brain:      <HyperBrainScreen  {...screenProps} />,
+    world:      <WorldBuilderScreen {...screenProps} />,
+    config:     <ConfigScreen      {...screenProps} />,
   };
 
   return (
