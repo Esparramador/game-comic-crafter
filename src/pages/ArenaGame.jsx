@@ -23,7 +23,7 @@ export default function ArenaGame() {
     setGenerating(true);
     setMessage('Generando Arena Game con 6 IA\'s...');
     try {
-      const response = await base44.functions.invoke('generateArenaGameComplete', {
+      const response = await base44.functions.invoke('arenaGame', {
         gameTitle: 'Arena Game',
         description: 'Epic multiplayer arena battles with 6 AI opponents'
       });
