@@ -74,7 +74,7 @@ setInterval(()=>{if(session)document.getElementById('health').textContent='HP: '
 </html>`;
 
     const blob = new Blob([arenaHtml], { type: 'text/html' });
-    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file: blob });
+    const uploadResult = await base44.integrations.Core.UploadFile({ file: blob });
     const arenaUrl = uploadResult.file_url;
 
     const arenaProject = await base44.entities.GameProject.create({
