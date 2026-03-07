@@ -284,7 +284,7 @@ export default function HyperBrainScreen({ onNav, showToast }) {
       <div style={{ background:"linear-gradient(135deg,rgba(124,58,237,0.15),rgba(0,245,255,0.08))", borderRadius:16, padding:"1rem", border:`1px solid rgba(124,58,237,0.3)`, marginBottom:"1rem" }}>
         <div style={{ fontSize:"1.2rem", marginBottom:4 }}>🧠</div>
         <div style={{ fontSize:"1rem", fontWeight:900, color:"#fff", letterSpacing:1 }}>HYPER BRAIN</div>
-        <div style={{ fontSize:"0.65rem", color:C.muted, marginBottom:"0.8rem" }}>5 IAs en paralelo — ElevenLabs · Replicate · Tripo3D · Manus · <span style={{color:"#4285f4"}}>Gemini ✨</span></div>
+        <div style={{ fontSize:"0.65rem", color:C.muted, marginBottom:"0.8rem" }}>6 IAs en paralelo — ElevenLabs · Replicate · Tripo3D · Manus · <span style={{color:"#4285f4"}}>Gemini ✨</span> · <span style={{color:"#22c55e"}}>🌍 Maps</span></div>
         {/* Status de services */}
         <div style={{ display:"flex", gap:"0.4rem", flexWrap:"wrap" }}>
           {Object.values(services).map(s => <ServiceBadge key={s.name} {...s} />)}
