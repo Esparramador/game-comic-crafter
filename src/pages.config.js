@@ -47,13 +47,13 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import AssetRepository from './pages/AssetRepository';
 import ArenaGame from './pages/ArenaGame';
+import AssetRepository from './pages/AssetRepository';
 
 
 export const PAGES = {
-    "AssetRepository": AssetRepository,
     "ArenaGame": ArenaGame,
+    "AssetRepository": AssetRepository,
 }
 
 export const pagesConfig = {
