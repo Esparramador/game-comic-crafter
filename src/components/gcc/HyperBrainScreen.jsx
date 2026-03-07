@@ -170,6 +170,7 @@ export default function HyperBrainScreen({ onNav, showToast }) {
   const [charArch, setCharArch]   = useState("Guerrero");
   const [charDesc, setCharDesc]   = useState("");
   const [charVoice, setCharVoice] = useState("SOYHLrjzK2X1ezoPC6cr");
+  const [worldQuery, setWorldQuery] = useState("");
   const [gameTitle, setGameTitle] = useState("");
   const [gameGenre, setGameGenre] = useState("RPG");
   const [gameAtmo, setGameAtmo]   = useState("Dark Fantasy");
