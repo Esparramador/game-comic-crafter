@@ -47,32 +47,28 @@ Deno.serve(async (req) => {
   <div id="players"></div>
 
   <script>
-    const GAME_ID='${gameId}';let session=null;let scene=null;let player={x:window.innerWidth/2,y:window.innerHeight/2,vx:0,vy:0,hp:100};const keys={};
-    
-    class GameScene extends Phaser.Scene{
-      constructor(){super({key:'Main'})}
-      create(){
-        this.physics.world.setBounds(0,0,this.sys.game.config.width,this.sys.game.config.height);
-        this.cursors=this.input.keyboard.createCursorKeys();
-        this.players={};
-        this.updateLoop();
-      }
-      update(){
-        if(this.cursors){if(this.cursors.left.isDown)player.vx=-5;if(this.cursors.right.isDown)player.vx=5;if(this.cursors.up.isDown)player.vy=-5;if(this.cursors.down.isDown)player.vy=5;}
-        player.vx*=0.92;player.vy*=0.92;player.x+=player.vx;player.y+=player.vy;
-        player.x=Math.max(15,Math.min(this.sys.game.config.width-15,player.x));player.y=Math.max(15,Math.min(this.sys.game.config.height-15,player.y));
-        Object.entries(this.players).forEach(([e,p])=>{if(p.sprite)p.sprite.setPosition(p.x,p.y);});
-        if(this.players.me)this.players.me.sprite?.setPosition(player.x,player.y);
-      }
-      updateLoop(){
-        setInterval(()=>{if(session?.session_code)fetch('/api/functions/arenaGameMultiplayer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'update_state',session_code:session.session_code,position:{x:Math.round(player.x),y:Math.round(player.y)},health:player.hp})}).then(r=>r.json()).then(d=>{if(d.players)d.players.forEach((p,i)=>{if(p.email!==session.created_by||i===0){const k=p.email;if(!this.players[k]){this.players[k]={sprite:this.add.circle(p.position.x,p.position.y,12,0x7c3aed),x:p.position.x,y:p.position.y,hp:p.health};this.add.text(p.position.x-20,p.position.y-25,p.email.split('@')[0],{font:'10px Arial',fill:'#fff'});}else{this.players[k].x=p.position.x;this.players[k].y=p.position.y;this.players[k].hp=p.health;}}});});},300);
-      }
-    }
-    
-    async function createSala(){const r=await fetch('/api/functions/arenaGameMultiplayer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'create_session',game_project_id:GAME_ID,max_players:4,character_id:'warrior'})});const d=await r.json();if(d.success){session=d;document.getElementById('code').textContent='Session: '+d.session_code;document.getElementById('status').textContent='🟢 Room Created';initGame();}else alert('Error: '+d.error);}
-    async function joinSala(){const c=document.getElementById('joinCode').value;if(!c)return;const r=await fetch('/api/functions/arenaGameMultiplayer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'join_session',session_code:c,character_id:'warrior'})});const d=await r.json();if(d.success){session=d.session;document.getElementById('code').textContent='Session: '+c;document.getElementById('status').textContent='🟢 Joined';initGame();}else alert('Error: '+(d.error||'Failed'));}
-    function initGame(){if(scene)return;const cfg={type:Phaser.AUTO,width:window.innerWidth,height:window.innerHeight,physics:{default:'arcade',arcade:{gravity:{y:0},debug:!1}},scene:GameScene,backgroundColor:'#0a0010'};const g=new Phaser.Game(cfg);scene=g.scene.scenes[0];}
-    setInterval(()=>{if(session)document.getElementById('health').textContent='HP: '+Math.max(0,player.hp);},100);
+const GAME_ID='${gameId}';let session=null,scene=null,player={x:innerWidth/2,y:innerHeight/2,vx:0,vy:0,hp:100};
+class GameScene extends Phaser.Scene{
+  constructor(){super({key:'Main'})}
+  create(){
+    this.physics.world.setBounds(0,0,this.sys.game.config.width,this.sys.game.config.height);
+    this.cursors=this.input.keyboard.createCursorKeys();
+    this.players={};
+    this.updateSync();
+  }
+  update(){
+    if(this.cursors){if(this.cursors.left.isDown)player.vx=-5;if(this.cursors.right.isDown)player.vx=5;if(this.cursors.up.isDown)player.vy=-5;if(this.cursors.down.isDown)player.vy=5;}
+    player.vx*=0.92;player.vy*=0.92;player.x+=player.vx;player.y+=player.vy;
+    player.x=Math.max(15,Math.min(this.sys.game.config.width-15,player.x));
+    player.y=Math.max(15,Math.min(this.sys.game.config.height-15,player.y));
+    Object.values(this.players).forEach(p=>{if(p.sprite)p.sprite.setPosition(p.x,p.y);});
+  }
+  updateSync(){setInterval(()=>{if(session?.session_code){fetch('/api/functions/arenaGameMultiplayer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'update_state',session_code:session.session_code,position:{x:Math.round(player.x),y:Math.round(player.y)},health:player.hp})}).then(r=>r.json()).then(d=>{if(d.players)d.players.forEach(p=>{const k=p.email;if(!this.players[k]){this.players[k]={sprite:this.add.circle(p.position.x,p.position.y,12,0x7c3aed),x:p.position.x,y:p.position.y};this.add.text(p.position.x-20,p.position.y-25,p.email.split('@')[0],{font:'9px Arial',fill:'#fff'});}else{this.players[k].x=p.position.x;this.players[k].y=p.position.y;}});});}}},300);}
+}
+async function createSala(){const r=await fetch('/api/functions/arenaGameMultiplayer',{method:'POST',body:JSON.stringify({action:'create_session',game_project_id:GAME_ID,max_players:4,character_id:'warrior'})});const d=await r.json();if(d.success){session=d;document.getElementById('code').textContent='Session: '+d.session_code;document.getElementById('status').textContent='🟢 Room Created';initGame();}}
+async function joinSala(){const c=document.getElementById('joinCode').value;if(!c)return;const r=await fetch('/api/functions/arenaGameMultiplayer',{method:'POST',body:JSON.stringify({action:'join_session',session_code:c,character_id:'warrior'})});const d=await r.json();if(d.success){session=d.session;document.getElementById('code').textContent='Session: '+c;document.getElementById('status').textContent='🟢 Joined';initGame();}else alert('Error: '+(d.error||'Failed'));}
+function initGame(){if(scene)return;const cfg={type:Phaser.AUTO,width:innerWidth,height:innerHeight,physics:{default:'arcade',arcade:{gravity:{y:0}}},scene:GameScene,backgroundColor:'#0a0010'};scene=new Phaser.Game(cfg).scene.scenes[0];}
+setInterval(()=>{if(session)document.getElementById('health').textContent='HP: '+Math.max(0,player.hp);},100);
   </script>
 </body>
 </html>`;
