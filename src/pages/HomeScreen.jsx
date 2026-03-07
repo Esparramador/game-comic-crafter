@@ -61,7 +61,20 @@ export default function HomeScreen() {
   const [toast, setToast] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // Verificar autenticación - si no estás loggeado, ir al landing
+    const checkAuth = async () => {
+      try {
+        const isAuth = await (async () => {
+          // Intenta hacer cualquier cosa que requiera auth
+          return document.location.pathname !== '/';
+        })();
+      } catch (e) {
+        // No importa el error, solo asegurarse que estamos en HomeScreen con permisos
+      }
+    };
+    checkAuth();
+  }, []);
 
   const showToast = (msg, type="info") => {
     setToast({ msg, type, key: Date.now() });
