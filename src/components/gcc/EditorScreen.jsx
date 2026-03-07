@@ -389,11 +389,32 @@ export default function EditorScreen({ onNav, showToast }) {
         }}>+ Nuevo</button>
       </div>
 
-      {projects.length === 0 ? (
-        <EmptyState icon="🎮" title="Sin proyectos" sub="Crea tu primer juego" action="✏️ Crear Proyecto" onAction={() => setView("create")} />
+      {/* Buscador y filtros */}
+      {projects.length > 0 && (
+        <div style={{ display:"flex", flexDirection:"column", gap:"0.5rem", marginBottom:"1rem" }}>
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="🔍 Buscar proyectos..."
+            style={{ ...inputStyle, fontSize:"0.78rem" }}
+          />
+          <div style={{ display:"flex", gap:"0.4rem" }}>
+            <select value={filterGenre} onChange={e => setFilterGenre(e.target.value)} style={{ ...inputStyle, flex:1, fontSize:"0.7rem" }}>
+              <option>Todos</option>
+              {GENRES.map(g => <option key={g}>{g}</option>)}
+            </select>
+            <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ ...inputStyle, flex:1, fontSize:"0.7rem" }}>
+              {["Todos","draft","generating","playable","published","exported"].map(s => <option key={s}>{s}</option>)}
+            </select>
+          </div>
+        </div>
+      )}
+
+      {filteredProjects.length === 0 ? (
+        <EmptyState icon="🎮" title={projects.length === 0 ? "Sin proyectos" : "Sin resultados"} sub={projects.length === 0 ? "Crea tu primer juego" : "Prueba con otros filtros"} action={projects.length === 0 ? "✏️ Crear Proyecto" : undefined} onAction={projects.length === 0 ? () => setView("create") : undefined} />
       ) : (
         <div style={{ display:"grid", gap:"0.7rem" }}>
-          {projects.map(p => {
+          {filteredProjects.map(p => {
             const sc = STATUS_STYLE[p.status] || STATUS_STYLE.draft;
             return (
               <div key={p.id} onClick={() => { setSelected(p); setView("detail"); }} style={{
