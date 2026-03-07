@@ -67,7 +67,7 @@ export function EmptyState({ icon, title, sub, action, onAction }) {
 export function Spinner() {
   return (
     <div style={{ display:"flex", alignItems:"center", justifyContent:"center", padding:"3rem", color:"#5a4080", flexDirection:"column", gap:"0.8rem" }}>
-      <div style={{ width:36, height:36, border:"2px solid rgba(124,58,237,0.2)", borderTopColor:"#7c3aed", borderRadius:"50%", animation:"spin 0.8s linear infinite" }}/>
+      <div style={{ width:36, height:36, border:"2px solid rgba(124,58,237,0.2)", borderTopColor:"#7c3aed", borderRadius:"50%", animation:"spin 0.8s linear infinite" }} />
       <div style={{ fontSize:"0.65rem", letterSpacing:2, textTransform:"uppercase" }}>Cargando...</div>
       <style>{`@keyframes spin{100%{transform:rotate(360deg)}}`}</style>
     </div>
