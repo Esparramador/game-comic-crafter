@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { C, SectionTitle, Spinner, inputStyle, labelStyle } from "./shared";
+import { C, SectionTitle, inputStyle, labelStyle } from "./shared";
 
 const GENRES = ["RPG","Action","Horror","Stealth","Open World","Adventure","Platformer","Shooter"];
 
