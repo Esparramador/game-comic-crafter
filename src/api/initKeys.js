@@ -11,6 +11,7 @@ export function autoInitKeys() {
     shopifyDomain: import.meta.env.VITE_SHOPIFY_DOMAIN || "comic-crafter.myshopify.com",
     replicateKey:  import.meta.env.VITE_REPLICATE_KEY  || "",
     manusKey:      import.meta.env.VITE_MANUS_KEY      || "",
+    geminiKey:     import.meta.env.VITE_GEMINI_KEY     || "",
   };
 
   // Keys desde localStorage (el usuario puede sobrescribirlas en ConfigScreen)

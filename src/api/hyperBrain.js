@@ -132,9 +132,12 @@ export const HyperBrain = {
 Cuando generes contenido, sé específico, oscuro, evocador y cinematográfico.
 Responde siempre en JSON puro sin markdown.`;
 
+    // Gemini enriquece: si Manus falla o como capa adicional
+    const LLM = ManusService.ok() ? ManusService : GeminiService;
+
     const [loreResult, visualPrompt, voiceText] = await Promise.all([
-      // Lore completo
-      ManusService.generate(
+      // Lore completo — usa Manus si está disponible, Gemini como fallback
+      LLM.generate(
         `Genera el lore completo para el personaje:
 Nombre: ${name}
 Arquetipo: ${archetype}
@@ -228,8 +231,10 @@ Responde SOLO el prompt, sin explicación, máximo 120 palabras.`,
 
     step("gdd", "Generando Game Design Document con Manus...");
 
+    const LLM_G = ManusService.ok() ? ManusService : GeminiService;
+
     const [gddResult, coverPrompt] = await Promise.all([
-      ManusService.generate(
+      LLM_G.generate(
         `Crea el GDD completo para:
 Título: ${title}
 Género: ${genre}
@@ -247,7 +252,7 @@ Responde en JSON: {
         SYSTEM
       ).catch(() => null),
 
-      ManusService.generate(
+      LLM_G.generate(
         `Genera un prompt en inglés para crear la portada de un videojuego:
 Título: ${title}, Género: ${genre}, Atmósfera: ${atmosphere}
 Estilo: dark fantasy cyberpunk game cover art, cinematic, dramatic lighting, epic composition
@@ -298,8 +303,10 @@ Solo el prompt, máximo 100 palabras.`,
 
     step("copy", "Generando copy viral con Manus en 3 idiomas...");
 
+    const LLM_M = ManusService.ok() ? ManusService : GeminiService;
+
     const [synopsisResult, posterPrompt, trailerScript] = await Promise.all([
-      ManusService.generate(
+      LLM_M.generate(
         `Para este videojuego: ${ctx}
 Genera en JSON: {
   "synopsis_es": "synopsis épica español 100 palabras",
@@ -311,14 +318,14 @@ Genera en JSON: {
         SYSTEM
       ).catch(() => null),
 
-      ManusService.generate(
+      LLM_M.generate(
         `Genera el prompt para crear un póster épico de marketing del juego: ${ctx}
 Estilo: dark fantasy cyberpunk game poster, epic art, dramatic lighting, title text integration
 Solo el prompt, máximo 120 palabras.`,
         SYSTEM
       ).catch(() => `epic dark fantasy game poster ${project.title}, cyberpunk atmosphere, dramatic lighting, hero silhouette`),
 
-      ManusService.generate(
+      LLM_M.generate(
         `Escribe el script de un tráiler cinematográfico de 60 segundos para: ${ctx}
 Incluye: voz en off épica, efectos de sonido [SFX: ...], música [MÚSICA: ...], 5-7 escenas.
 Formato: script listo para grabar.`,
@@ -416,6 +423,10 @@ Formato: script listo para grabar.`,
 // ════════════════════════════════════════════════
 export function initHyperBrain(config = {}) {
   window.__GCC_CONFIG__ = { ...(window.__GCC_CONFIG__ || {}), ...config };
+  // Mapear aliases comunes
+  const cfg = window.__GCC_CONFIG__;
+  if (!cfg.geminiKey && cfg.VITE_GEMINI_KEY)   cfg.geminiKey   = cfg.VITE_GEMINI_KEY;
+  if (!cfg.replicateKey && cfg.replicateToken)  cfg.replicateKey = cfg.replicateToken;
 }
 
 export const ALL_SERVICES_STATUS = () => ({
@@ -423,6 +434,80 @@ export const ALL_SERVICES_STATUS = () => ({
   eleven:    { name:"ElevenLabs",  ok: ElevenService.ok(),      icon:"🎙️" },
   replicate: { name:"Replicate",   ok: ReplicateService.ok(),   icon:"🎨" },
   manus:     { name:"Manus AI",    ok: ManusService.ok(),       icon:"🧠" },
+  gemini:    { name:"Gemini",      ok: GeminiService.ok(),      icon:"✨" },
 });
 
 export default HyperBrain;
+
+// ════════════════════════════════════════════════
+//  GEMINI SERVICE — Google AI multitarea
+// ════════════════════════════════════════════════
+export const GeminiService = {
+  BASE: "https://generativelanguage.googleapis.com/v1beta/models",
+  key()  { return cfg().geminiKey || ""; },
+  ok()   { return !!this.key(); },
+  MODEL_TEXT:  "gemini-2.0-flash",       // ultra rápido
+  MODEL_PRO:   "gemini-2.0-flash-thinking-exp", // razonamiento
+  MODEL_VISION:"gemini-2.0-flash",       // visión + texto
+
+  async generate(prompt, systemPrompt = "", opts = {}) {
+    if (!this.ok()) throw new Error("Gemini key no configurada");
+    const model = opts.model || this.MODEL_TEXT;
+    const parts = [];
+    if (systemPrompt) parts.push({ text: systemPrompt + "\n\n" });
+    parts.push({ text: prompt });
+
+    const body = {
+      contents: [{ parts }],
+      generationConfig: {
+        temperature: opts.temperature ?? 0.7,
+        maxOutputTokens: opts.maxTokens || 2048,
+        topP: 0.95,
+        topK: 40,
+      }
+    };
+
+    const r = await fetch(`${this.BASE}/${model}:generateContent?key=${this.key()}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) {
+      const e = await r.json().catch(() => ({}));
+      throw new Error(e.error?.message || `Gemini ${r.status}`);
+    }
+    const d = await r.json();
+    return d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  },
+
+  // Análisis de imagen (visión)
+  async analyzeImage(imageUrl, prompt = "Describe esta imagen en detalle") {
+    if (!this.ok()) throw new Error("Gemini key no configurada");
+    // Fetch imagen como base64
+    const imgR = await fetch(imageUrl);
+    const blob  = await imgR.blob();
+    const b64   = await new Promise(res => {
+      const fr = new FileReader();
+      fr.onloadend = () => res(fr.result.split(",")[1]);
+      fr.readAsDataURL(blob);
+    });
+
+    const body = {
+      contents: [{
+        parts: [
+          { inline_data: { mime_type: blob.type, data: b64 } },
+          { text: prompt }
+        ]
+      }],
+      generationConfig: { temperature: 0.4, maxOutputTokens: 1024 }
+    };
+    const r = await fetch(`${this.BASE}/${this.MODEL_VISION}:generateContent?key=${this.key()}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.error?.message || `Gemini vision ${r.status}`); }
+    const d = await r.json();
+    return d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  }
+};

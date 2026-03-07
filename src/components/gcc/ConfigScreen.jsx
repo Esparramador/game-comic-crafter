@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { C, SectionTitle, labelStyle, inputStyle } from "./shared";
 import { initGCC, ElevenService, ShopifyService, TripoService } from "@/api/services";
-import { initHyperBrain, ReplicateService, ManusService } from "@/api/hyperBrain";
+import { initHyperBrain, ReplicateService, ManusService, GeminiService } from "@/api/hyperBrain";
 
 const STORAGE_KEY = "gcc_api_config";
 
@@ -157,7 +157,28 @@ export default function ConfigScreen({ onNav, showToast }) {
       },
       note: "LLM avanzado para lore, GDD, copy y razonamiento creativo.",
       links: [{ label:"Manus Dashboard", url:"https://manus.im" }]
+    },
+    {
+      id: "gemini",
+      icon: "✨",
+      title: "Gemini AI",
+      color: "#4285f4",
+      fields: [{ key:"geminiKey", label:"API Key", placeholder:"AIzaSy...", type:"password" }],
+      onTest: async () => {
+        if (!cfg.geminiKey) { showToast("⚠️ Escribe tu Gemini key primero", "warning"); return; }
+        setTesting(t => ({ ...t, gemini: true }));
+        try {
+          initHyperBrain(cfg);
+          const text = await GeminiService.generate("Responde solo: OK");
+          setStatus(s => ({ ...s, gemini: { ok:true, msg:`✅ Gemini conectado — respuesta: ${text.substring(0,30)}` } }));
+          showToast("✅ Gemini conectado", "success");
+        } catch(e) { setStatus(s => ({ ...s, gemini: { ok:false, msg:`❌ ${e.message}` } })); }
+        setTesting(t => ({ ...t, gemini: false }));
+      },
+      note: "Google Gemini 2.0 Flash — LLM ultrarrápido + visión de imágenes.",
+      links: [{ label:"Google AI Studio", url:"https://aistudio.google.com/apikey" }]
     }
+
   ];
 
   return (
