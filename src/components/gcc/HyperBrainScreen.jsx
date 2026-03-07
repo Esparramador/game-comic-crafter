@@ -116,6 +116,32 @@ function ResultPanel({ result, mode }) {
     </div>
   );
 
+  if (mode === "arena") return (
+    <div style={{ display:"flex", flexDirection:"column", gap:"0.6rem" }}>
+      {result?.cover_image_url && (
+        <img src={result.cover_image_url} alt="arena" style={{ width:"100%", borderRadius:12, border:`1px solid ${C.border}`, maxHeight:250, objectFit:"cover" }} />
+      )}
+      <div style={{ background:C.card, borderRadius:12, padding:"0.8rem", border:`1px solid ${C.border}` }}>
+        <div style={{ fontSize:"0.8rem", fontWeight:800, color:"#ef4444", marginBottom:4 }}>⚔️ Arena Game - Multijugador</div>
+        <div style={{ fontSize:"0.68rem", color:C.text, lineHeight:1.5 }}>
+          <div>✅ Proyecto creado: {result?.project?.title}</div>
+          <div>✅ URL jugable: {result?.play_link?.substring(0,50)}...</div>
+          <div>✅ APK building...</div>
+          <div>✅ Personajes integrados</div>
+        </div>
+      </div>
+      {result?.arena_url && (
+        <a href={result.arena_url} target="_blank" rel="noreferrer" style={{
+          display:"flex", alignItems:"center", justifyContent:"center", gap:"0.6rem",
+          background:"linear-gradient(135deg,#ef4444,#e91e8c)", border:"none",
+          borderRadius:10, padding:"0.8rem", textDecoration:"none", color:"#fff", fontWeight:700, cursor:"pointer"
+        }}>
+          ▶️ Jugar Ahora
+        </a>
+      )}
+    </div>
+  );
+
   if (mode === "marketing") return (
     <div style={{ display:"flex", flexDirection:"column", gap:"0.6rem" }}>
       {result.poster_url && (
