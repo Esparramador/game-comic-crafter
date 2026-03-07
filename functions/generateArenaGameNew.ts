@@ -78,7 +78,13 @@ setInterval(()=>{if(session)document.getElementById('health').textContent='HP: '
     const arenaUrl = uploadResult.file_url;
 
     // Verificar si Arena Game ya existe
-    let arenaProject = await base44.entities.GameProject.filter({ title: 'Arena Game' }).then(results => results?.[0]).catch(() => null);
+    let arenaProject = null;
+    try {
+      const projects = await base44.entities.GameProject.list('-updated_date', 100);
+      arenaProject = projects.find(p => p.title === 'Arena Game');
+    } catch (e) {
+      // Si falla, continuamos sin buscar
+    }
 
     if (arenaProject) {
       // Actualizar existente
