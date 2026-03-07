@@ -1,6 +1,5 @@
 import { useState, useEffect, Suspense, lazy } from "react";
-import { autoInitKeys } from "@/api/initKeys";
-import { initHyperBrain } from "@/api/hyperBrain";
+import { autoInitKeys, initHyperBrain } from "@/components/gcc/hyperBrainApi";
 import Toast from "@/components/gcc/Toast";
 
 export const config = { requiresAuth: true };

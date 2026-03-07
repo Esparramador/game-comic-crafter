@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { HyperBrain, ALL_SERVICES_STATUS, ManusService, ReplicateService, GeminiService, initHyperBrain } from "@/api/hyperBrain";
-import { ElevenService, initGCC } from "@/api/services";
+import { HyperBrain, ALL_SERVICES_STATUS, initHyperBrain, initGCC } from "./hyperBrainApi";
 import { C, SectionTitle, Spinner, labelStyle, inputStyle } from "./shared";
 
 const MODES = [
