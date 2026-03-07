@@ -220,6 +220,40 @@ export default function HyperBrainScreen({ onNav, showToast }) {
           addStep("saved", `💾 Personaje guardado en BD — ID: ${created.id.substring(0,8)}...`);
         } catch(e) { addStep("error", `⚠️ No se pudo guardar en BD: ${e.message}`); }
       }
+      else if (mode === "world") {
+        if (!worldQuery.trim()) { showToast("⚠️ Escribe una ciudad o zona", "warning"); setRunning(false); return; }
+        addStep("info", `🗺️ Buscando ${worldQuery} en Google Maps...`);
+        const searchRes = await base44.functions.invoke("worldBuilderMaps", { mode:"search", payload:{ query: worldQuery }});
+        const places = searchRes.data?.places || [];
+        if (!places.length) { addStep("error", "No se encontraron lugares"); setRunning(false); return; }
+        const place = places[0];
+        addStep("info", `📍 Analizando ${place.name}...`);
+        addStep("info", "🧠 Gemini convirtiendo zona real en escenario...");
+        addStep("info", "🎨 Replicate generando concept art...");
+        const analyzeRes = await base44.functions.invoke("worldBuilderMaps", {
+          mode:"analyze", payload:{ place_id: place.place_id, lat: place.lat, lng: place.lng, name: place.name, address: place.address }
+        });
+        const d = analyzeRes.data;
+        addStep("info", "🎮 Generando GDD y juego completo...");
+        const gameRes = await base44.functions.invoke("worldBuilderMaps", {
+          mode:"generate_game", payload:{ location: d.location, analysis: d.analysis, genre: gameGenre }
+        });
+        const gd = gameRes.data;
+        try {
+          let gddParsed = {};
+          try { gddParsed = JSON.parse(gd.gdd.replace(/```json|```/g,"").trim()); } catch {}
+          const created = await base44.entities.GameProject.create({
+            title: gd.title || d.analysis?.level_name || place.name,
+            genre: gd.genre || gameGenre, format:"2D", engine:"Phaser.js",
+            status:"draft", description: gddParsed.synopsis || "",
+            game_design_document: gd.gdd, cover_image_url: gd.cover_image_url,
+            atmosphere: d.analysis?.atmosphere || "Realista",
+            global_context:{ location: d.location, analysis: d.analysis, world_builder: true }
+          });
+          addStep("saved", `💾 Juego guardado — ID: ${created.id.substring(0,8)}...`);
+        } catch {}
+        res = { ...gd, concept_art_url: d.concept_art_url, analysis: d.analysis, location: d.location };
+      }
       else if (mode === "game") {
         if (!gameTitle.trim()) { showToast("⚠️ Escribe el título del juego", "warning"); setRunning(false); return; }
         res = await HyperBrain.genesisGame({ title:gameTitle, genre:gameGenre, atmosphere:gameAtmo, onStep });
