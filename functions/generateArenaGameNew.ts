@@ -77,19 +77,32 @@ setInterval(()=>{if(session)document.getElementById('health').textContent='HP: '
     const uploadResult = await base44.integrations.Core.UploadFile({ file: blob });
     const arenaUrl = uploadResult.file_url;
 
-    const arenaProject = await base44.entities.GameProject.create({
-      title: 'Arena Game',
-      description: 'Juego multijugador online en tiempo real con Phaser',
-      genre: 'Fighting',
-      format: '2D',
-      engine: 'Phaser.js',
-      status: 'playable',
-      playable_url: arenaUrl,
-      cover_image_url: 'https://images.unsplash.com/photo-1538481572228-034ef077b87f?w=800&h=400&fit=crop',
-      character_ids: characters.map(c => c.id).filter(Boolean),
-      export_status: 'ready',
-      export_formats: ['web', 'android_apk']
-    });
+    // Verificar si Arena Game ya existe
+    let arenaProject = await base44.entities.GameProject.filter({ title: 'Arena Game' }).then(results => results?.[0]).catch(() => null);
+
+    if (arenaProject) {
+      // Actualizar existente
+      await base44.entities.GameProject.update(arenaProject.id, {
+        playable_url: arenaUrl,
+        character_ids: characters.map(c => c.id).filter(Boolean),
+        status: 'playable'
+      });
+    } else {
+      // Crear si no existe
+      arenaProject = await base44.entities.GameProject.create({
+        title: 'Arena Game',
+        description: 'Juego multijugador online en tiempo real con Phaser',
+        genre: 'Fighting',
+        format: '2D',
+        engine: 'Phaser.js',
+        status: 'playable',
+        playable_url: arenaUrl,
+        cover_image_url: 'https://images.unsplash.com/photo-1538481572228-034ef077b87f?w=800&h=400&fit=crop',
+        character_ids: characters.map(c => c.id).filter(Boolean),
+        export_status: 'ready',
+        export_formats: ['web', 'android_apk']
+      });
+    }
 
     // Iniciar APK build en background (no esperar)
     base44.asServiceRole.functions.invoke('buildArenaAPK', {
