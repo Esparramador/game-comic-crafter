@@ -160,10 +160,10 @@ export default function HomeScreen() {
           {/* Footer */}
           <div style={{ padding:"0.6rem 0.3rem", borderTop:`1px solid ${C.border}`, marginTop:"0.5rem" }}>
             <div style={{ fontSize:"0.52rem", color:C.muted, lineHeight:1.6 }}>
-              <div style={{ color:"#22c55e", fontWeight:700, marginBottom:2 }}>● 5 IAs Activas</div>
+              <div style={{ color:"#22c55e", fontWeight:700, marginBottom:2 }}>● 6 IAs Activas</div>
               <div>🏺 Tripo3D · 🎙️ ElevenLabs</div>
               <div>🎨 Replicate · 🧠 Manus</div>
-              <div>✨ Gemini 2.0 Flash</div>
+              <div>✨ Gemini · 🌍 Google Maps</div>
             </div>
           </div>
         </aside>
