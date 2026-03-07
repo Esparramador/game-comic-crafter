@@ -435,6 +435,31 @@ export default function MarketingScreen({ onNav, showToast }) {
                 ))}
               </div>
 
+              {/* ── PUBLICAR EN SHOPIFY ── */}
+              <div style={{ background:"rgba(150,191,72,0.06)", border:"1px solid rgba(150,191,72,0.25)", borderRadius:14, padding:"1rem" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"0.7rem" }}>
+                  <div>
+                    <div style={{ fontSize:"0.82rem", fontWeight:800, color:"#96bf48" }}>🛍️ Publicar en Shopify</div>
+                    <div style={{ fontSize:"0.62rem", color:C.muted }}>Crea el producto automáticamente en tu tienda</div>
+                  </div>
+                  {selected.shopify_product_id && <span style={{ fontSize:"0.65rem", color:"#96bf48", fontWeight:700 }}>✅ Publicado</span>}
+                </div>
+                {!selected.shopify_product_id ? (
+                  <button onClick={publishToShopify} disabled={publishing} style={{
+                    width:"100%", padding:"0.8rem",
+                    background: publishing ? "rgba(150,191,72,0.1)" : "rgba(150,191,72,0.15)",
+                    border:"1px solid rgba(150,191,72,0.4)", borderRadius:10,
+                    color:"#96bf48", fontSize:"0.8rem", fontWeight:800,
+                    cursor: publishing ? "not-allowed" : "pointer", fontFamily:"inherit"
+                  }}>{publishing ? "⏳ Publicando..." : "🛍️ Crear Producto en Shopify"}</button>
+                ) : (
+                  <div style={{ display:"flex", gap:"0.5rem" }}>
+                    <a href={`https://comic-crafter.myshopify.com/products/${selected.shopify_product_id}`} target="_blank" rel="noreferrer" style={{ flex:1, textAlign:"center", background:"rgba(150,191,72,0.1)", border:"1px solid rgba(150,191,72,0.3)", borderRadius:8, padding:"0.5rem", color:"#96bf48", fontSize:"0.72rem", fontWeight:700, textDecoration:"none" }}>Ver en tienda ↗</a>
+                    <a href={`https://comic-crafter.myshopify.com/admin/products/${selected.shopify_product_id}`} target="_blank" rel="noreferrer" style={{ flex:1, textAlign:"center", background:"rgba(150,191,72,0.06)", border:"1px solid rgba(150,191,72,0.2)", borderRadius:8, padding:"0.5rem", color:"#96bf48", fontSize:"0.72rem", fontWeight:700, textDecoration:"none" }}>Admin Shopify ↗</a>
+                  </div>
+                )}
+              </div>
+
               {/* Copiar todos los links */}
               <button onClick={() => {
                 const links = [
