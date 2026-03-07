@@ -1,213 +1,229 @@
-import { useState, useEffect } from "react";
-import { createPageUrl } from "@/utils";
-import { initGCC } from "@/api/services";
+import { useState, useEffect, Suspense, lazy } from "react";
 import { autoInitKeys } from "@/api/initKeys";
 import { initHyperBrain } from "@/api/hyperBrain";
-import DashboardHome  from "@/components/gcc/DashboardHome";
-import CharsScreen    from "@/components/gcc/CharsScreen";
-import EditorScreen   from "@/components/gcc/EditorScreen";
-import MarketingScreen from "@/components/gcc/MarketingScreen";
-import PhysicsScreen  from "@/components/gcc/PhysicsScreen";
-import TestScreen     from "@/components/gcc/TestScreen";
-import AssetsScreen   from "@/components/gcc/AssetsScreen";
-import PromptsScreen  from "@/components/gcc/PromptsScreen";
-import VoiceScreen    from "@/components/gcc/VoiceScreen";
-import ConfigScreen   from "@/components/gcc/ConfigScreen";
-import HyperBrainScreen from "@/components/gcc/HyperBrainScreen";
-import Toast          from "@/components/gcc/Toast";
+import Toast from "@/components/gcc/Toast";
 
 export const config = { requiresAuth: true };
 
+// ── Lazy loading para rendimiento ──
+const DashboardHome    = lazy(() => import("@/components/gcc/DashboardHome"));
+const EditorScreen     = lazy(() => import("@/components/gcc/EditorScreen"));
+const CharsScreen      = lazy(() => import("@/components/gcc/CharsScreen"));
+const VoiceScreen      = lazy(() => import("@/components/gcc/VoiceScreen"));
+const AssetsScreen     = lazy(() => import("@/components/gcc/AssetsScreen"));
+const PhysicsScreen    = lazy(() => import("@/components/gcc/PhysicsScreen"));
+const PromptsScreen    = lazy(() => import("@/components/gcc/PromptsScreen"));
+const MarketingScreen  = lazy(() => import("@/components/gcc/MarketingScreen"));
+const TestScreen       = lazy(() => import("@/components/gcc/TestScreen"));
+const ConfigScreen     = lazy(() => import("@/components/gcc/ConfigScreen"));
+const HyperBrainScreen = lazy(() => import("@/components/gcc/HyperBrainScreen"));
+const GuideScreen      = lazy(() => import("@/components/gcc/GuideScreen"));
+
 const C = {
   bg:"#0f0a1e", sidebar:"#0a0718", border:"rgba(124,58,237,0.2)",
-  cyan:"#00f5ff", muted:"#5a4080", text:"#e0e8ff"
+  cyan:"#00f5ff", muted:"#5a4080", text:"#e0e8ff", card:"#160d2e"
 };
 
 const NAV = [
-  { id:"dashboard", icon:"🏠", label:"Dashboard"  },
-  { id:"create",    icon:"🎮", label:"Mis Juegos"  },
-  { id:"chars",     icon:"👥", label:"Personajes"  },
-  { id:"voice",     icon:"🎙️", label:"Voces"       },
-  { id:"assets",    icon:"📦", label:"Assets"      },
-  { id:"physics",   icon:"⚙️", label:"Physics"     },
-  { id:"prompts",   icon:"⚡", label:"Prompts"     },
-  { id:"marketing", icon:"📣", label:"Marketing"   },
-  { id:"test",      icon:"▶️", label:"Play"        },
-  { id:"config",    icon:"🔑", label:"Config API"  },
-  { id:"brain",     icon:"🧠", label:"Hyper Brain" },
+  { id:"dashboard", icon:"🏠", label:"Dashboard"   },
+  { id:"create",    icon:"🎮", label:"Mis Juegos"   },
+  { id:"chars",     icon:"👥", label:"Personajes"   },
+  { id:"voice",     icon:"🎙️", label:"Voces"        },
+  { id:"assets",    icon:"📦", label:"Assets"       },
+  { id:"physics",   icon:"⚙️", label:"Physics"      },
+  { id:"prompts",   icon:"⚡", label:"Prompts"      },
+  { id:"marketing", icon:"📣", label:"Marketing"    },
+  { id:"test",      icon:"▶️", label:"Play"         },
+  { id:"guide",     icon:"📚", label:"Guía"         },
+  { id:"brain",     icon:"🧠", label:"Hyper Brain"  },
+  { id:"config",    icon:"🔑", label:"Config API"   },
 ];
 
-// Cargar config guardada al inicio
-function loadSavedConfig() {
-  try { return JSON.parse(localStorage.getItem("gcc_api_config") || "{}"); } catch { return {}; }
+// ── Spinner de carga ──
+function PageLoader() {
+  return (
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", height:"60vh", gap:"1rem" }}>
+      <div style={{ width:40, height:40, border:"2px solid rgba(124,58,237,0.2)", borderTopColor:"#7c3aed", borderRadius:"50%", animation:"spin 0.8s linear infinite" }} />
+      <div style={{ fontSize:"0.62rem", color:C.muted, letterSpacing:2, textTransform:"uppercase" }}>Cargando...</div>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+    </div>
+  );
+}
+
+// ── Error boundary funcional ──
+function SafeScreen({ children }) {
+  try { return children; } catch(e) {
+    return (
+      <div style={{ padding:"2rem", textAlign:"center", color:"#ef4444" }}>
+        <div style={{ fontSize:"2rem", marginBottom:"0.5rem" }}>⚠️</div>
+        <div style={{ fontSize:"0.8rem" }}>Error al cargar esta sección</div>
+        <div style={{ fontSize:"0.65rem", color:C.muted, marginTop:"0.3rem" }}>{e.message}</div>
+      </div>
+    );
+  }
 }
 
 export default function HomeScreen() {
   const [tab, setTab] = useState("dashboard");
   const [toast, setToast] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Aplicar keys guardadas al arrancar
-  useEffect(() => { autoInitKeys(); }, []);
+  useEffect(() => {
+    try { autoInitKeys(); } catch(e) { console.warn("initKeys:", e); }
+    try { initHyperBrain(JSON.parse(localStorage.getItem("gcc_api_config")||"{}")); } catch {}
+  }, []);
 
   const showToast = (msg, type="info") => {
     setToast({ msg, type, key: Date.now() });
-    setTimeout(() => setToast(null), 3200);
+    setTimeout(() => setToast(null), 3500);
   };
 
-  const screens = {
-    dashboard:  <DashboardHome  onNav={setTab} showToast={showToast} />,
-    create:     <EditorScreen   onNav={setTab} showToast={showToast} />,
-    chars:      <CharsScreen    onNav={setTab} showToast={showToast} />,
-    voice:      <VoiceScreen    onNav={setTab} showToast={showToast} />,
-    assets:     <AssetsScreen   onNav={setTab} showToast={showToast} />,
-    physics:    <PhysicsScreen  onNav={setTab} showToast={showToast} />,
-    prompts:    <PromptsScreen  onNav={setTab} showToast={showToast} />,
-    marketing:  <MarketingScreen onNav={setTab} showToast={showToast} />,
-    test:       <TestScreen     onNav={setTab} showToast={showToast} />,
-    config:     <ConfigScreen   onNav={setTab} showToast={showToast} />,
-    brain:      <HyperBrainScreen onNav={setTab} showToast={showToast} />,
+  const navigate = (id) => {
+    setTab(id);
+    setSidebarOpen(false);
+    window.scrollTo(0, 0);
   };
 
   const current = NAV.find(n => n.id === tab);
+
+  const screenProps = { onNav: navigate, showToast };
+
+  const SCREENS = {
+    dashboard:  <DashboardHome    {...screenProps} />,
+    create:     <EditorScreen     {...screenProps} />,
+    chars:      <CharsScreen      {...screenProps} />,
+    voice:      <VoiceScreen      {...screenProps} />,
+    assets:     <AssetsScreen     {...screenProps} />,
+    physics:    <PhysicsScreen    {...screenProps} />,
+    prompts:    <PromptsScreen    {...screenProps} />,
+    marketing:  <MarketingScreen  {...screenProps} />,
+    test:       <TestScreen       {...screenProps} />,
+    guide:      <GuideScreen      {...screenProps} />,
+    brain:      <HyperBrainScreen {...screenProps} />,
+    config:     <ConfigScreen     {...screenProps} />,
+  };
 
   return (
     <>
       <style>{`
         *{box-sizing:border-box;margin:0;padding:0}
-        body{background:${C.bg};font-family:'Inter',sans-serif;color:${C.text}}
+        body{background:${C.bg};font-family:'Inter',system-ui,sans-serif;color:${C.text};overflow-x:hidden}
         ::-webkit-scrollbar{width:3px;height:3px}
-        ::-webkit-scrollbar-thumb{background:#7c3aed;border-radius:2px}
-        .sbi{display:flex;align-items:center;gap:0.55rem;padding:0.4rem 0.65rem;border-radius:8px;cursor:pointer;font-size:0.72rem;color:${C.muted};transition:all 0.15s;margin-bottom:1px;border:1px solid transparent;white-space:nowrap}
-        .sbi:hover{background:rgba(124,58,237,0.1);color:${C.text}}
-        .sba{background:linear-gradient(135deg,rgba(124,58,237,0.22),rgba(233,30,140,0.08));color:${C.text};border-color:rgba(124,58,237,0.28)!important}
-        .extl{display:flex;align-items:center;gap:0.45rem;padding:0.35rem 0.6rem;border-radius:8px;text-decoration:none;transition:all 0.15s;font-size:0.62rem;font-weight:600;border:1px solid rgba(124,58,237,0.18);color:${C.muted};margin-bottom:0.3rem}
-        .extl:hover{background:rgba(124,58,237,0.1);color:${C.text};border-color:rgba(124,58,237,0.4)}
-        @media(max-width:768px){.sidebar{display:none!important}.bnav{display:flex!important}.maincontent{padding-bottom:68px!important}}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:#7c3aed44;border-radius:99px}
+        ::-webkit-scrollbar-thumb:hover{background:#7c3aed99}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+        .nav-item{display:flex;align-items:center;gap:0.55rem;padding:0.42rem 0.7rem;border-radius:9px;cursor:pointer;font-size:0.72rem;color:${C.muted};transition:all 0.15s;margin-bottom:2px;border:1px solid transparent;white-space:nowrap}
+        .nav-item:hover{background:rgba(124,58,237,0.1);color:#e0e8ff}
+        .nav-item.active{background:rgba(124,58,237,0.18);color:#c084fc;border-color:rgba(124,58,237,0.3)}
+        .screen-enter{animation:fadeIn 0.2s ease}
+        @media(max-width:600px){.desktop-sidebar{display:none!important}.mobile-topbar{display:flex!important}}
+        @media(min-width:601px){.mobile-topbar{display:none!important}.desktop-sidebar{display:flex!important}}
       `}</style>
 
-      <div style={{ display:"flex", height:"100vh", overflow:"hidden" }}>
+      {/* ── LAYOUT PRINCIPAL ── */}
+      <div style={{ display:"flex", minHeight:"100vh" }}>
 
-        {/* ── SIDEBAR ── */}
-        <div className="sidebar" style={{
-          width:192, flexShrink:0, background:C.sidebar,
-          borderRight:`1px solid ${C.border}`,
-          display:"flex", flexDirection:"column", overflowY:"auto"
+        {/* SIDEBAR DESKTOP */}
+        <aside className="desktop-sidebar" style={{
+          width:195, flexShrink:0, background:C.sidebar,
+          borderRight:`1px solid ${C.border}`, padding:"1rem 0.7rem",
+          display:"flex", flexDirection:"column", position:"sticky",
+          top:0, height:"100vh", overflowY:"auto"
         }}>
           {/* Logo */}
-          <div style={{ padding:"0.85rem 0.85rem 0.7rem", display:"flex", alignItems:"center", gap:"0.5rem", borderBottom:`1px solid ${C.border}` }}>
-            <div style={{ width:30, height:30, borderRadius:7, background:"linear-gradient(135deg,#7c3aed,#e91e8c)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"0.9rem", flexShrink:0 }}>🐧</div>
-            <div>
-              <div style={{ fontFamily:"monospace", fontSize:"0.75rem", fontWeight:900, color:C.cyan, letterSpacing:1 }}>GCC Studio</div>
-              <div style={{ fontSize:"0.45rem", color:C.muted, letterSpacing:1 }}>ENGINE v1.0</div>
-            </div>
+          <div style={{ marginBottom:"1.2rem", padding:"0 0.3rem" }}>
+            <div style={{ fontSize:"1.1rem", fontWeight:900, color:"#fff", letterSpacing:1, fontFamily:"'Orbitron',sans-serif" }}>GCC</div>
+            <div style={{ fontSize:"0.55rem", color:C.muted, letterSpacing:2, textTransform:"uppercase" }}>Game Comic Crafter</div>
           </div>
 
-          {/* Nav */}
-          <div style={{ padding:"0.55rem 0.5rem", flex:1 }}>
+          {/* Nav items */}
+          <nav style={{ flex:1 }}>
             {NAV.map(n => (
-              <div key={n.id} onClick={() => setTab(n.id)} className={`sbi${tab===n.id?" sba":""}`}>
-                <span style={{ fontSize:"0.85rem", width:16, textAlign:"center", flexShrink:0 }}>{n.icon}</span>
-                {n.label}
-                {n.id==="prompts" && <span style={{ marginLeft:"auto", fontSize:"0.42rem", background:"rgba(124,58,237,0.3)", color:"#c084fc", padding:"1px 4px", borderRadius:8, fontWeight:800 }}>NEW</span>}
-                {n.id==="voice"   && <span style={{ marginLeft:"auto", fontSize:"0.42rem", background:"rgba(34,197,94,0.2)", color:"#22c55e", padding:"1px 4px", borderRadius:8, fontWeight:800 }}>NEW</span>}
+              <div key={n.id} className={`nav-item${tab===n.id?" active":""}`} onClick={() => navigate(n.id)}>
+                <span style={{ flexShrink:0 }}>{n.icon}</span>
+                <span>{n.label}</span>
+                {n.id === "brain" && (
+                  <span style={{ marginLeft:"auto", background:"linear-gradient(90deg,#7c3aed,#00f5ff)", borderRadius:99, padding:"1px 5px", fontSize:"0.48rem", color:"#fff", fontWeight:900, flexShrink:0 }}>5 IAs</span>
+                )}
+                {n.id === "guide" && (
+                  <span style={{ marginLeft:"auto", background:"rgba(34,197,94,0.2)", borderRadius:99, padding:"1px 5px", fontSize:"0.48rem", color:"#22c55e", fontWeight:900, flexShrink:0 }}>NEW</span>
+                )}
               </div>
             ))}
-          </div>
+          </nav>
 
-          {/* Links externos */}
-          <div style={{ padding:"0.5rem 0.5rem", borderTop:`1px solid ${C.border}` }}>
-            <div style={{ fontSize:"0.5rem", letterSpacing:2, textTransform:"uppercase", color:C.muted, marginBottom:"0.4rem", padding:"0 0.3rem" }}>Comunidad</div>
-            <a href="https://www.instagram.com/comiccrafter_ai" target="_blank" rel="noreferrer" className="extl">
-              <div style={{ width:15, height:15, borderRadius:3, background:"linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
-                <svg width="8" height="8" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="white" strokeWidth="2.5"/><circle cx="12" cy="12" r="5" stroke="white" strokeWidth="2.5"/><circle cx="17.5" cy="6.5" r="1.2" fill="white"/></svg>
-              </div>
-              Instagram
-            </a>
-            <a href="https://comic-crafter.myshopify.com" target="_blank" rel="noreferrer" className="extl" style={{ color:"#96bf48" }}>
-              <span style={{ fontSize:"0.78rem" }}>🛍️</span> Shopify
-            </a>
-            <a href="https://comiccrafter.es" target="_blank" rel="noreferrer" className="extl" style={{ color:"#c084fc" }}>
-              <span style={{ fontSize:"0.78rem" }}>🌐</span> comiccrafter.es
-            </a>
-          </div>
-
-          {/* Salir */}
-          <div style={{ padding:"0.45rem", borderTop:`1px solid ${C.border}` }}>
-            <a href={createPageUrl("Landing")} style={{
-              display:"flex", alignItems:"center", justifyContent:"center", gap:"0.4rem",
-              padding:"0.35rem", borderRadius:8, textDecoration:"none",
-              background:"rgba(239,68,68,0.05)", border:"1px solid rgba(239,68,68,0.15)",
-              color:"rgba(239,68,68,0.4)", fontSize:"0.6rem", fontWeight:600, transition:"all 0.15s"
-            }}
-            onMouseEnter={e=>{e.currentTarget.style.background="rgba(239,68,68,0.1)";e.currentTarget.style.color="#ef4444"}}
-            onMouseLeave={e=>{e.currentTarget.style.background="rgba(239,68,68,0.05)";e.currentTarget.style.color="rgba(239,68,68,0.4)"}}
-            >⏻ Salir</a>
-          </div>
-        </div>
-
-        {/* ── MAIN ── */}
-        <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden" }}>
-          {/* Topbar */}
-          <div style={{
-            height:44, background:"rgba(10,7,24,0.97)", backdropFilter:"blur(10px)",
-            borderBottom:`1px solid ${C.border}`,
-            display:"flex", alignItems:"center", gap:"0.8rem",
-            padding:"0 1rem", flexShrink:0
-          }}>
-            <div style={{ fontFamily:"monospace", fontSize:"0.8rem", fontWeight:700, color:C.cyan }}>
-              {current?.icon} {current?.label}
-            </div>
-            <div style={{ marginLeft:"auto", display:"flex", gap:"0.4rem", alignItems:"center" }}>
-              <button onClick={() => setTab("prompts")} style={{
-                background:"rgba(124,58,237,0.1)", border:`1px solid rgba(124,58,237,0.25)`,
-                borderRadius:20, padding:"2px 9px", fontSize:"0.55rem",
-                color:"#c084fc", fontWeight:700, cursor:"pointer", fontFamily:"inherit"
-              }}>⚡ Prompts</button>
-              <button onClick={() => setTab("voice")} style={{
-                background:"rgba(34,197,94,0.1)", border:"1px solid rgba(34,197,94,0.25)",
-                borderRadius:20, padding:"2px 9px", fontSize:"0.55rem",
-                color:"#22c55e", fontWeight:700, cursor:"pointer", fontFamily:"inherit"
-              }}>🎙️ Voces</button>
-              <button onClick={() => setTab("config")} style={{
-                background:"rgba(255,215,0,0.08)", border:"1px solid rgba(255,215,0,0.25)",
-                borderRadius:20, padding:"2px 9px", fontSize:"0.55rem",
-                color:"#ffd700", fontWeight:700, cursor:"pointer", fontFamily:"inherit"
-              }}>⚙️ APIs</button>
-              <button onClick={() => setTab("brain")} style={{
-                background:"linear-gradient(135deg,rgba(124,58,237,0.2),rgba(0,245,255,0.1))", border:"1px solid rgba(124,58,237,0.4)",
-                borderRadius:20, padding:"2px 9px", fontSize:"0.55rem",
-                color:"#c084fc", fontWeight:900, cursor:"pointer", fontFamily:"inherit"
-              }}>🧠 BRAIN</button>
+          {/* Footer */}
+          <div style={{ padding:"0.6rem 0.3rem", borderTop:`1px solid ${C.border}`, marginTop:"0.5rem" }}>
+            <div style={{ fontSize:"0.52rem", color:C.muted, lineHeight:1.6 }}>
+              <div style={{ color:"#22c55e", fontWeight:700, marginBottom:2 }}>● 5 IAs Activas</div>
+              <div>🏺 Tripo3D · 🎙️ ElevenLabs</div>
+              <div>🎨 Replicate · 🧠 Manus</div>
+              <div>✨ Gemini 2.0 Flash</div>
             </div>
           </div>
+        </aside>
 
-          {/* Content */}
-          <div className="maincontent" style={{ flex:1, overflowY:"auto" }}>
-            {screens[tab] || screens.dashboard}
-          </div>
-        </div>
-
-        {/* ── BOTTOM NAV MOBILE ── */}
-        <div className="bnav" style={{
-          display:"none", position:"fixed", bottom:0, left:0, right:0,
-          background:C.sidebar, borderTop:`1px solid ${C.border}`,
-          justifyContent:"space-around", padding:"0.25rem 0 0.35rem", zIndex:100
+        {/* TOPBAR MOBILE */}
+        <div className="mobile-topbar" style={{
+          position:"fixed", top:0, left:0, right:0, zIndex:100,
+          background:`${C.sidebar}ee`, backdropFilter:"blur(12px)",
+          borderBottom:`1px solid ${C.border}`,
+          padding:"0.6rem 0.8rem", alignItems:"center", gap:"0.5rem"
         }}>
-          {NAV.slice(0,8).map(n => (
-            <div key={n.id} onClick={() => setTab(n.id)} style={{
-              display:"flex", flexDirection:"column", alignItems:"center", gap:1,
-              padding:"0.15rem 0.15rem", cursor:"pointer",
-              color: tab===n.id ? C.cyan : C.muted,
-              fontSize:"0.45rem", fontWeight: tab===n.id ? 700 : 400
-            }}>
-              <span style={{ fontSize:"0.95rem" }}>{n.icon}</span>
-              {n.label.split(" ")[0]}
-            </div>
-          ))}
+          <button onClick={() => setSidebarOpen(o=>!o)} style={{
+            background:"transparent", border:`1px solid ${C.border}`, borderRadius:7,
+            color:C.text, fontSize:"1rem", padding:"0.25rem 0.5rem", cursor:"pointer"
+          }}>☰</button>
+          <div style={{ fontSize:"0.82rem", fontWeight:800, color:"#fff", flex:1 }}>GCC</div>
+          <div style={{ fontSize:"0.65rem", color:"#c084fc" }}>{current?.icon} {current?.label}</div>
         </div>
+
+        {/* DRAWER MOBILE */}
+        {sidebarOpen && (
+          <>
+            <div onClick={() => setSidebarOpen(false)} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", zIndex:200 }} />
+            <aside style={{
+              position:"fixed", top:0, left:0, bottom:0, width:210, zIndex:201,
+              background:C.sidebar, borderRight:`1px solid ${C.border}`,
+              padding:"1rem 0.7rem", overflowY:"auto", display:"flex", flexDirection:"column"
+            }}>
+              <div style={{ marginBottom:"1rem" }}>
+                <div style={{ fontSize:"1rem", fontWeight:900, color:"#fff", letterSpacing:1 }}>GCC</div>
+                <div style={{ fontSize:"0.52rem", color:C.muted, letterSpacing:2, textTransform:"uppercase" }}>Game Comic Crafter</div>
+              </div>
+              {NAV.map(n => (
+                <div key={n.id} className={`nav-item${tab===n.id?" active":""}`} onClick={() => navigate(n.id)}>
+                  <span>{n.icon}</span><span>{n.label}</span>
+                </div>
+              ))}
+            </aside>
+          </>
+        )}
+
+        {/* MAIN CONTENT */}
+        <main style={{
+          flex:1, overflowY:"auto", overflowX:"hidden",
+          paddingTop: "0",
+          minHeight:"100vh",
+          maxWidth:"100%",
+        }}>
+          {/* Mobile top spacing */}
+          <div className="mobile-topbar" style={{ height:52, display:"block" }} />
+
+          <div className="screen-enter" key={tab} style={{ minHeight:"100vh" }}>
+            <Suspense fallback={<PageLoader />}>
+              <SafeScreen>
+                {SCREENS[tab] || <DashboardHome {...screenProps} />}
+              </SafeScreen>
+            </Suspense>
+          </div>
+        </main>
       </div>
 
-      {toast && <Toast key={toast.key} message={toast.msg} type={toast.type} />}
+      {/* TOAST */}
+      {toast && <Toast key={toast.key} msg={toast.msg} type={toast.type} />}
     </>
   );
 }

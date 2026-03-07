@@ -165,10 +165,33 @@ export default function DashboardHome({ onNav, showToast }) {
         </div>
       </div>
 
-      {/* QUICK ACTIONS */}
+      {/* HYPER BRAIN CTA */}
       <div style={{ padding:"1rem 1rem 0" }}>
+        <div onClick={() => onNav("brain")} style={{
+          background:"linear-gradient(135deg,rgba(124,58,237,0.2),rgba(0,245,255,0.08))",
+          border:"1px solid rgba(124,58,237,0.4)", borderRadius:14,
+          padding:"0.9rem 1rem", cursor:"pointer",
+          display:"flex", alignItems:"center", gap:"0.8rem",
+          transition:"all 0.2s"
+        }}
+        onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(124,58,237,0.7)"}
+        onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(124,58,237,0.4)"}
+        >
+          <div style={{ fontSize:"1.8rem", flexShrink:0 }}>🧠</div>
+          <div style={{ flex:1 }}>
+            <div style={{ fontSize:"0.82rem", fontWeight:900, color:"#fff", letterSpacing:1 }}>HYPER BRAIN — 5 IAs</div>
+            <div style={{ fontSize:"0.62rem", color:"#5a4080" }}>Personaje completo en 90s · Juego + cover en 60s · Marketing en 45s</div>
+          </div>
+          <div style={{ background:"linear-gradient(90deg,#7c3aed,#00f5ff)", borderRadius:99, padding:"3px 10px", fontSize:"0.6rem", color:"#fff", fontWeight:900, flexShrink:0 }}>
+            ACTIVAR →
+          </div>
+        </div>
+      </div>
+
+      {/* QUICK ACTIONS */}
+      <div style={{ padding:"0.8rem 1rem 0" }}>
         <div style={{ fontSize:"0.6rem", color:C.muted, letterSpacing:2, textTransform:"uppercase", marginBottom:"0.6rem" }}>Acciones Rápidas</div>
-        <div style={{ display:"flex", gap:"0.5rem" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"0.5rem", marginBottom:"0.6rem" }}>
           {[
             { icon:"✏️", label:"Nuevo Juego",  tab:"create" },
             { icon:"👥", label:"Personajes",   tab:"chars" },
@@ -190,6 +213,24 @@ export default function DashboardHome({ onNav, showToast }) {
               {a.label}
             </button>
           ))}
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"0.5rem", marginTop:"0.4rem" }}>
+          <div onClick={() => onNav("guide")} style={{
+            background:"rgba(34,197,94,0.06)", border:"1px solid rgba(34,197,94,0.25)",
+            borderRadius:10, padding:"0.6rem", cursor:"pointer", textAlign:"center"
+          }}>
+            <div style={{ fontSize:"1.2rem" }}>📚</div>
+            <div style={{ fontSize:"0.62rem", color:"#22c55e", fontWeight:700 }}>Guía Experta</div>
+            <div style={{ fontSize:"0.55rem", color:"#5a4080" }}>Prompts + Flujo</div>
+          </div>
+          <div onClick={() => onNav("prompts")} style={{
+            background:"rgba(192,132,252,0.06)", border:"1px solid rgba(192,132,252,0.25)",
+            borderRadius:10, padding:"0.6rem", cursor:"pointer", textAlign:"center"
+          }}>
+            <div style={{ fontSize:"1.2rem" }}>⚡</div>
+            <div style={{ fontSize:"0.62rem", color:"#c084fc", fontWeight:700 }}>Prompts Lab</div>
+            <div style={{ fontSize:"0.55rem", color:"#5a4080" }}>Mejorar textos</div>
+          </div>
         </div>
       </div>
 
