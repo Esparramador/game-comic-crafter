@@ -1,5 +1,5 @@
 import { useState, useEffect, Suspense, lazy } from "react";
-// hyperBrainApi loaded via HyperBrainScreen directly
+import { useState, Suspense, lazy, useEffect } from "react";
 import Toast from "@/components/gcc/Toast";
 
 export const config = { requiresAuth: true };
