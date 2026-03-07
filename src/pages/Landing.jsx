@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { GoogleLogin } from "@/components/ui/google_login.jsx";
 
 export const config = { requiresAuth: false };
@@ -6,60 +7,220 @@ const VIDEO1 = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/publi
 const VIDEO2 = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/69aa73f013b5c82e8989d6fc/10de00b17_Landing_Videos_y_Tienda_Shopify.mp4";
 
 export default function Landing() {
+  const [showLogin, setShowLogin] = useState(false);
 
   return (
-    <div style={{minHeight:"100vh",background:"#0d0520",backgroundImage:"radial-gradient(circle,rgba(168,85,247,0.18) 1.5px,transparent 1.5px)",backgroundSize:"12px 12px",display:"flex",flexDirection:"column",alignItems:"center",fontFamily:"'Inter',sans-serif",padding:"2rem",position:"relative",overflow:"hidden"}}>
+    <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden", fontFamily: "'Inter', sans-serif" }}>
       <style>{`
-        .glow-bg{position:absolute;top:10%;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(ellipse,rgba(124,58,237,0.15) 0%,transparent 70%);pointer-events:none}
-        .land-pill{background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);border-radius:50px;padding:0.3rem 0.9rem;font-size:0.72rem;color:#c4b5fd}
-        .land-card{background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.3);border-radius:14px;padding:1.5rem;width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center;gap:1rem;backdrop-filter:blur(10px)}
-        .vid-card{background:#160830;border:1px solid rgba(124,58,237,0.25);border-radius:14px;overflow:hidden;transition:all 0.3s;cursor:pointer}
-        .vid-card:hover{border-color:rgba(124,58,237,0.6);box-shadow:0 0 30px rgba(124,58,237,0.2);transform:translateY(-3px)}
-        .vid-card video{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
-        .vid-label{padding:0.7rem 1rem;font-size:0.78rem;font-weight:600;color:#c4b5fd;border-top:1px solid rgba(124,58,237,0.15)}
-        .section-title{font-size:1.1rem;font-weight:700;color:#fff;text-align:center;margin-bottom:1.2rem;letter-spacing:1px}
-        .section-sub{font-size:0.72rem;color:#7060a0;text-align:center;margin-top:-0.8rem;margin-bottom:1.5rem}
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        .land-pill {
+          background: rgba(124,58,237,0.18);
+          border: 1px solid rgba(168,85,247,0.35);
+          border-radius: 50px;
+          padding: 0.3rem 0.85rem;
+          font-size: 0.7rem;
+          color: #c4b5fd;
+          backdrop-filter: blur(6px);
+        }
+
+        .enter-btn {
+          background: linear-gradient(135deg, #7c3aed, #e91e8c);
+          border: none;
+          border-radius: 50px;
+          color: #fff;
+          font-size: 1rem;
+          font-weight: 700;
+          padding: 0.85rem 2.5rem;
+          cursor: pointer;
+          letter-spacing: 1px;
+          box-shadow: 0 0 30px rgba(124,58,237,0.5);
+          transition: all 0.2s;
+          font-family: inherit;
+        }
+        .enter-btn:hover {
+          box-shadow: 0 0 50px rgba(124,58,237,0.8);
+          transform: scale(1.04);
+        }
+
+        .login-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 100;
+          animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+        .login-card {
+          background: rgba(10, 5, 28, 0.75);
+          border: 1px solid rgba(168,85,247,0.4);
+          border-radius: 20px;
+          padding: 2.5rem 2rem;
+          width: 100%;
+          max-width: 360px;
+          backdrop-filter: blur(20px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1.2rem;
+          box-shadow: 0 0 60px rgba(124,58,237,0.3);
+        }
+
+        @media (max-width: 480px) {
+          .login-card { padding: 2rem 1.5rem; margin: 1rem; }
+        }
       `}</style>
 
-      <div className="glow-bg"/>
+      {/* ── VIDEO FONDO LANDING ── */}
+      <video
+        src={VIDEO1}
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: "absolute", inset: 0,
+          width: "100%", height: "100%",
+          objectFit: "cover",
+          zIndex: 0
+        }}
+      />
 
-      {/* HERO */}
-      <div style={{display:"flex",flexDirection:"column",alignItems:"center",marginBottom:"2.5rem",zIndex:1,marginTop:"1rem"}}>
-        <div style={{width:90,height:90,borderRadius:20,background:"linear-gradient(135deg,#7c3aed,#e91e8c)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"2.8rem",marginBottom:"1.5rem",boxShadow:"0 0 0 6px rgba(124,58,237,0.15),0 0 40px rgba(124,58,237,0.4)",border:"2px solid rgba(168,85,247,0.5)"}}>🐧</div>
-        <h1 style={{fontFamily:"monospace",fontSize:"clamp(1.6rem,5vw,2.5rem)",fontWeight:900,color:"#fff",textAlign:"center",textShadow:"0 0 30px rgba(124,58,237,0.6)",letterSpacing:2,marginBottom:"0.5rem",lineHeight:1.2}}>Game Comic<br/>Crafter</h1>
-        <p style={{fontFamily:"monospace",fontSize:"0.65rem",letterSpacing:"4px",textTransform:"uppercase",color:"#a855f7",marginBottom:"1.2rem"}}>El Súper Cerebro del Creador</p>
-        <div style={{display:"flex",flexWrap:"wrap",gap:"0.5rem",justifyContent:"center",marginBottom:"0"}}>
-          {["⚙️ Physics Mixer AAA","🎙️ ElevenLabs Voices","🏺 Tripo3D Models","🛍️ Shopify Ready","🤖 6-AI Cluster"].map(f=>(
+      {/* ── OVERLAY OSCURO SOBRE VIDEO ── */}
+      <div style={{
+        position: "absolute", inset: 0,
+        background: "linear-gradient(to bottom, rgba(8,4,20,0.55) 0%, rgba(8,4,20,0.3) 50%, rgba(8,4,20,0.8) 100%)",
+        zIndex: 1
+      }} />
+
+      {/* ── CONTENIDO LANDING ── */}
+      <div style={{
+        position: "relative", zIndex: 2,
+        width: "100%", height: "100%",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        padding: "2rem",
+        textAlign: "center"
+      }}>
+        {/* Logo */}
+        <div style={{
+          width: 80, height: 80, borderRadius: 20,
+          background: "linear-gradient(135deg,#7c3aed,#e91e8c)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "2.5rem", marginBottom: "1.2rem",
+          boxShadow: "0 0 0 6px rgba(124,58,237,0.2), 0 0 50px rgba(124,58,237,0.5)",
+          border: "2px solid rgba(168,85,247,0.5)"
+        }}>🐧</div>
+
+        <h1 style={{
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: "clamp(1.8rem, 6vw, 3rem)",
+          fontWeight: 900, color: "#fff",
+          textShadow: "0 0 40px rgba(124,58,237,0.8)",
+          letterSpacing: 2, lineHeight: 1.15, marginBottom: "0.6rem"
+        }}>
+          Game Comic<br/>Crafter
+        </h1>
+
+        <p style={{
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: "0.6rem", letterSpacing: "4px",
+          textTransform: "uppercase", color: "#a855f7",
+          marginBottom: "1.5rem"
+        }}>El Súper Cerebro del Creador</p>
+
+        {/* Pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center", marginBottom: "2.5rem" }}>
+          {["⚙️ Physics AAA","🎙️ ElevenLabs","🏺 Tripo3D","🛍️ Shopify","🤖 6-AI Cluster"].map(f => (
             <span key={f} className="land-pill">{f}</span>
           ))}
         </div>
+
+        {/* CTA */}
+        <button className="enter-btn" onClick={() => setShowLogin(true)}>
+          🚀 Entrar al GCC Engine
+        </button>
+
+        <p style={{ marginTop: "1.5rem", fontSize: "0.6rem", color: "rgba(168,130,220,0.5)", letterSpacing: 1 }}>
+          GCC Engine v1.0 · Nintendo Polish Grade AAA
+        </p>
       </div>
 
-      {/* VIDEOS */}
-      <div style={{width:"100%",maxWidth:900,zIndex:1,marginBottom:"2.5rem"}}>
-        <div className="section-title">🎬 Ve lo que puedes crear</div>
-        <div className="section-sub">Trailers y demos generados 100% con GCC Engine</div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:"1.2rem"}}>
-          <div className="vid-card">
-            <video src={VIDEO1} controls muted playsInline preload="metadata"/>
-            <div className="vid-label">🎮 Trailer — Configuración lista · GCC Engine</div>
-          </div>
-          <div className="vid-card">
-            <video src={VIDEO2} controls muted playsInline preload="metadata"/>
-            <div className="vid-label">🛍️ Demo — Landing · Tienda Shopify integrada</div>
+      {/* ── LOGIN OVERLAY CON VIDEO2 DE FONDO ── */}
+      {showLogin && (
+        <div className="login-overlay">
+          {/* Video fondo login */}
+          <video
+            src={VIDEO2}
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover",
+              zIndex: 0
+            }}
+          />
+
+          {/* Overlay oscuro */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "rgba(5, 2, 15, 0.7)",
+            zIndex: 1
+          }} />
+
+          {/* Cerrar */}
+          <button
+            onClick={() => setShowLogin(false)}
+            style={{
+              position: "absolute", top: "1.2rem", right: "1.2rem",
+              zIndex: 3, background: "rgba(124,58,237,0.2)",
+              border: "1px solid rgba(168,85,247,0.4)",
+              borderRadius: "50%", width: 36, height: 36,
+              color: "#c4b5fd", fontSize: "1rem",
+              cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center"
+            }}
+          >✕</button>
+
+          {/* Card login centrada */}
+          <div style={{
+            position: "relative", zIndex: 2,
+            width: "100%", height: "100%",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: "1rem"
+          }}>
+            <div className="login-card">
+              <div style={{
+                width: 60, height: 60, borderRadius: 16,
+                background: "linear-gradient(135deg,#7c3aed,#e91e8c)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "1.8rem",
+                boxShadow: "0 0 30px rgba(124,58,237,0.5)"
+              }}>🐧</div>
+
+              <div style={{ textAlign: "center" }}>
+                <div style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "1.1rem", fontWeight: 900,
+                  color: "#fff", letterSpacing: 1, marginBottom: "0.3rem"
+                }}>GCC Engine</div>
+                <div style={{ fontSize: "0.72rem", color: "rgba(196,181,253,0.7)" }}>
+                  Accede con tu cuenta de Google
+                </div>
+              </div>
+
+              <GoogleLogin />
+
+              <p style={{ fontSize: "0.6rem", color: "rgba(120,90,160,0.5)", textAlign: "center" }}>
+                Al entrar aceptas los términos de uso del GCC Engine
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* LOGIN */}
-      <div className="land-card" style={{zIndex:1}}>
-        <p style={{fontSize:"0.85rem",color:"rgba(232,224,245,0.7)",textAlign:"center"}}>Accede con tu cuenta de Google para entrar al GCC Engine</p>
-        <GoogleLogin />
-      </div>
-
-      <p style={{marginTop:"2rem",fontSize:"0.65rem",color:"rgba(120,90,160,0.5)",textAlign:"center",zIndex:1,marginBottom:"1rem"}}>
-        GCC Engine v1.0 · 6-AI Cluster · Nintendo Polish Grade AAA
-      </p>
+      )}
     </div>
   );
 }
