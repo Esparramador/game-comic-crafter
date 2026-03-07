@@ -51,17 +51,9 @@ function PageLoader() {
   );
 }
 
-// ── Error boundary funcional ──
+// ── Wrapper simple (Suspense ya maneja el lazy loading) ──
 function SafeScreen({ children }) {
-  try { return children; } catch(e) {
-    return (
-      <div style={{ padding:"2rem", textAlign:"center", color:"#ef4444" }}>
-        <div style={{ fontSize:"2rem", marginBottom:"0.5rem" }}>⚠️</div>
-        <div style={{ fontSize:"0.8rem" }}>Error al cargar esta sección</div>
-        <div style={{ fontSize:"0.65rem", color:C.muted, marginTop:"0.3rem" }}>{e.message}</div>
-      </div>
-    );
-  }
+  return children;
 }
 
 export default function HomeScreen() {
