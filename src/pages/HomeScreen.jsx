@@ -145,7 +145,10 @@ export default function HomeScreen() {
                 <span style={{ flexShrink:0 }}>{n.icon}</span>
                 <span>{n.label}</span>
                 {n.id === "brain" && (
-                  <span style={{ marginLeft:"auto", background:"linear-gradient(90deg,#7c3aed,#00f5ff)", borderRadius:99, padding:"1px 5px", fontSize:"0.48rem", color:"#fff", fontWeight:900, flexShrink:0 }}>5 IAs</span>
+                  <span style={{ marginLeft:"auto", background:"linear-gradient(90deg,#7c3aed,#00f5ff)", borderRadius:99, padding:"1px 5px", fontSize:"0.48rem", color:"#fff", fontWeight:900, flexShrink:0 }}>6 IAs</span>
+                )}
+                {n.id === "world" && (
+                  <span style={{ marginLeft:"auto", background:"rgba(34,197,94,0.2)", borderRadius:99, padding:"1px 5px", fontSize:"0.48rem", color:"#22c55e", fontWeight:900, flexShrink:0 }}>NEW</span>
                 )}
                 {n.id === "guide" && (
                   <span style={{ marginLeft:"auto", background:"rgba(34,197,94,0.2)", borderRadius:99, padding:"1px 5px", fontSize:"0.48rem", color:"#22c55e", fontWeight:900, flexShrink:0 }}>NEW</span>
