@@ -293,6 +293,19 @@ export default function EditorScreen({ onNav, showToast }) {
               )}
             </div>
 
+            {/* Activar PWA */}
+            {selected.playable_url && (
+              <button onClick={handleMakePWA} disabled={makingPWA} style={{
+                width:"100%", marginBottom:"0.5rem",
+                background: makingPWA ? "rgba(124,58,237,0.2)" : "linear-gradient(135deg,#7c3aed,#e91e8c)",
+                border:"none", borderRadius:10, padding:"0.65rem",
+                color:"#fff", fontSize:"0.78rem", fontWeight:800,
+                cursor: makingPWA ? "not-allowed" : "pointer", fontFamily:"inherit"
+              }}>
+                {makingPWA ? "⚙️ Activando PWA..." : "📱 Activar / Actualizar PWA Instalable"}
+              </button>
+            )}
+
             {/* Acciones */}
             <div style={{ display:"flex", gap:"0.5rem" }}>
               <button onClick={() => handleEdit(selected)} style={{
