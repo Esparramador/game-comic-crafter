@@ -113,6 +113,24 @@ export default function EditorScreen({ onNav, showToast }) {
     setDeleting(false);
   };
 
+  const handleMakePWA = async () => {
+    if (!selected?.playable_url) return;
+    setMakingPWA(true);
+    try {
+      const res = await base44.functions.invoke('makePWA', {
+        project_id: selected.id,
+        playable_url: selected.playable_url,
+        title: selected.title
+      });
+      if (res.data?.pwa_url) {
+        setSelected(s => ({ ...s, playable_url: res.data.pwa_url }));
+        setProjects(prev => prev.map(p => p.id === selected.id ? { ...p, playable_url: res.data.pwa_url } : p));
+        showToast("📱 PWA activada — ¡instala el juego desde tu móvil!", "success");
+      }
+    } catch(e) { showToast("❌ Error activando PWA", "error"); }
+    setMakingPWA(false);
+  };
+
   const copyPrompt = () => {
     const prompt = buildGamePrompt(form);
     navigator.clipboard.writeText(prompt).then(() => {
