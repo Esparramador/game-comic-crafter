@@ -12,6 +12,7 @@ export function autoInitKeys() {
     replicateKey:  import.meta.env.VITE_REPLICATE_KEY  || "",
     manusKey:      import.meta.env.VITE_MANUS_KEY      || "",
     geminiKey:     import.meta.env.VITE_GEMINI_KEY     || "",
+    tripoKey:      import.meta.env.VITE_TRIPO_KEY      || "",
   };
 
   // Keys desde localStorage (el usuario puede sobrescribirlas en ConfigScreen)
@@ -31,3 +32,4 @@ export function autoInitKeys() {
   initGCC(finalConfig);
   initHyperBrain(finalConfig);
 }
+

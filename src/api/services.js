@@ -1,12 +1,12 @@
 // GCC SERVICES — Tripo3D · ElevenLabs · Shopify
-const TRIPO_KEY = "tsk_zlOCluH25qxtmvgEWSw7lUWL2fSpeXexmUW73IFvLDK";
+const TRIPO_KEY = () => (window.__GCC_CONFIG__?.tripoKey || import.meta.env.VITE_TRIPO_KEY || "");
 const cfg = () => window.__GCC_CONFIG__ || {};
 
 // ── TRIPO3D ──────────────────────────────────────────────────
 export const TripoService = {
   async getTask(taskId) {
     const r = await fetch(`https://api.tripo3d.ai/v2/openapi/task/${taskId}`, {
-      headers: { Authorization: `Bearer ${TRIPO_KEY}` }
+      headers: { Authorization: `Bearer ${TRIPO_KEY()}` }
     });
     const d = await r.json();
     if (d.code !== 0) throw new Error(d.message || "Tripo3D error");
@@ -15,7 +15,7 @@ export const TripoService = {
   async generate(prompt) {
     const r = await fetch("https://api.tripo3d.ai/v2/openapi/task", {
       method: "POST",
-      headers: { Authorization: `Bearer ${TRIPO_KEY}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${TRIPO_KEY()}`, "Content-Type": "application/json" },
       body: JSON.stringify({ type:"text_to_model", prompt, model_version:"v2.5-20250123", texture:true, pbr:true, texture_alignment:"geometry", export_uv:true, geometry_quality:"standard" })
     });
     const d = await r.json();
@@ -113,3 +113,4 @@ export const ShopifyService = {
 export function initGCC(config = {}) {
   window.__GCC_CONFIG__ = { ...(window.__GCC_CONFIG__ || {}), ...config };
 }
+
