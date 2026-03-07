@@ -397,6 +397,26 @@ export default function HyperBrainScreen({ onNav, showToast }) {
           </>
         )}
 
+        {mode === "world" && (
+          <div>
+            <div style={{ marginBottom:"0.6rem" }}>
+              <label style={labelStyle}>Ciudad o zona del mundo *</label>
+              <input style={inputStyle} value={worldQuery} onChange={e=>setWorldQuery(e.target.value)} placeholder="Shinjuku Tokyo, Barrio Gótico Barcelona, Favela Rio..." />
+            </div>
+            <div>
+              <label style={labelStyle}>Género del juego</label>
+              <div style={{ display:"flex", gap:"0.3rem", flexWrap:"wrap" }}>
+                {GENRE_OPTIONS.map(g => (
+                  <button key={g} onClick={()=>setGameGenre(g)} style={{ background: gameGenre===g ? "rgba(34,197,94,0.15)" : "transparent", border:`1px solid ${gameGenre===g ? "#22c55e" : C.border}`, borderRadius:20, padding:"2px 8px", color: gameGenre===g ? "#22c55e" : C.muted, fontSize:"0.62rem", cursor:"pointer", fontFamily:"inherit" }}>{g}</button>
+                ))}
+              </div>
+            </div>
+            <div style={{ marginTop:"0.6rem", background:"rgba(34,197,94,0.06)", borderRadius:10, padding:"0.6rem", border:"1px solid rgba(34,197,94,0.2)", fontSize:"0.62rem", color:"#22c55e" }}>
+              🌍 Google Maps → 🧠 Gemini analiza zona → 🎨 Replicate genera arte → 🎮 GDD completo guardado
+            </div>
+          </div>
+        )}
+
         {mode === "game" && (
           <>
             <div style={{ marginBottom:"0.6rem" }}>
