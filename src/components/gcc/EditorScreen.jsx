@@ -184,17 +184,41 @@ export default function EditorScreen({ onNav, showToast }) {
             {/* Links */}
             <div style={{ display:"flex", flexDirection:"column", gap:"0.4rem", marginBottom:"1rem" }}>
               {selected.playable_url && (
-                <a href={selected.playable_url} target="_blank" rel="noreferrer" style={{
-                  display:"flex", alignItems:"center", gap:"0.6rem",
-                  background:"rgba(34,197,94,0.08)", border:"1px solid rgba(34,197,94,0.3)",
-                  borderRadius:10, padding:"0.7rem", textDecoration:"none", color:"#22c55e"
-                }}>
-                  <span>▶️</span>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:"0.78rem", fontWeight:700 }}>Jugar Demo</div>
-                    <div style={{ fontSize:"0.6rem", opacity:0.7, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{selected.playable_url}</div>
-                  </div>
-                </a>
+                <div style={{ display:"flex", flexDirection:"column", gap:"0.4rem" }}>
+                  <a href={selected.playable_url} target="_blank" rel="noreferrer" style={{
+                    display:"flex", alignItems:"center", gap:"0.6rem",
+                    background:"rgba(34,197,94,0.08)", border:"1px solid rgba(34,197,94,0.3)",
+                    borderRadius:10, padding:"0.7rem", textDecoration:"none", color:"#22c55e"
+                  }}>
+                    <span>▶️</span>
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontSize:"0.78rem", fontWeight:700 }}>Jugar en Web</div>
+                      <div style={{ fontSize:"0.6rem", opacity:0.7, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{selected.playable_url}</div>
+                    </div>
+                  </a>
+                  <a
+                    href={selected.playable_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const w = window.open(selected.playable_url, '_blank', 'fullscreen=yes,toolbar=no,menubar=no,scrollbars=no,resizable=yes');
+                      if (w) w.focus();
+                    }}
+                    style={{
+                      display:"flex", alignItems:"center", gap:"0.6rem",
+                      background:"linear-gradient(135deg,rgba(124,58,237,0.15),rgba(233,30,140,0.1))",
+                      border:"1px solid rgba(124,58,237,0.4)",
+                      borderRadius:10, padding:"0.7rem", textDecoration:"none", color:"#c084fc", cursor:"pointer"
+                    }}
+                  >
+                    <span>📱</span>
+                    <div>
+                      <div style={{ fontSize:"0.78rem", fontWeight:700 }}>Instalar como App (PWA)</div>
+                      <div style={{ fontSize:"0.6rem", opacity:0.7 }}>Abre en fullscreen — instala desde el navegador móvil</div>
+                    </div>
+                  </a>
+                </div>
               )}
               {selected.export_url_web && (
                 <a href={selected.export_url_web} target="_blank" rel="noreferrer" style={{
