@@ -298,9 +298,9 @@ export default function DashboardHome({ onNav, showToast }) {
         display:"flex", alignItems:"center", justifyContent:"space-around", gap:"0.5rem"
       }}>
         {/* Instagram */}
-        <a href="https://www.instagram.com/comiccrafter_ai" target="_blank" rel="noreferrer" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, textDecoration:"none" }}>
+        <a href="https://www.instagram.com/comiccrafter_ai" target="_blank" rel="noreferrer" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6, textDecoration:"none" }}>
           <div style={{
-            width:36, height:36, borderRadius:10,
+            width:44, height:44, borderRadius:12,
             background:"linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)",
             display:"flex", alignItems:"center", justifyContent:"center"
           }}>
