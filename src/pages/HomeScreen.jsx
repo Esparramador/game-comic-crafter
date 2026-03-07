@@ -36,6 +36,7 @@ const NAV = [
   { id:"test",      icon:"▶️", label:"Play"         },
   { id:"guide",     icon:"📚", label:"Guía"         },
   { id:"brain",     icon:"🧠", label:"Hyper Brain"  },
+  { id:"world",     icon:"🌍", label:"World Builder" },
   { id:"config",    icon:"🔑", label:"Config API"   },
 ];
 
