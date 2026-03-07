@@ -6,6 +6,7 @@ import { C, SectionTitle, Spinner, labelStyle, inputStyle } from "./shared";
 const MODES = [
   { id:"character", icon:"👤", label:"Forge Personaje",  desc:"Lore + imagen + 3D + voz en un click",     color:"#c084fc", time:"~90s" },
   { id:"game",      icon:"🎮", label:"Genesis Juego",    desc:"GDD + cover art + marketing kit completo", color:C.cyan,    time:"~60s" },
+  { id:"arena",     icon:"⚔️", label:"Arena Game",       desc:"Multijugador online + APK + personajes",   color:"#ef4444", time:"~30s" },
   { id:"world",     icon:"🌍", label:"World Builder",    desc:"Zona real → escenario de juego con Maps",  color:"#22c55e", time:"~75s" },
   { id:"marketing", icon:"📣", label:"Marketing Blitz",  desc:"Poster + trailer + copy 3 idiomas",        color:"#f59e0b", time:"~45s" },
   { id:"assets",    icon:"🖼️", label:"Asset Batch",      desc:"Múltiples imágenes en paralelo",           color:"#22c55e", time:"~30s" },
