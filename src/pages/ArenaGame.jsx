@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
+import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '@/utils';
+import { Loader2, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function ArenaGame() {
   const gameRef = useRef(null);
   const [gameInstance, setGameInstance] = useState(null);
   const [selectedMode, setSelectedMode] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     // Cargar Phaser dinámicamente
@@ -16,6 +22,22 @@ export default function ArenaGame() {
       document.head.appendChild(script);
     }
   }, []);
+
+  const generateArenaGame = async () => {
+    setGenerating(true);
+    setMessage('Generando Arena Game con 6 IA\'s...');
+    try {
+      const response = await base44.functions.invoke('generateArenaGameComplete', {
+        gameTitle: 'Arena Game',
+        description: 'Epic multiplayer arena battles with 6 AI opponents'
+      });
+      setMessage(`✅ Arena Game generado: ${response.data.aiCount} IA's creadas, ${response.data.characterIds.length} personajes guardados`);
+    } catch (error) {
+      setMessage(`❌ Error: ${error.message}`);
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const startGame = (mode) => {
     setSelectedMode(mode);
@@ -34,7 +56,7 @@ export default function ArenaGame() {
         super({ key: 'Main' });
       }
       create() {
-        this.add.text(16, 16, `Arena Game - ${mode} Jugadores`, { 
+        this.add.text(16, 16, `Arena Game - ${mode} Jugadores + 6 IA's`, { 
           font: '20px Arial', 
           fill: '#fff' 
         });
@@ -116,6 +138,47 @@ export default function ArenaGame() {
           }}>⚔️ GCC ARENA</h1>
           <div style={{ fontSize: '.85rem', color: '#7060a0', letterSpacing: '4px' }}>BATTLES · POWERED BY GCC ENGINE</div>
           
+          {/* Botón de generación */}
+          <Button
+            onClick={generateArenaGame}
+            disabled={generating}
+            style={{
+              background: generating ? '#666' : '#00d4ff',
+              color: '#000',
+              padding: '0.8rem 1.6rem',
+              fontSize: '0.9rem',
+              fontWeight: 700,
+              marginBottom: '1rem'
+            }}
+          >
+            {generating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Generando 6 IA's...
+              </>
+            ) : (
+              <>
+                <Zap className="h-4 w-4 mr-2" />
+                Generar Arena Game Completo
+              </>
+            )}
+          </Button>
+
+          {message && (
+            <div style={{
+              background: message.includes('✅') ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
+              border: `1px solid ${message.includes('✅') ? '#22c55e' : '#ef4444'}`,
+              color: message.includes('✅') ? '#22c55e' : '#ef4444',
+              padding: '1rem',
+              borderRadius: '8px',
+              maxWidth: '600px',
+              textAlign: 'center',
+              fontSize: '0.9rem'
+            }}>
+              {message}
+            </div>
+          )}
+          
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
@@ -166,23 +229,42 @@ export default function ArenaGame() {
             padding: '1rem',
             color: '#fff',
             fontSize: '0.9rem',
-            borderBottom: '1px solid rgba(124,58,237,.2)'
+            borderBottom: '1px solid rgba(124,58,237,.2)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}>
-            🎮 GCC Arena - {selectedMode} Jugadores
-            <button
-              onClick={() => setSelectedMode(null)}
-              style={{
-                float: 'right',
-                background: 'rgba(124,58,237,.2)',
-                border: '1px solid rgba(124,58,237,.4)',
-                color: '#fff',
-                padding: '0.5rem 1rem',
-                borderRadius: '8px',
-                cursor: 'pointer'
-              }}
-            >
-              ← Volver
-            </button>
+            <span>🎮 GCC Arena - {selectedMode} Jugadores + 6 IA's</span>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button
+                onClick={() => window.location.href = createPageUrl('AssetRepository')}
+                style={{
+                  background: 'rgba(124,58,237,.2)',
+                  border: '1px solid rgba(124,58,237,.4)',
+                  color: '#fff',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '0.8rem'
+                }}
+              >
+                📦 Repositorio
+              </button>
+              <button
+                onClick={() => setSelectedMode(null)}
+                style={{
+                  background: 'rgba(124,58,237,.2)',
+                  border: '1px solid rgba(124,58,237,.4)',
+                  color: '#fff',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '0.8rem'
+                }}
+              >
+                ← Volver
+              </button>
+            </div>
           </div>
           <div ref={gameRef} style={{ flex: 1 }} />
         </>
