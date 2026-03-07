@@ -91,10 +91,11 @@ setInterval(()=>{if(session)document.getElementById('health').textContent='HP: '
       export_formats: ['web', 'android_apk']
     });
 
-    await base44.functions.invoke('buildArenaAPK', {
+    // Iniciar APK build en background (no esperar)
+    base44.asServiceRole.functions.invoke('buildArenaAPK', {
       project_id: arenaProject.id,
       playable_url: arenaUrl
-    });
+    }).catch(e => console.log('APK build error:', e.message));
 
     return Response.json({
       success: true,
