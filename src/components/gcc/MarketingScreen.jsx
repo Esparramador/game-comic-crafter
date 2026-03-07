@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { C, SectionTitle, Spinner, EmptyState, Pill } from "./shared";
 
-export default function MarketingScreen({ showToast }) {
+export default function MarketingScreen({ onNav, showToast }) {
   const [projects, setProjects] = useState([]);
   const [kits, setKits] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +24,7 @@ export default function MarketingScreen({ showToast }) {
 
   if (projects.length === 0) return (
     <div style={{ padding:"1rem" }}>
+      <button onClick={() => onNav("dashboard")} style={{ background:"transparent", border:"none", color:"#5a4080", fontSize:"0.72rem", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:4, marginBottom:"0.8rem", padding:0 }}>← Volver al Dashboard</button>
       <SectionTitle>📣 Marketing Kit</SectionTitle>
       <EmptyState icon="📣" title="Sin proyectos" sub="Crea un proyecto para generar su kit de marketing" />
     </div>
@@ -40,6 +41,7 @@ export default function MarketingScreen({ showToast }) {
 
   return (
     <div style={{ padding:"1rem" }}>
+      <button onClick={() => onNav("dashboard")} style={{ background:"transparent", border:"none", color:"#5a4080", fontSize:"0.72rem", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:4, marginBottom:"0.8rem", padding:0 }}>← Volver al Dashboard</button>
       <SectionTitle>📣 Marketing Kit</SectionTitle>
 
       {/* Selector proyecto */}

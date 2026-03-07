@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCC Arena Battles — 2v2 · 3v3 · 5v5</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #0a0010; font-family: 'Segoe UI', sans-serif; color: #e0e8ff; overflow: hidden; user-select: none; }
+
+#canvas { display: block; }
+
+/* UI OVERLAY */
+#ui { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+
+/* MENU */
+#menu {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, #1a0035 0%, #0a0010 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 100;
+}
+#menu h1 {
+  font-size: clamp(2rem, 6vw, 4rem); font-weight: 900;
+  background: linear-gradient(135deg, #a855f7, #00f5ff, #e91e8c);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  text-align: center; margin-bottom: 0.3rem; letter-spacing: 2px;
+}
+#menu .sub { font-size: 0.85rem; color: #7060a0; letter-spacing: 4px; margin-bottom: 2rem; }
+
+.mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; max-width: 600px; width: 90%; }
+.mode-btn {
+  background: rgba(124,58,237,0.12); border: 2px solid rgba(124,58,237,0.4);
+  border-radius: 16px; padding: 1.2rem 0.8rem; cursor: pointer;
+  text-align: center; transition: all 0.25s; pointer-events: all;
+}
+.mode-btn:hover { background: rgba(124,58,237,0.25); border-color: #a855f7; transform: translateY(-4px); box-shadow: 0 8px 30px rgba(124,58,237,0.4); }
+.mode-btn .mode-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.mode-btn .mode-name { font-size: 1rem; font-weight: 800; color: #fff; }
+.mode-btn .mode-desc { font-size: 0.65rem; color: #7060a0; margin-top: 0.3rem; }
+
+/* CLASS SELECT */
+#classSelect {
+  position: fixed; inset: 0;
+  background: rgba(5,0,15,0.97);
+  display: none; flex-direction: column; align-items: center;
+  padding: 1.5rem 1rem; overflow-y: auto; z-index: 100;
+}
+#classSelect h2 { font-size: 1.5rem; color: #a855f7; margin-bottom: 0.3rem; }
+#classSelect .sub2 { font-size: 0.72rem; color: #5a4080; margin-bottom: 1.2rem; letter-spacing: 2px; }
+.class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.8rem; width: 100%; max-width: 900px; }
+.class-card {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 14px; padding: 1rem; cursor: pointer; transition: all 0.2s; pointer-events: all;
+  position: relative;
+}
+.class-card:hover { border-color: #a855f7; background: rgba(124,58,237,0.12); transform: translateY(-2px); }
+.class-card.selected { border-color: #00f5ff; background: rgba(0,245,255,0.08); }
+.class-card .cc-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.class-card .cc-name { font-size: 0.9rem; font-weight: 800; color: #fff; }
+.class-card .cc-role { font-size: 0.6rem; font-weight: 700; border-radius: 20px; padding: 2px 8px; display: inline-block; margin: 0.3rem 0; }
+.class-card .cc-desc { font-size: 0.62rem; color: #7060a0; line-height: 1.4; }
+.role-dps { background: rgba(239,68,68,0.15); color: #ef4444; }
+.role-tank { background: rgba(59,130,246,0.15); color: #60a5fa; }
+.role-healer { background: rgba(34,197,94,0.15); color: #22c55e; }
+.role-special { background: rgba(255,215,0,0.2); color: #ffd700; }
+.class-card.special-card { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.04); }
+.class-card.special-card:hover { border-color: #ffd700; box-shadow: 0 0 30px rgba(255,215,0,0.3); }
+.secret-badge { position: absolute; top: 8px; right: 8px; background: rgba(255,215,0,0.2); color: #ffd700; font-size: 0.55rem; font-weight: 800; padding: 2px 6px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.4); }
+
+.start-btn {
+  margin-top: 1.5rem; padding: 0.9rem 3rem; font-size: 1rem; font-weight: 800;
+  background: linear-gradient(135deg, #7c3aed, #e91e8c); border: none; border-radius: 12px;
+  color: #fff; cursor: pointer; pointer-events: all; transition: all 0.2s; letter-spacing: 1px;
+}
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.5); }
+
+/* HUD */
+#hud { position: fixed; top: 0; left: 0; right: 0; pointer-events: none; z-index: 50; }
+.team-hud { display: flex; gap: 0.4rem; padding: 0.7rem; flex-wrap: wrap; }
+.unit-bar {
+  background: rgba(10,0,20,0.85); border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 10px; padding: 0.5rem 0.7rem; min-width: 110px; backdrop-filter: blur(8px);
+}
+.unit-bar .ub-name { font-size: 0.62rem; font-weight: 700; color: #c084fc; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.08); margin-bottom: 2px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; transition: width 0.2s; }
+.hp-fill { background: linear-gradient(90deg, #22c55e, #86efac); }
+.mp-fill { background: linear-gradient(90deg, #3b82f6, #93c5fd); }
+.enemy-fill { background: linear-gradient(90deg, #ef4444, #fca5a5); }
+
+/* ABILITIES BAR */
+#abilityBar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 0.5rem;
+  padding: 0.8rem; background: rgba(5,0,15,0.9);
+  border-top: 1px solid rgba(124,58,237,0.2); z-index: 50;
+  pointer-events: all;
+}
+.ab-btn {
+  width: 60px; height: 60px; border-radius: 12px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 1.4rem; position: relative; border: 2px solid rgba(124,58,237,0.4);
+  background: rgba(124,58,237,0.1); transition: all 0.15s;
+}
+.ab-btn:hover { border-color: #a855f7; background: rgba(124,58,237,0.25); transform: translateY(-3px); }
+.ab-btn.on-cd { opacity: 0.5; cursor: not-allowed; }
+.ab-key { position: absolute; bottom: 3px; right: 5px; font-size: 0.52rem; color: #5a4080; font-weight: 700; }
+.ab-cd { position: absolute; inset: 0; border-radius: 10px; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #fff; font-weight: 800; }
+.ab-special { border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.08); }
+.ab-special:hover { border-color: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+
+/* DAMAGE NUMBERS */
+.dmg-num {
+  position: fixed; font-weight: 900; pointer-events: none; z-index: 60;
+  animation: floatUp 1.2s ease-out forwards;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+@keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-60px) scale(0.8)} }
+
+/* ARENA */
+#arenaCanvas { position: fixed; inset: 0; }
+
+/* RESULT */
+#result {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 200; pointer-events: all;
+}
+#result h2 { font-size: 3rem; font-weight: 900; margin-bottom: 1rem; }
+#result .res-sub { font-size: 1rem; color: #7060a0; margin-bottom: 2rem; }
+.res-btn { padding: 0.8rem 2.5rem; background: linear-gradient(135deg,#7c3aed,#e91e8c); border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 800; cursor: pointer; margin: 0.3rem; }
+
+/* ALUNIZAJE overlay */
+#alunizaje {
+  position: fixed; inset: 0; z-index: 150; pointer-events: none;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.3);
+}
+#alunizaje .bmw { font-size: 12rem; animation: bmwDrive 8s linear forwards; }
+@keyframes bmwDrive {
+  0%   { transform: translateX(-120vw) rotate(-5deg); }
+  20%  { transform: translateX(-20vw) rotate(5deg); }
+  40%  { transform: translateX(10vw) rotate(-8deg); }
+  60%  { transform: translateX(-10vw) rotate(10deg); }
+  80%  { transform: translateX(30vw) rotate(-5deg); }
+  100% { transform: translateX(120vw) rotate(0deg); }
+}
+.siren-bar { position: fixed; top: 0; left: 0; right: 0; height: 8px; display: flex; }
+.siren-r { flex: 1; background: #ef4444; animation: sirenBlink 0.4s infinite; }
+.siren-b { flex: 1; background: #3b82f6; animation: sirenBlink 0.4s 0.2s infinite; }
+@keyframes sirenBlink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* LOG */
+#battleLog {
+  position: fixed; right: 0.7rem; top: 50%; transform: translateY(-50%);
+  background: rgba(10,0,20,0.85); border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 12px; padding: 0.7rem; width: 200px; max-height: 300px;
+  overflow-y: auto; backdrop-filter: blur(8px); z-index: 50; pointer-events: none;
+}
+#battleLog .log-title { font-size: 0.58rem; color: #5a4080; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.5rem; }
+.log-entry { font-size: 0.62rem; color: #9a88c0; margin-bottom: 0.25rem; line-height: 1.3; border-bottom: 1px solid rgba(124,58,237,0.08); padding-bottom: 0.25rem; }
+.log-entry.dmg { color: #fca5a5; }
+.log-entry.heal { color: #86efac; }
+.log-entry.special { color: #ffd700; }
+.log-entry.kill { color: #e91e8c; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ARENA CANVAS -->
+<canvas id="arenaCanvas"></canvas>
+
+<!-- ALUNIZAJE -->
+<div id="alunizaje">
+  <div class="siren-r siren-bar" style="z-index:151"></div>
+  <div class="siren-b" style="position:fixed;top:8px;left:0;right:0;height:8px;display:flex;z-index:151">
+    <div style="flex:1;background:#3b82f6;animation:sirenBlink 0.4s 0.2s infinite"></div>
+    <div style="flex:1;background:#ef4444;animation:sirenBlink 0.4s infinite"></div>
+  </div>
+  <div class="bmw">🚗</div>
+</div>
+
+<!-- MENU -->
+<div id="menu">
+  <h1>⚔️ GCC ARENA</h1>
+  <div class="sub">BATTLES · POWERED BY GCC ENGINE</div>
+  <div class="mode-grid">
+    <div class="mode-btn" onclick="selectMode(2)">
+      <div class="mode-icon">⚔️</div>
+      <div class="mode-name">2 vs 2</div>
+      <div class="mode-desc">Arena Duelo<br>Skirmish</div>
+    </div>
+    <div class="mode-btn" onclick="selectMode(3)">
+      <div class="mode-icon">🛡️</div>
+      <div class="mode-name">3 vs 3</div>
+      <div class="mode-desc">Arena Táctica<br>Battleground</div>
+    </div>
+    <div class="mode-btn" onclick="selectMode(5)">
+      <div class="mode-icon">💀</div>
+      <div class="mode-name">5 vs 5</div>
+      <div class="mode-desc">Arena Épica<br>Full War</div>
+    </div>
+  </div>
+  <div style="font-size:0.7rem;color:#3a2060">
+    Haz clic en un modo para elegir tu clase
+  </div>
+</div>
+
+<!-- CLASS SELECT -->
+<div id="classSelect">
+  <h2>⚔️ ELIGE TU CLASE</h2>
+  <div class="sub2">MODO: <span id="modeLabel">2v2</span> — TÚ CONTROLAS AL PRIMER PERSONAJE</div>
+  <div class="class-grid" id="classGrid"></div>
+  <button class="start-btn" onclick="startBattle()">🏟️ ENTRAR A LA ARENA</button>
+</div>
+
+<!-- HUD -->
+<div id="hud" style="display:none">
+  <div style="display:flex;justify-content:space-between">
+    <div class="team-hud" id="team1Hud" style="background:rgba(34,197,94,0.05);border-radius:0 0 12px 0;border-bottom:1px solid rgba(34,197,94,0.2);border-right:1px solid rgba(34,197,94,0.2)"></div>
+    <div class="team-hud" id="team2Hud" style="justify-content:flex-end;background:rgba(239,68,68,0.05);border-radius:0 0 0 12px;border-bottom:1px solid rgba(239,68,68,0.2);border-left:1px solid rgba(239,68,68,0.2)"></div>
+  </div>
+</div>
+
+<!-- ABILITY BAR -->
+<div id="abilityBar" style="display:none"></div>
+
+<!-- BATTLE LOG -->
+<div id="battleLog" style="display:none">
+  <div class="log-title">⚔️ Battle Log</div>
+  <div id="logEntries"></div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <h2 id="resultText"></h2>
+  <div class="res-sub" id="resultSub"></div>
+  <button class="res-btn" onclick="backToMenu()">🏟️ Nueva Partida</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  CLASES Y DEFINICIONES
+// ══════════════════════════════════════════
+
+const CLASSES = [
+  // ─── HEALERS ───
+  {
+    id:"paladin", name:"Paladín", icon:"🛡️✨", role:"healer", color:"#ffd700",
+    hp:1400, maxHp:1400, mp:900, maxMp:900, armor:35, speed:2.2,
+    desc:"Guerrero sagrado con auras protectoras y curas masivas.",
+    abilities:[
+      { name:"Golpe Sagrado", icon:"✨", key:"Q", mp:0, cd:0, maxCd:0,
+        desc:"Ataque básico con luz divina",
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,90,0.8); dealDamage(me,t,d); logEntry(`${me.name} Golpe Sagrado → ${t.name} (-${d})`, "dmg"); }},
+      },
+      { name:"Cura Sagrada", icon:"💚", key:"W", mp:120, cd:0, maxCd:3,
+        desc:"Cura masiva a un aliado",
+        fn:(me,allies)=>{ let t=lowestHpAlly(me,allies); if(t){ let h=healCalc(me,280); t.hp=Math.min(t.maxHp,t.hp+h); showDmg(`+${h}`,t.x,t.y,"#22c55e"); logEntry(`${me.name} Cura Sagrada → ${t.name} (+${h})`, "heal"); }},
+      },
+      { name:"Escudo Divino", icon:"🛡️", key:"E", mp:200, cd:0, maxCd:12,
+        desc:"Escudo temporal que absorbe daño (5s)",
+        fn:(me,allies)=>{ let t=allies[0]||me; t.shield=500; t.shieldTimer=5; showDmg("🛡️SHIELD",t.x,t.y,"#ffd700"); logEntry(`${me.name} Escudo Divino → ${t.name}`, "special"); }},
+      { name:"Aura de Luz", icon:"☀️", key:"R", mp:350, cd:0, maxCd:30,
+        desc:"Cura a TODO el equipo durante 5s",
+        fn:(me,allies)=>{ allies.forEach(a=>{ let h=healCalc(me,160); a.hp=Math.min(a.maxHp,a.hp+h); showDmg(`+${h}`,a.x,a.y,"#86efac"); }); logEntry(`${me.name} Aura de Luz — EQUIPO CURADO`, "heal"); }},
+    ]
+  },
+  {
+    id:"druid", name:"Druida", icon:"🌿", role:"healer", color:"#22c55e",
+    hp:1200, maxHp:1200, mp:1100, maxMp:1100, armor:20, speed:2.5,
+    desc:"Maestro de la naturaleza. Heals por tiempo y raíces.",
+    abilities:[
+      { name:"Lanzar Espina", icon:"🌿", key:"Q", mp:0, cd:0, maxCd:0,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,55,0.5); dealDamage(me,t,d); applyDot(t,18,3); logEntry(`${me.name} Espina → ${t.name} (-${d}+DOT)`, "dmg"); }},
+      },
+      { name:"Regeneración", icon:"🌱", key:"W", mp:90, cd:0, maxCd:2,
+        fn:(me,allies)=>{ let t=lowestHpAlly(me,allies); if(t){ applyHot(t,60,4); showDmg("🌱HOT",t.x,t.y,"#22c55e"); logEntry(`${me.name} Regen → ${t.name}`, "heal"); }},
+      },
+      { name:"Enraizar", icon:"🌳", key:"E", mp:160, cd:0, maxCd:10,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ t.rooted=3; showDmg("⛓️ROOT",t.x,t.y,"#a3e635"); logEntry(`${me.name} Enraizó a ${t.name} (3s)`, "special"); }},
+      },
+      { name:"Lluvia Curativa", icon:"🌧️", key:"R", mp:400, cd:0, maxCd:35,
+        fn:(me,allies)=>{ allies.forEach(a=>{ applyHot(a,120,6); }); logEntry(`${me.name} Lluvia Curativa — equipo`, "heal"); }},
+    ]
+  },
+
+  // ─── TANKS ───
+  {
+    id:"warrior", name:"Guerrero", icon:"⚔️🛡️", role:"tank", color:"#60a5fa",
+    hp:2200, maxHp:2200, mp:600, maxMp:600, armor:60, speed:2.0,
+    desc:"Tanque frontline. Agarra a los enemigos y los retiene.",
+    abilities:[
+      { name:"Golpe Brutal", icon:"⚔️", key:"Q", mp:0, cd:0, maxCd:0,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,120,1.0); dealDamage(me,t,d); logEntry(`${me.name} Golpe Brutal → ${t.name} (-${d})`, "dmg"); }},
+      },
+      { name:"Provocar", icon:"😡", key:"W", mp:80, cd:0, maxCd:8,
+        fn:(me,targets)=>{ targets.forEach(t=>{ t.taunted=me; t.tauntTimer=3; }); showDmg("😡TAUNT",me.x,me.y,"#60a5fa"); logEntry(`${me.name} Provocó a todos (3s)`, "special"); }},
+      { name:"Escudo Roto", icon:"💥", key:"E", mp:150, cd:0, maxCd:12,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,200,1.5); dealDamage(me,t,d); t.armorReduced=8; showDmg(`💥${d}`,t.x,t.y,"#f97316"); logEntry(`${me.name} Escudo Roto → ${t.name} (-${d}, armor↓)`, "dmg"); }},
+      },
+      { name:"Torbellino", icon:"🌀", key:"R", mp:300, cd:0, maxCd:25,
+        fn:(me,targets)=>{ targets.forEach(t=>{ let d=dmgCalc(me,t,160,1.2); dealDamage(me,t,d); }); logEntry(`${me.name} Torbellino — AoE`, "dmg"); }},
+    ]
+  },
+  {
+    id:"deathknight", name:"Caballero Muerte", icon:"💀🛡️", role:"tank", color:"#818cf8",
+    hp:2400, maxHp:2400, mp:500, maxMp:500, armor:65, speed:1.8,
+    desc:"Tank de la muerte. Drenan vida y tienen control de áreas.",
+    abilities:[
+      { name:"Golpe Necrótico", icon:"💀", key:"Q", mp:0, cd:0, maxCd:0,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,110,0.9); dealDamage(me,t,d); let steal=Math.floor(d*0.2); me.hp=Math.min(me.maxHp,me.hp+steal); showDmg(`+${steal}❤️`,me.x,me.y,"#c084fc"); logEntry(`${me.name} Necrótico → ${t.name} (-${d}, steal ${steal})`, "dmg"); }},
+      },
+      { name:"Zona de Muerte", icon:"💜", key:"W", mp:120, cd:0, maxCd:6,
+        fn:(me,targets)=>{ targets.forEach(t=>{ applyDot(t,35,4); }); showDmg("💜ZONA",me.x,me.y,"#7c3aed"); logEntry(`${me.name} Zona de Muerte — DOT AoE`, "dmg"); }},
+      { name:"Congelación", icon:"❄️", key:"E", mp:200, cd:0, maxCd:15,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ t.frozen=4; showDmg("❄️FROZEN",t.x,t.y,"#93c5fd"); logEntry(`${me.name} Congeló a ${t.name} (4s)`, "special"); }},
+      },
+      { name:"Ejército Oscuro", icon:"🦇", key:"R", mp:400, cd:0, maxCd:30,
+        fn:(me,targets,allies)=>{ targets.forEach(t=>{ let d=dmgCalc(me,t,220,1.8); dealDamage(me,t,d); }); allies.forEach(a=>{ a.hp=Math.min(a.maxHp,a.hp+150); }); logEntry(`${me.name} Ejército Oscuro — AoE+Heal`, "special"); }},
+    ]
+  },
+
+  // ─── DPS ───
+  {
+    id:"rogue", name:"Pícaro", icon:"🗡️", role:"dps", color:"#f59e0b",
+    hp:1100, maxHp:1100, mp:800, maxMp:800, armor:20, speed:3.5,
+    desc:"Rey del burst. Daño masivo en 1 ataque y escapa invisible.",
+    abilities:[
+      { name:"Apuñalada", icon:"🗡️", key:"Q", mp:0, cd:0, maxCd:0,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,160,1.4); dealDamage(me,t,d); logEntry(`${me.name} Apuñalada → ${t.name} (-${d})`, "dmg"); }},
+      },
+      { name:"Golpe Sucio", icon:"⚡", key:"W", mp:100, cd:0, maxCd:4,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,280,2.0); dealDamage(me,t,d); t.stunned=1.5; showDmg(`⚡${d}`,t.x,t.y,"#f59e0b"); logEntry(`${me.name} Golpe Sucio → ${t.name} (-${d} STUN)`, "dmg"); }},
+      },
+      { name:"Invisibilidad", icon:"👻", key:"E", mp:150, cd:0, maxCd:18,
+        fn:(me)=>{ me.invisible=5; me.alpha=0.2; showDmg("👻INVIS",me.x,me.y,"#fbbf24"); logEntry(`${me.name} desapareció (5s)`, "special"); }},
+      { name:"Combo Letal", icon:"💥", key:"R", mp:350, cd:0, maxCd:28,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ [1,2,3].forEach((i)=>{ setTimeout(()=>{ let d=dmgCalc(me,t,220,1.8); dealDamage(me,t,d); },i*400); }); logEntry(`${me.name} Combo Letal × 3 → ${t.name}`, "dmg"); }},
+      },
+    ]
+  },
+  {
+    id:"mage", name:"Mago", icon:"🔮", role:"dps", color:"#a78bfa",
+    hp:900, maxHp:900, mp:1400, maxMp:1400, armor:10, speed:2.8,
+    desc:"Máximo daño mágico. Ventisca, bolas de fuego y arcano.",
+    abilities:[
+      { name:"Bola de Fuego", icon:"🔥", key:"Q", mp:30, cd:0, maxCd:0,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,140,1.3); dealDamage(me,t,d); applyDot(t,25,2); logEntry(`${me.name} Bola de Fuego → ${t.name} (-${d}+burn)`, "dmg"); }},
+      },
+      { name:"Ventisca", icon:"❄️", key:"W", mp:200, cd:0, maxCd:8,
+        fn:(me,targets)=>{ targets.forEach(t=>{ let d=dmgCalc(me,t,180,1.5); dealDamage(me,t,d); t.slowed=3; }); logEntry(`${me.name} Ventisca — AoE (-slow)`, "dmg"); }},
+      { name:"Polimorfar", icon:"🐑", key:"E", mp:180, cd:0, maxCd:15,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ t.polymorphed=4; t.polymorphTimer=4; showDmg("🐑SHEEP",t.x,t.y,"#e0e7ff"); logEntry(`${me.name} Polimorfó a ${t.name} (4s)`, "special"); }},
+      },
+      { name:"Tormenta Arcana", icon:"🌌", key:"R", mp:500, cd:0, maxCd:40,
+        fn:(me,targets)=>{ targets.forEach(t=>{ let d=dmgCalc(me,t,380,2.8); dealDamage(me,t,d); }); logEntry(`${me.name} ⚡TORMENTA ARCANA⚡ — masiva AoE`, "special"); }},
+    ]
+  },
+  {
+    id:"hunter", name:"Cazador", icon:"🏹", role:"dps", color:"#34d399",
+    hp:1150, maxHp:1150, mp:900, maxMp:900, armor:22, speed:3.0,
+    desc:"Daño a distancia constante. Trampas y animal compañero.",
+    abilities:[
+      { name:"Disparo Rápido", icon:"🏹", key:"Q", mp:0, cd:0, maxCd:0,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,100,0.9); dealDamage(me,t,d); logEntry(`${me.name} Disparo → ${t.name} (-${d})`, "dmg"); }},
+      },
+      { name:"Trampa de Hielo", icon:"🪤", key:"W", mp:120, cd:0, maxCd:10,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ t.frozen=3; let d=dmgCalc(me,t,140,1.2); dealDamage(me,t,d); logEntry(`${me.name} Trampa → ${t.name} (frozen+dmg)`, "dmg"); }},
+      },
+      { name:"Multidisparo", icon:"💨", key:"E", mp:180, cd:0, maxCd:9,
+        fn:(me,targets)=>{ targets.forEach(t=>{ let d=dmgCalc(me,t,95,0.8); dealDamage(me,t,d); }); logEntry(`${me.name} Multidisparo — AoE`, "dmg"); }},
+      { name:"Bestia Feroz", icon:"🐺", key:"R", mp:300, cd:0, maxCd:25,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ [1,2,3,4].forEach(i=>{ setTimeout(()=>{ let d=dmgCalc(me,t,130,1.1); dealDamage(me,t,d); },i*500); }); logEntry(`${me.name} Bestia Feroz × 4 → ${t.name}`, "dmg"); }},
+      },
+    ]
+  },
+  {
+    id:"warlock", name:"Brujo", icon:"🕯️", role:"dps", color:"#f472b6",
+    hp:950, maxHp:950, mp:1300, maxMp:1300, armor:12, speed:2.6,
+    desc:"Daño por tiempo y control demoníaco. Drain Soul letal.",
+    abilities:[
+      { name:"Inmolación", icon:"🔥", key:"Q", mp:40, cd:0, maxCd:0,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ applyDot(t,45,5); let d=60; dealDamage(me,t,d); logEntry(`${me.name} Inmolación → ${t.name} (-${d}+DOT)`, "dmg"); }},
+      },
+      { name:"Miedo", icon:"😱", key:"W", mp:150, cd:0, maxCd:12,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ t.feared=4; showDmg("😱FEAR",t.x,t.y,"#f472b6"); logEntry(`${me.name} Asustó a ${t.name} (4s)`, "special"); }},
+      },
+      { name:"Maldición Agonía", icon:"💜", key:"E", mp:200, cd:0, maxCd:8,
+        fn:(me,targets)=>{ targets.forEach(t=>{ applyDot(t,60,8); }); logEntry(`${me.name} Agonía — DOT masivo AoE`, "dmg"); }},
+      { name:"Drenar Alma", icon:"🌑", key:"R", mp:350, cd:0, maxCd:30,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,450,3.0); dealDamage(me,t,d); let steal=Math.floor(d*0.5); me.hp=Math.min(me.maxHp,me.hp+steal); showDmg(`🌑${d}`,t.x,t.y,"#7c3aed"); logEntry(`${me.name} DRENAR ALMA → ${t.name} (-${d}, steal ${steal})`, "dmg"); }},
+      },
+    ]
+  },
+  {
+    id:"shaman", name:"Chamán", icon:"⚡🌊", role:"dps", color:"#38bdf8",
+    hp:1250, maxHp:1250, mp:1050, maxMp:1050, armor:28, speed:2.7,
+    desc:"Híbrido elemental. Rayo + curación menor + totems.",
+    abilities:[
+      { name:"Golpe Rayo", icon:"⚡", key:"Q", mp:20, cd:0, maxCd:0,
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,120,1.0); dealDamage(me,t,d); let chain=targets.filter(e=>e!==t).slice(0,1); chain.forEach(c=>dealDamage(me,c,Math.floor(d*0.6))); logEntry(`${me.name} Rayo → ${t.name} (-${d}+chain)`, "dmg"); }},
+      },
+      { name:"Ola de Curación", icon:"🌊", key:"W", mp:130, cd:0, maxCd:5,
+        fn:(me,allies)=>{ let t=lowestHpAlly(me,allies); if(t){ let h=healCalc(me,200); t.hp=Math.min(t.maxHp,t.hp+h); showDmg(`+${h}`,t.x,t.y,"#38bdf8"); logEntry(`${me.name} Ola → ${t.name} (+${h})`, "heal"); }},
+      },
+      { name:"Tótem de Fuego", icon:"🔥", key:"E", mp:220, cd:0, maxCd:14,
+        fn:(me,targets)=>{ targets.forEach(t=>{ applyDot(t,40,5); let d=90; dealDamage(me,t,d); }); logEntry(`${me.name} Tótem Fuego — AoE`, "dmg"); }},
+      { name:"Tormenta Elemental", icon:"🌪️", key:"R", mp:450, cd:0, maxCd:35,
+        fn:(me,targets)=>{ targets.forEach(t=>{ let d=dmgCalc(me,t,300,2.2); dealDamage(me,t,d); t.slowed=4; }); logEntry(`${me.name} ⚡TORMENTA ELEMENTAL⚡`, "dmg"); }},
+    ]
+  },
+
+  // ─── ESPECIAL ───
+  {
+    id:"alunizero", name:"Alunizero", icon:"🔧", role:"special", color:"#ffd700",
+    hp:1800, maxHp:1800, mp:800, maxMp:800, armor:45, speed:3.0,
+    isSecret: true,
+    desc:"Personaje único. Pata de cabra, Magnum .38 y el legendario Alunizaje.",
+    abilities:[
+      { name:"Pata de Cabra", icon:"🔧", key:"Q", mp:0, cd:0, maxCd:0,
+        desc:"Golpe cuerpo a cuerpo brutal con la pata de cabra de la obra",
+        fn:(me,targets)=>{ let t=nearestEnemy(me,targets); if(t){ let d=dmgCalc(me,t,180,1.6); dealDamage(me,t,d); t.stunned=0.8; showDmg(`🔧${d}`,t.x,t.y,"#ffd700"); logEntry(`Alunizero Pata de Cabra → ${t.name} (-${d} STUN)`, "dmg"); }},
+      },
+      { name:"Magnum .38", icon:"🔫", key:"W", mp:60, cd:0, maxCd:2,
+        desc:"Disparo a distancia preciso con el 38",
+        fn:(me,targets)=>{ let far=targets.reduce((a,b)=>dist(me,a)<dist(me,b)?b:a, targets[0]); if(far){ let d=dmgCalc(me,far,240,2.0); dealDamage(me,far,d); showDmg(`🔫${d}`,far.x,far.y,"#fbbf24"); logEntry(`Alunizero .38 → ${far.name} (-${d})`, "dmg"); }},
+      },
+      { name:"Granada de Obra", icon:"💥", key:"E", mp:150, cd:0, maxCd:10,
+        desc:"Lanza una granada que aturde y daña en área",
+        fn:(me,targets)=>{ targets.forEach(t=>{ let d=dmgCalc(me,t,160,1.3); dealDamage(me,t,d); t.stunned=2; }); showDmg("💥BOOM",me.x,me.y,"#f97316"); logEntry(`Alunizero Granada — AoE STUN`, "dmg"); }},
+      { name:"⭐ EL ALUNIZAJE", icon:"🚗", key:"R", mp:400, cd:0, maxCd:45,
+        desc:"¡Aparece un BMW X6 y arrolla a todos durante 8 segundos!",
+        fn:(me,targets,allies,gameState)=>{ triggerAlunizaje(me,targets); logEntry(`⭐ ALUNIZERO ACTIVA: EL ALUNIZAJE ⭐`, "special"); }},
+    ]
+  },
+];
+
+// ══════════════════════════════════════════
+//  ESTADO DEL JUEGO
+// ══════════════════════════════════════════
+
+let gameMode = 2;
+let selectedClass = null;
+let team1 = [], team2 = [];
+let playerUnit = null;
+let canvas, ctx;
+let gameLoop = null;
+let gameTime = 0;
+let gameOver = false;
+let cdTimers = {};
+
+// ── CANVAS SETUP ──
+window.onload = () => {
+  canvas = document.getElementById("arenaCanvas");
+  ctx = canvas.getContext("2d");
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+  // Keyboard
+  document.addEventListener("keydown", handleKey);
+};
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+// ══════════════════════════════════════════
+//  MENU & SETUP
+// ══════════════════════════════════════════
+
+function selectMode(n) {
+  gameMode = n;
+  document.getElementById("modeLabel").textContent = `${n}v${n}`;
+  document.getElementById("menu").style.display = "none";
+  document.getElementById("classSelect").style.display = "flex";
+  renderClassGrid();
+}
+
+function renderClassGrid() {
+  const grid = document.getElementById("classGrid");
+  grid.innerHTML = "";
+  CLASSES.forEach(c => {
+    const div = document.createElement("div");
+    div.className = "class-card" + (c.isSecret ? " special-card" : "");
+    div.dataset.id = c.id;
+    div.onclick = () => selectClass(c.id);
+    div.innerHTML = `
+      ${c.isSecret ? '<div class="secret-badge">⭐ ÚNICO</div>' : ""}
+      <div class="cc-icon">${c.icon}</div>
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-role role-${c.role}">${c.role.toUpperCase()}</div>
+      <div class="cc-desc">${c.desc}</div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function selectClass(id) {
+  selectedClass = CLASSES.find(c => c.id === id);
+  document.querySelectorAll(".class-card").forEach(el => {
+    el.classList.toggle("selected", el.dataset.id === id);
+  });
+}
+
+// ══════════════════════════════════════════
+//  INICIO DE BATALLA
+// ══════════════════════════════════════════
+
+function startBattle() {
+  if (!selectedClass) { alert("¡Elige una clase primero!"); return; }
+  document.getElementById("classSelect").style.display = "none";
+  document.getElementById("hud").style.display = "block";
+  document.getElementById("abilityBar").style.display = "flex";
+  document.getElementById("battleLog").style.display = "block";
+  setupTeams();
+  renderAbilityBar();
+  renderHUD();
+  if (gameLoop) clearInterval(gameLoop);
+  gameTime = 0;
+  gameOver = false;
+  gameLoop = setInterval(tick, 100);
+  drawLoop();
+}
+
+const ENEMY_POOLS = ["warrior","mage","rogue","paladin","hunter","deathknight","shaman","warlock","druid"];
+
+function makeUnit(classDef, team, x, y, isPlayer=false) {
+  const u = JSON.parse(JSON.stringify(classDef));
+  u.x = x; u.y = y; u.team = team; u.isPlayer = isPlayer;
+  u.hp = u.maxHp; u.mp = u.maxMp;
+  u.dots = []; u.hots = [];
+  u.shield = 0; u.shieldTimer = 0;
+  u.stunned = 0; u.rooted = 0; u.frozen = 0; u.feared = 0;
+  u.invisible = 0; u.alpha = 1;
+  u.taunted = null; u.tauntTimer = 0;
+  u.slowed = 0; u.polymorphed = 0; u.polymorphTimer = 0;
+  u.armorReduced = 0;
+  u.aiTimer = 0;
+  u.abilities = u.abilities.map((a,i) => ({ ...a, cd: 0, maxCd: a.maxCd||0 }));
+  return u;
+}
+
+function setupTeams() {
+  const W = canvas.width, H = canvas.height;
+  team1 = []; team2 = [];
+
+  // Player
+  playerUnit = makeUnit(selectedClass, 1, W*0.25, H*0.5, true);
+  team1.push(playerUnit);
+
+  // Allies
+  const allyPool = CLASSES.filter(c => c.id !== selectedClass.id);
+  for (let i = 1; i < gameMode; i++) {
+    const cls = allyPool[Math.floor(Math.random()*allyPool.length)];
+    const u = makeUnit(cls, 1, W*0.2, H*0.3 + i*90);
+    u.name = `${cls.name} Aliado`;
+    team1.push(u);
+  }
+
+  // Enemies
+  for (let i = 0; i < gameMode; i++) {
+    const eid = ENEMY_POOLS[Math.floor(Math.random()*ENEMY_POOLS.length)];
+    const ecls = CLASSES.find(c=>c.id===eid) || CLASSES[0];
+    const u = makeUnit(ecls, 2, W*0.75, H*0.3 + i*90);
+    u.name = `${ecls.name} Rival`;
+    team2.push(u);
+  }
+}
+
+// ══════════════════════════════════════════
+//  GAME TICK (AI + TIMERS)
+// ══════════════════════════════════════════
+
+function tick() {
+  if (gameOver) return;
+  gameTime += 0.1;
+
+  const allUnits = [...team1, ...team2];
+  const aliveT1 = team1.filter(u => u.hp > 0);
+  const aliveT2 = team2.filter(u => u.hp > 0);
+
+  if (aliveT1.length === 0 || aliveT2.length === 0) {
+    endGame(aliveT1.length > 0);
+    return;
+  }
+
+  allUnits.forEach(u => {
+    if (u.hp <= 0) return;
+
+    // Timers de estado
+    if (u.stunned > 0)     u.stunned     = Math.max(0, u.stunned - 0.1);
+    if (u.frozen > 0)      u.frozen      = Math.max(0, u.frozen - 0.1);
+    if (u.feared > 0)      u.feared      = Math.max(0, u.feared - 0.1);
+    if (u.rooted > 0)      u.rooted      = Math.max(0, u.rooted - 0.1);
+    if (u.slowed > 0)      u.slowed      = Math.max(0, u.slowed - 0.1);
+    if (u.invisible > 0)   { u.invisible = Math.max(0, u.invisible - 0.1); if (u.invisible<=0) u.alpha=1; }
+    if (u.tauntTimer > 0)  { u.tauntTimer= Math.max(0, u.tauntTimer - 0.1); if (u.tauntTimer<=0) u.taunted=null; }
+    if (u.shieldTimer > 0) { u.shieldTimer=Math.max(0,u.shieldTimer-0.1); if(u.shieldTimer<=0) u.shield=0; }
+    if (u.polymorphTimer > 0) { u.polymorphTimer=Math.max(0,u.polymorphTimer-0.1); if(u.polymorphTimer<=0){ u.polymorphed=0; } }
+
+    // DOTs
+    u.dots = u.dots.filter(d => d.dur > 0);
+    u.dots.forEach(d => {
+      d.tick = (d.tick||0) + 0.1;
+      if (d.tick >= 1) { d.tick=0; d.dur--; dealDamage(null,u,d.dmg); }
+    });
+
+    // HOTs
+    u.hots = u.hots.filter(h => h.dur > 0);
+    u.hots.forEach(h => {
+      h.tick = (h.tick||0) + 0.1;
+      if (h.tick >= 1) { h.tick=0; h.dur--; u.hp=Math.min(u.maxHp,u.hp+h.heal); showDmg(`+${h.heal}`,u.x,u.y,"#22c55e"); }
+    });
+
+    // CD
+    u.abilities.forEach(a => { if (a.cd > 0) a.cd = Math.max(0, a.cd - 0.1); });
+
+    // AI (no player, no stunned/frozen/polymorphed)
+    if (!u.isPlayer && u.hp > 0 && u.stunned<=0 && u.frozen<=0 && u.polymorphed<=0 && u.feared<=0) {
+      const enemies = u.team===1 ? aliveT2 : aliveT1;
+      const allies  = u.team===1 ? aliveT1 : aliveT2;
+      aiAct(u, enemies, allies);
+    }
+
+    // Movimiento AI hacia enemigos
+    if (!u.isPlayer && u.hp > 0 && u.stunned<=0 && u.frozen<=0 && u.rooted<=0) {
+      const enemies = u.team===1 ? aliveT2 : aliveT1;
+      if (enemies.length > 0) {
+        const target = u.taunted && u.taunted.hp>0 ? u.taunted : enemies[0];
+        moveToward(u, target, (u.slowed>0?u.speed*0.5:u.speed));
+      }
+    }
+  });
+
+  renderHUD();
+  renderAbilityBar();
+}
+
+function aiAct(u, enemies, allies) {
+  u.aiTimer = (u.aiTimer||0) + 0.1;
+  if (u.aiTimer < 1.5 + Math.random()) return;
+  u.aiTimer = 0;
+
+  if (enemies.length === 0) return;
+
+  // Elegir habilidad según rol
+  const usable = u.abilities.filter(a => a.cd <= 0 && u.mp >= (a.mp||0));
+  if (usable.length === 0) return;
+
+  let chosen;
+  if (u.role === "healer") {
+    // Curar si alguien tiene menos del 70% HP
+    const lowAlly = allies.find(a => a.hp < a.maxHp * 0.7);
+    if (lowAlly && usable.length > 1) {
+      chosen = usable[Math.floor(Math.random() * Math.min(2, usable.length))];
+    } else {
+      chosen = usable[0]; // básico
+    }
+  } else {
+    // Priorizar ultimate si está lista
+    const ult = usable.find(a => a.key === "R");
+    if (ult && Math.random() < 0.3) chosen = ult;
+    else chosen = usable[Math.floor(Math.random() * usable.length)];
+  }
+
+  if (chosen) {
+    u.mp = Math.max(0, u.mp - (chosen.mp||0));
+    chosen.cd = chosen.maxCd;
+    try { chosen.fn(u, enemies, allies); } catch(e){}
+  }
+}
+
+// ══════════════════════════════════════════
+//  DRAW LOOP
+// ══════════════════════════════════════════
+
+function drawLoop() {
+  if (!canvas || !ctx) return;
+  draw();
+  if (!gameOver) requestAnimationFrame(drawLoop);
+}
+
+function draw() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // ARENA BACKGROUND
+  const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W*0.7);
+  grad.addColorStop(0, "#1a0035");
+  grad.addColorStop(1, "#06000f");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  // Arena circle
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(W/2, H/2, Math.min(W,H)*0.45, 0, Math.PI*2);
+  ctx.strokeStyle = "rgba(124,58,237,0.25)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // Inner rings
+  [0.3,0.2,0.1].forEach(r => {
+    ctx.beginPath();
+    ctx.arc(W/2, H/2, Math.min(W,H)*r, 0, Math.PI*2);
+    ctx.strokeStyle = "rgba(124,58,237,0.08)";
+    ctx.stroke();
+  });
+  ctx.restore();
+
+  // Dividing line
+  ctx.save();
+  ctx.setLineDash([8,8]);
+  ctx.beginPath();
+  ctx.moveTo(W/2, H*0.1);
+  ctx.lineTo(W/2, H*0.9);
+  ctx.strokeStyle = "rgba(124,58,237,0.15)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.restore();
+
+  // Draw units
+  [...team1, ...team2].forEach(u => {
+    if (u.hp > 0) drawUnit(u);
+  });
+}
+
+function drawUnit(u) {
+  const r = 28;
+  const isEnemy = u.team === 2;
+  ctx.save();
+  ctx.globalAlpha = u.alpha || 1;
+
+  // Shadow
+  ctx.beginPath();
+  ctx.ellipse(u.x, u.y + r + 6, r*0.9, 6, 0, 0, Math.PI*2);
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.fill();
+
+  // Shield glow
+  if (u.shield > 0) {
+    ctx.beginPath();
+    ctx.arc(u.x, u.y, r + 10, 0, Math.PI*2);
+    ctx.strokeStyle = "rgba(255,215,0,0.6)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+
+  // Body circle
+  const teamColor = isEnemy ? "#ef4444" : "#22c55e";
+  const bodyGrad = ctx.createRadialGradient(u.x-8, u.y-8, 2, u.x, u.y, r);
+  bodyGrad.addColorStop(0, u.color || teamColor);
+  bodyGrad.addColorStop(1, isEnemy ? "#7f1d1d" : "#14532d");
+  ctx.beginPath();
+  ctx.arc(u.x, u.y, r, 0, Math.PI*2);
+  ctx.fillStyle = bodyGrad;
+  ctx.fill();
+
+  // Border
+  ctx.beginPath();
+  ctx.arc(u.x, u.y, r, 0, Math.PI*2);
+  ctx.strokeStyle = u.isPlayer ? "#ffd700" : (isEnemy ? "#f87171" : "#4ade80");
+  ctx.lineWidth = u.isPlayer ? 3 : 2;
+  ctx.stroke();
+
+  // Status effects
+  if (u.frozen > 0)     { ctx.strokeStyle="#93c5fd"; ctx.lineWidth=3; ctx.stroke(); }
+  if (u.stunned > 0)    { ctx.fillStyle="rgba(255,215,0,0.3)"; ctx.fill(); }
+  if (u.polymorphed > 0){ ctx.fillStyle="rgba(255,255,255,0.5)"; ctx.fill(); }
+
+  // Icon
+  ctx.globalAlpha = (u.alpha||1);
+  ctx.font = `${u.polymorphed > 0 ? "1.2rem" : "1.4rem"} serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(u.polymorphed > 0 ? "🐑" : (typeof u.icon === "string" ? u.icon.split("")[0] : "?"), u.x, u.y);
+
+  // HP bar above unit
+  const bw = 64, bh = 7;
+  const bx = u.x - bw/2, by = u.y - r - 18;
+  ctx.fillStyle = "rgba(0,0,0,0.6)";
+  roundRect(ctx, bx, by, bw, bh, 3);
+  ctx.fill();
+  const hpRatio = Math.max(0, u.hp / u.maxHp);
+  ctx.fillStyle = hpRatio > 0.5 ? "#22c55e" : hpRatio > 0.25 ? "#f59e0b" : "#ef4444";
+  roundRect(ctx, bx, by, bw * hpRatio, bh, 3);
+  ctx.fill();
+
+  // Name
+  ctx.font = "bold 10px sans-serif";
+  ctx.fillStyle = u.isPlayer ? "#ffd700" : (isEnemy ? "#fca5a5" : "#86efac");
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  ctx.fillText(u.name || u.id, u.x, u.y - r - 28);
+
+  // Role badge
+  const roleColor = { dps:"#ef4444", tank:"#60a5fa", healer:"#22c55e", special:"#ffd700" };
+  ctx.font = "bold 8px sans-serif";
+  ctx.fillStyle = roleColor[u.role] || "#a78bfa";
+  ctx.fillText(u.role?.toUpperCase(), u.x, u.y - r - 38);
+
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+// ══════════════════════════════════════════
+//  HUD
+// ══════════════════════════════════════════
+
+function renderHUD() {
+  const h1 = document.getElementById("team1Hud");
+  const h2 = document.getElementById("team2Hud");
+  h1.innerHTML = team1.map(u => unitBar(u, false)).join("");
+  h2.innerHTML = team2.map(u => unitBar(u, true)).join("");
+}
+
+function unitBar(u, enemy) {
+  const hpPct = Math.max(0, (u.hp/u.maxHp)*100).toFixed(1);
+  const mpPct = Math.max(0, (u.mp/u.maxMp)*100).toFixed(1);
+  const statusIcons = [
+    u.stunned>0?"⚡":"", u.frozen>0?"❄️":"", u.rooted>0?"⛓️":"",
+    u.feared>0?"😱":"", u.invisible>0?"👻":"", u.shield>0?"🛡️":"",
+    u.polymorphed>0?"🐑":""
+  ].filter(Boolean).join("");
+  return `<div class="unit-bar">
+    <div class="ub-name">${u.isPlayer?"⭐ ":""}${u.name||u.id} ${statusIcons}</div>
+    <div class="bar-track"><div class="bar-fill ${enemy?"enemy-fill":"hp-fill"}" style="width:${hpPct}%"></div></div>
+    <div class="bar-track"><div class="bar-fill mp-fill" style="width:${mpPct}%"></div></div>
+    <div style="font-size:0.55rem;color:#5a4080">${Math.max(0,u.hp)}/${u.maxHp} HP</div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+//  ABILITY BAR
+// ══════════════════════════════════════════
+
+function renderAbilityBar() {
+  if (!playerUnit) return;
+  const bar = document.getElementById("abilityBar");
+  const abilities = playerUnit.abilities;
+  bar.innerHTML = abilities.map((a,i) => {
+    const onCd = a.cd > 0;
+    const noMp = playerUnit.mp < (a.mp||0);
+    const isSpecial = a.key === "R";
+    return `<div class="ab-btn ${isSpecial?"ab-special":""} ${(onCd||noMp)?"on-cd":""}"
+      onclick="useAbility(${i})" title="${a.name}: ${a.desc||""}">
+      ${a.icon}
+      <div class="ab-key">${a.key}</div>
+      ${onCd ? `<div class="ab-cd">${a.cd.toFixed(1)}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+// ══════════════════════════════════════════
+//  PLAYER ABILITY USE
+// ══════════════════════════════════════════
+
+function useAbility(idx) {
+  if (!playerUnit || playerUnit.hp <= 0 || gameOver) return;
+  if (playerUnit.stunned>0||playerUnit.frozen>0||playerUnit.polymorphed>0) {
+    logEntry("¡Estás bloqueado!","dmg"); return;
+  }
+  const a = playerUnit.abilities[idx];
+  if (!a) return;
+  if (a.cd > 0) { logEntry(`${a.name} en cooldown (${a.cd.toFixed(1)}s)`); return; }
+  if (playerUnit.mp < (a.mp||0)) { logEntry(`Sin maná para ${a.name}`,"dmg"); return; }
+
+  const enemies = team2.filter(u=>u.hp>0);
+  const allies  = team1.filter(u=>u.hp>0);
+  if (enemies.length === 0) return;
+
+  playerUnit.mp = Math.max(0, playerUnit.mp - (a.mp||0));
+  a.cd = a.maxCd;
+  try { a.fn(playerUnit, enemies, allies); } catch(e){ console.error(e); }
+  renderAbilityBar();
+}
+
+function handleKey(e) {
+  if (!playerUnit || gameOver) return;
+  const keyMap = { KeyQ:0, KeyW:1, KeyE:2, KeyR:3 };
+  const idx = keyMap[e.code];
+  if (idx !== undefined) { e.preventDefault(); useAbility(idx); }
+}
+
+// ══════════════════════════════════════════
+//  COMBAT HELPERS
+// ══════════════════════════════════════════
+
+function dmgCalc(attacker, target, base, mult=1.0) {
+  const armor = Math.max(0, (target.armor||0) - (target.armorReduced||0));
+  const reduction = armor / (armor + 100);
+  const raw = Math.floor(base * mult * (1 - reduction));
+  return Math.max(1, raw + Math.floor((Math.random()-0.5)*raw*0.2));
+}
+
+function healCalc(healer, base) {
+  return Math.floor(base * (0.9 + Math.random()*0.2));
+}
+
+function dealDamage(attacker, target, amount) {
+  if (!target || target.hp <= 0) return;
+  if (target.shield > 0) {
+    const absorbed = Math.min(target.shield, amount);
+    target.shield -= absorbed;
+    amount -= absorbed;
+    showDmg(`🛡️${absorbed}`,target.x,target.y,"#ffd700");
+    if (amount <= 0) return;
+  }
+  target.hp = Math.max(0, target.hp - amount);
+  const color = target.team===2 ? "#ef4444" : "#fca5a5";
+  showDmg(amount, target.x, target.y, color);
+  if (target.hp <= 0) {
+    logEntry(`💀 ${target.name} ha caído`, "kill");
+  }
+}
+
+function applyDot(target, dmg, dur) {
+  target.dots.push({ dmg, dur, tick:0 });
+}
+function applyHot(target, heal, dur) {
+  target.hots.push({ heal, dur, tick:0 });
+}
+
+function nearestEnemy(me, enemies) {
+  if (!enemies||enemies.length===0) return null;
+  return enemies.filter(e=>e.hp>0).sort((a,b)=>dist(me,a)-dist(me,b))[0]||null;
+}
+function lowestHpAlly(me, allies) {
+  if (!allies||allies.length===0) return me;
+  const alive = allies.filter(a=>a.hp>0);
+  return alive.sort((a,b)=>(a.hp/a.maxHp)-(b.hp/b.maxHp))[0]||me;
+}
+function dist(a, b) {
+  return Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2);
+}
+function moveToward(u, target, speed) {
+  if (!target) return;
+  const dx = target.x - u.x, dy = target.y - u.y;
+  const d = Math.sqrt(dx*dx+dy*dy);
+  if (d > 55) { u.x += (dx/d)*speed; u.y += (dy/d)*speed; }
+}
+
+// ══════════════════════════════════════════
+//  DAMAGE NUMBERS
+// ══════════════════════════════════════════
+
+function showDmg(val, x, y, color="#ef4444") {
+  const el = document.createElement("div");
+  el.className = "dmg-num";
+  el.style.left = (x + (Math.random()-0.5)*40) + "px";
+  el.style.top = (y - 20) + "px";
+  el.style.color = color;
+  el.style.fontSize = (typeof val === "number" && val > 300) ? "1.6rem" : "1.1rem";
+  el.textContent = typeof val === "number" ? `-${val}` : val;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+}
+
+// ══════════════════════════════════════════
+//  ALUNIZAJE ⭐
+// ══════════════════════════════════════════
+
+function triggerAlunizaje(me, targets) {
+  const overlay = document.getElementById("alunizaje");
+  overlay.style.display = "flex";
+
+  // Sirenas de audio (oscillators)
+  try {
+    const ac = new AudioContext();
+    function siren(freq1, freq2, dur) {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.frequency.setValueAtTime(freq1, ac.currentTime);
+      osc.frequency.linearRampToValueAtTime(freq2, ac.currentTime + dur/2);
+      osc.frequency.linearRampToValueAtTime(freq1, ac.currentTime + dur);
+      gain.gain.setValueAtTime(0.15, ac.currentTime);
+      gain.gain.linearRampToValueAtTime(0, ac.currentTime + dur);
+      osc.start(); osc.stop(ac.currentTime + dur);
+    }
+    for (let i=0; i<8; i++) {
+      setTimeout(() => { siren(800,1200,0.8); }, i*1000);
+      setTimeout(() => { siren(600,900,0.8); }, i*1000+500);
+    }
+  } catch(e){}
+
+  // Daño progresivo durante 8 segundos
+  let elapsed = 0;
+  const bmwInterval = setInterval(() => {
+    elapsed += 0.5;
+    if (targets) {
+      targets.filter(t=>t.hp>0).forEach(t => {
+        const d = dmgCalc(me, t, 180, 1.4);
+        dealDamage(me, t, d);
+        showDmg(`🚗💥${d}`, t.x, t.y, "#ffd700");
+      });
+    }
+    if (elapsed >= 8) {
+      clearInterval(bmwInterval);
+      overlay.style.display = "none";
+    }
+  }, 500);
+
+  logEntry("🚗💨 BMW X6 ACTIVO — 8 segundos de puro caos", "special");
+}
+
+// ══════════════════════════════════════════
+//  BATTLE LOG
+// ══════════════════════════════════════════
+
+function logEntry(text, type="") {
+  const container = document.getElementById("logEntries");
+  if (!container) return;
+  const el = document.createElement("div");
+  el.className = "log-entry " + type;
+  el.textContent = text;
+  container.prepend(el);
+  if (container.children.length > 30) container.lastChild.remove();
+}
+
+// ══════════════════════════════════════════
+//  END GAME
+// ══════════════════════════════════════════
+
+function endGame(playerWon) {
+  gameOver = true;
+  clearInterval(gameLoop);
+  const resultEl = document.getElementById("result");
+  const textEl = document.getElementById("resultText");
+  const subEl = document.getElementById("resultSub");
+  resultEl.style.display = "flex";
+  if (playerWon) {
+    textEl.textContent = "🏆 ¡VICTORIA!";
+    textEl.style.color = "#ffd700";
+    subEl.textContent = `Tu equipo dominó la arena ${gameMode}v${gameMode}`;
+  } else {
+    textEl.textContent = "💀 DERROTA";
+    textEl.style.color = "#ef4444";
+    subEl.textContent = "El rival fue más fuerte esta vez...";
+  }
+}
+
+function backToMenu() {
+  gameOver = true;
+  clearInterval(gameLoop);
+  team1=[]; team2=[]; playerUnit=null;
+  selectedClass=null;
+  document.getElementById("result").style.display="none";
+  document.getElementById("hud").style.display="none";
+  document.getElementById("abilityBar").style.display="none";
+  document.getElementById("battleLog").style.display="none";
+  document.getElementById("alunizaje").style.display="none";
+  document.getElementById("menu").style.display="flex";
+  if(ctx) { ctx.clearRect(0,0,canvas.width,canvas.height); }
+}
+
+// Regen MP pasivo
+setInterval(() => {
+  if (gameOver) return;
+  [...team1,...team2].forEach(u => {
+    if (u.hp>0) u.mp = Math.min(u.maxMp, u.mp+8);
+  });
+}, 1000);
+</script>
+</body>
+</html>

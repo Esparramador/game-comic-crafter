@@ -23,6 +23,7 @@ export default function TestScreen({ onNav, showToast }) {
 
   return (
     <div style={{ padding:"1rem" }}>
+      <button onClick={() => onNav("dashboard")} style={{ background:"transparent", border:"none", color:"#5a4080", fontSize:"0.72rem", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:4, marginBottom:"0.8rem", padding:0 }}>← Volver al Dashboard</button>
       <SectionTitle>▶️ Play & Test</SectionTitle>
 
       {/* Stats rápidas */}
