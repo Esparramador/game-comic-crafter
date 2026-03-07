@@ -1,0 +1,59 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+
+// Inyecta metadatos PWA en un HTML de juego y sube la versión PWA
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const { project_id, playable_url, title } = await req.json();
+    if (!playable_url) return Response.json({ error: 'playable_url requerida' }, { status: 400 });
+
+    // 1. Descargar el HTML original
+    const res = await fetch(playable_url);
+    if (!res.ok) return Response.json({ error: 'No se pudo descargar el HTML' }, { status: 500 });
+    let html = await res.text();
+
+    const gameName = title || 'GCC Game';
+    const shortName = gameName.substring(0, 12);
+
+    // 2. Inyectar metadatos PWA si no los tiene ya
+    if (!html.includes('manifest.json') && !html.includes('apple-mobile-web-app-capable')) {
+      const pwaHead = `
+  <!-- PWA Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="${shortName}">
+  <meta name="theme-color" content="#080c1a">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <style>
+    html, body { margin: 0; padding: 0; overflow: hidden; background: #080c1a; }
+    canvas { display: block; touch-action: none; }
+  </style>`;
+
+      html = html.replace('</head>', pwaHead + '\n</head>');
+    }
+
+    // 3. Subir el HTML con PWA
+    const file = new File([html], 'game-pwa.html', { type: 'text/html' });
+    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file });
+    const newUrl = uploadResult.file_url;
+
+    if (!newUrl) return Response.json({ error: 'Upload falló' }, { status: 500 });
+
+    // 4. Actualizar el proyecto si se pasó project_id
+    if (project_id) {
+      await base44.asServiceRole.entities.GameProject.update(project_id, {
+        playable_url: newUrl,
+        status: 'playable'
+      });
+    }
+
+    return Response.json({ success: true, pwa_url: newUrl });
+
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+});
