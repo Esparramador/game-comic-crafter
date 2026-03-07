@@ -38,6 +38,10 @@ export default function EditorScreen({ onNav, showToast }) {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [selected, setSelected] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filterGenre, setFilterGenre] = useState("Todos");
+  const [filterStatus, setFilterStatus] = useState("Todos");
   const [form, setForm] = useState({
     title:"", description:"", genre:"RPG", format:"2D",
     engine:"Phaser.js", style:"Dark Fantasy", atmosphere:"dark", status:"draft"

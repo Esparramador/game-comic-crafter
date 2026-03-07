@@ -110,7 +110,7 @@ export default function DashboardHome({ onNav, showToast }) {
 
   if (loading) return <Spinner />;
 
-  const heroProject = projects[0] || null;
+  const heroProject = projects.find(p => p.status === "playable") || projects[0] || null;
   const stats = {
     assets: profile?.total_assets ?? assets.length,
     voices: profile?.total_voices ?? voices.length,
