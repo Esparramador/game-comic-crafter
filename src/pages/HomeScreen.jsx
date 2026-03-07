@@ -17,6 +17,7 @@ const TestScreen       = lazy(() => import("@/components/gcc/TestScreen"));
 const ConfigScreen     = lazy(() => import("@/components/gcc/ConfigScreen"));
 const HyperBrainScreen = lazy(() => import("@/components/gcc/HyperBrainScreen"));
 const GuideScreen      = lazy(() => import("@/components/gcc/GuideScreen"));
+const WorldBuilderScreen = lazy(() => import("@/components/gcc/WorldBuilderScreen"));
 
 const C = {
   bg:"#0f0a1e", sidebar:"#0a0718", border:"rgba(124,58,237,0.2)",
