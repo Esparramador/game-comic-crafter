@@ -55,17 +55,9 @@ Deno.serve(async (req) => {
     // 2. Inject Jinete as first class
     const newHTML = arenaHTML.replace('const CLASSES = [', 'const CLASSES = [\n' + JINETE_BLOCK);
 
-    // 3. Upload via SDK UploadFile — pass as base64 data URL
-    const encoder = new TextEncoder();
-    const bytes = encoder.encode(newHTML);
-    let binary = '';
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    const b64 = btoa(binary);
-    const dataUrl = 'data:text/html;base64,' + b64;
-
-    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file: dataUrl });
+    // 3. Upload via SDK UploadFile — pass as File object
+    const file = new File([newHTML], 'gcc-arena-jinete.html', { type: 'text/html' });
+    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file });
     const newUrl = uploadResult.file_url;
 
     if (!newUrl) return Response.json({ error: 'Upload no devolvió URL', uploadResult }, { status: 500 });
