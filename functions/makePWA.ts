@@ -18,11 +18,19 @@ Deno.serve(async (req) => {
     }
 
     // 1. Descargar el HTML original
-    const htmlRes = await fetch(playable_url);
-    if (!htmlRes.ok) {
-      return Response.json({ error: 'No se pudo descargar el HTML' }, { status: 500 });
+    let html;
+    try {
+      const htmlRes = await fetch(playable_url);
+      if (htmlRes.ok) {
+        html = await htmlRes.text();
+      } else {
+        throw new Error('HTTP ' + htmlRes.status);
+      }
+    } catch (e) {
+      // Si falla el fetch, devolver el URL original de todas formas
+      console.log('Aviso: no se pudo descargar HTML para PWA — devolviendo URL original', e.message);
+      return Response.json({ success: true, pwa_url: playable_url });
     }
-    let html = await htmlRes.text();
 
     const shortName = title.substring(0, 12);
 
