@@ -40,8 +40,9 @@ Deno.serve(async (req) => {
     };
 
     const capacitorJson = JSON.stringify(capacitorConfig, null, 2);
+    const configBlob = new Blob([capacitorJson], { type: 'application/json' });
     const androidConfigUrl = await base44.asServiceRole.integrations.Core.UploadFile({
-      file: new File([capacitorJson], 'capacitor.config.json', { type: 'application/json' })
+      file: configBlob
     });
 
     const buildScript = `#!/bin/bash
@@ -55,8 +56,9 @@ npx cap sync
 cd android && ./gradlew assembleRelease
 echo "APK ready at android/app/build/outputs/apk/release/"`;
 
+    const scriptBlob = new Blob([buildScript], { type: 'text/plain' });
     const scriptUrl = await base44.asServiceRole.integrations.Core.UploadFile({
-      file: new File([buildScript], 'build-apk.sh', { type: 'text/plain' })
+      file: scriptBlob
     });
 
     await base44.entities.GameProject.update(project_id, {
