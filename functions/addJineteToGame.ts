@@ -62,8 +62,18 @@ Deno.serve(async (req) => {
 
     if (!newUrl) return Response.json({ error: 'Upload no devolvió URL', uploadResult }, { status: 500 });
 
-    // 4. Update GameProject — use user-scoped client (RLS: created_by = user)
-    await base44.entities.GameProject.update(PROJECT_ID, { playable_url: newUrl });
+    // 4. Update GameProject playable_url only — use PATCH via direct fetch with user token
+    const token = req.headers.get('Authorization');
+    const APP_ID = Deno.env.get('BASE44_APP_ID');
+    const patchRes = await fetch(`https://base44.app/api/apps/${APP_ID}/entities/GameProject/${PROJECT_ID}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': token },
+      body: JSON.stringify({ playable_url: newUrl })
+    });
+    if (!patchRes.ok) {
+      const errText = await patchRes.text();
+      return Response.json({ error: 'Patch failed: ' + errText }, { status: 500 });
+    }
 
     return Response.json({ success: true, new_url: newUrl });
 
