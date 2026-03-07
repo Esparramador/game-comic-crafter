@@ -50,6 +50,7 @@ export default function EditorScreen({ onNav, showToast }) {
   const [deleting, setDeleting] = useState(false);
   const [promptCopied, setPromptCopied] = useState(false);
   const [showPrompt, setShowPrompt]     = useState(false);
+  const [makingPWA, setMakingPWA] = useState(false);
 
   const load = () => {
     setLoading(true);
