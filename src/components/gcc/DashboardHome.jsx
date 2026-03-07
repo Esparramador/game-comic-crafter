@@ -2,6 +2,25 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { C, Pill, Spinner, EmptyState } from "./shared";
 
+function ApiStatusBadges() {
+  const cfg = (() => { try { return JSON.parse(localStorage.getItem("gcc_api_config") || "{}"); } catch { return {}; } })();
+  const apis = [
+    { name:"ElevenLabs", key: localStorage.getItem("gcc_eleven_key") || cfg.eleven_key },
+    { name:"Tripo3D",    key: cfg.tripo_key },
+    { name:"Replicate",  key: cfg.replicate_key },
+    { name:"Gemini",     key: cfg.gemini_key },
+  ];
+  return (
+    <div style={{ display:"flex", gap:"0.4rem", marginTop:4, flexWrap:"wrap" }}>
+      {apis.map(({ name, key }) => (
+        <span key={name} style={{ fontSize:"0.5rem", padding:"1px 6px", borderRadius:99, fontWeight:700, background: key ? "rgba(34,197,94,0.15)" : "rgba(90,64,128,0.2)", color: key ? "#22c55e" : "#5a4080", border: `1px solid ${key ? "rgba(34,197,94,0.3)" : "rgba(90,64,128,0.2)"}` }}>
+          {key ? "●" : "○"} {name}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function StatCard({ icon, label, value, color }) {
   return (
     <div style={{
