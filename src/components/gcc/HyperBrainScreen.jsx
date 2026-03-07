@@ -179,9 +179,7 @@ export default function HyperBrainScreen({ onNav, showToast }) {
   useEffect(() => {
     // Leer config guardada
     try {
-      const saved = JSON.parse(localStorage.getItem("gcc_api_config") || "{}");
-      initGCC(saved);
-      initHyperBrain(saved);
+      initHyperBrain();
     } catch {}
     setServices(ALL_SERVICES_STATUS());
     base44.entities.GameProject.list("-updated_date", 20).then(d => {
