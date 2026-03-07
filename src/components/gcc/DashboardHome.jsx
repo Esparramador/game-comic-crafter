@@ -183,16 +183,7 @@ export default function DashboardHome({ onNav, showToast }) {
             <div style={{ fontSize:"0.62rem", color:"#5a4080" }}>
             Personaje completo en 90s · Juego + cover en 60s · Marketing en 45s
           </div>
-          <div style={{ display:"flex", gap:"0.4rem", marginTop:4, flexWrap:"wrap" }}>
-            {["ElevenLabs","Tripo3D","Replicate","Gemini"].map(api => {
-              const key = api === "ElevenLabs" ? localStorage.getItem("gcc_eleven_key") : localStorage.getItem(`gcc_${api.toLowerCase()}_key`) || (JSON.parse(localStorage.getItem("gcc_api_config")||"{}")[api.toLowerCase()+"_key"]);
-              return (
-                <span key={api} style={{ fontSize:"0.5rem", padding:"1px 6px", borderRadius:99, fontWeight:700, background: key ? "rgba(34,197,94,0.15)" : "rgba(90,64,128,0.2)", color: key ? "#22c55e" : "#5a4080", border: `1px solid ${key ? "rgba(34,197,94,0.3)" : "rgba(90,64,128,0.2)"}` }}>
-                  {key ? "●" : "○"} {api}
-                </span>
-              );
-            })}
-          </div>
+          <ApiStatusBadges />
           </div>
           <div style={{ background:"linear-gradient(90deg,#7c3aed,#00f5ff)", borderRadius:99, padding:"3px 10px", fontSize:"0.6rem", color:"#fff", fontWeight:900, flexShrink:0 }}>
             ACTIVAR →

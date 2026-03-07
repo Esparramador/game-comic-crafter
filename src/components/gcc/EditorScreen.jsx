@@ -67,7 +67,7 @@ export default function EditorScreen({ onNav, showToast }) {
     setSaving(true);
     try {
       if (editMode && selected) {
-        const updated = await base44.entities.GameProject.update(selected.id, form);
+        await base44.entities.GameProject.update(selected.id, form);
         setProjects(prev => prev.map(p => p.id === selected.id ? { ...p, ...form } : p));
         showToast("✅ Proyecto actualizado", "success");
         setSelected({ ...selected, ...form });
