@@ -75,6 +75,22 @@ const canvas=document.getElementById('arenaCanvas');const ctx=canvas.getContext(
       } catch (e) {
         console.log('Update aviso:', e.message);
       }
+    } else {
+      // Crear proyecto Arena Game automáticamente
+      try {
+        await base44.entities.GameProject.create({
+          title: 'GCC Arena Battles',
+          description: 'Juego de batalla multijugador generado por el AI Assistant del GCC Engine',
+          genre: 'Fighting',
+          format: '2D',
+          engine: 'Phaser.js',
+          status: 'playable',
+          playable_url: newUrl,
+          cover_image_url: null
+        });
+      } catch (e) {
+        console.log('Aviso: No se pudo guardar el proyecto Arena:', e.message);
+      }
     }
 
     return Response.json({ success: true, arena_url: newUrl });
