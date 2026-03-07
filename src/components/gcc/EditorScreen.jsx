@@ -123,6 +123,13 @@ export default function EditorScreen({ onNav, showToast }) {
 
   if (loading) return <Spinner />;
 
+  const filteredProjects = projects.filter(p => {
+    const matchSearch = !search || p.title?.toLowerCase().includes(search.toLowerCase()) || p.description?.toLowerCase().includes(search.toLowerCase());
+    const matchGenre  = filterGenre === "Todos" || p.genre === filterGenre;
+    const matchStatus = filterStatus === "Todos" || p.status === filterStatus;
+    return matchSearch && matchGenre && matchStatus;
+  });
+
   // ─── DETAIL ───
   if (view === "detail" && selected) {
     const sc = STATUS_STYLE[selected.status] || STATUS_STYLE.draft;
