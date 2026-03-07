@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 
-export default function Toast({ message, type = "info" }) {
+export default function Toast({ msg, message, type = "info" }) {
   const [visible, setVisible] = useState(true);
+  const text = msg || message;
 
   useEffect(() => {
     setVisible(true);
     const t = setTimeout(() => setVisible(false), 2800);
     return () => clearTimeout(t);
-  }, [message]);
+  }, [text]);
 
-  if (!message || !visible) return null;
+  if (!text || !visible) return null;
 
   const colors = {
     info:    { border:"rgba(0,245,255,0.45)",   color:"#00f5ff",  bg:"rgba(0,245,255,0.06)" },
@@ -29,7 +30,7 @@ export default function Toast({ message, type = "info" }) {
       boxShadow:`0 4px 24px ${c.border}`,
       animation:"fadeInUp 0.2s ease"
     }}>
-      {message}
+      {text}
       <style>{`@keyframes fadeInUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}`}</style>
     </div>
   );
