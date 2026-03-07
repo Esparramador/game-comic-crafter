@@ -1,22 +1,16 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-
-const C = {
-  bg: "#0f0a1e", card: "#160d2e", card2: "#1f1340",
-  purple: "#7c3aed", cyan: "#00f5ff", pink: "#e91e8c",
-  gold: "#ffd700", green: "#22c55e", muted: "#5a7090", text: "#e0e8ff"
-};
+import { C, Pill, Spinner, EmptyState } from "./shared";
 
 function StatCard({ icon, label, value, color }) {
   return (
     <div style={{
-      flex: 1, background: C.card, borderRadius: 12,
-      border: `1px solid rgba(124,58,237,0.2)`, padding: "0.9rem 0.7rem",
-      textAlign: "center"
+      flex:1, background:C.card, borderRadius:12,
+      border:`1px solid ${C.border}`, padding:"0.9rem 0.7rem", textAlign:"center"
     }}>
-      <div style={{ fontSize: "1.4rem", marginBottom: "0.3rem" }}>{icon}</div>
-      <div style={{ fontSize: "1.1rem", fontWeight: 800, color: color || C.cyan }}>{value ?? "—"}</div>
-      <div style={{ fontSize: "0.58rem", color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginTop: 2 }}>{label}</div>
+      <div style={{ fontSize:"1.4rem", marginBottom:"0.3rem" }}>{icon}</div>
+      <div style={{ fontSize:"1.1rem", fontWeight:800, color:color||C.cyan }}>{value ?? "—"}</div>
+      <div style={{ fontSize:"0.58rem", color:C.muted, letterSpacing:1, textTransform:"uppercase", marginTop:2 }}>{label}</div>
     </div>
   );
 }
@@ -24,33 +18,34 @@ function StatCard({ icon, label, value, color }) {
 function ProjectCard({ project, onClick }) {
   return (
     <div onClick={onClick} style={{
-      minWidth: 160, borderRadius: 14, overflow: "hidden",
-      border: "1px solid rgba(124,58,237,0.25)", background: C.card,
-      cursor: "pointer", flexShrink: 0
-    }}>
+      minWidth:160, borderRadius:14, overflow:"hidden",
+      border:`1px solid ${C.border}`, background:C.card,
+      cursor:"pointer", flexShrink:0, transition:"all 0.25s"
+    }}
+    onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(124,58,237,0.55)"}
+    onMouseLeave={e => e.currentTarget.style.borderColor = C.border}
+    >
       <div style={{
-        height: 100, background: project.cover_image_url
+        height:100, background: project.cover_image_url
           ? `url(${project.cover_image_url}) center/cover`
           : "linear-gradient(135deg,#160d2e,#7c3aed33)",
-        display: "flex", alignItems: "center", justifyContent: "center"
+        display:"flex", alignItems:"center", justifyContent:"center"
       }}>
-        {!project.cover_image_url && <span style={{ fontSize: "2rem" }}>🎮</span>}
+        {!project.cover_image_url && <span style={{ fontSize:"2rem" }}>🎮</span>}
       </div>
-      <div style={{ padding: "0.6rem 0.7rem" }}>
-        <div style={{ fontSize: "0.78rem", fontWeight: 700, color: C.text, marginBottom: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+      <div style={{ padding:"0.6rem 0.7rem" }}>
+        <div style={{ fontSize:"0.78rem", fontWeight:700, color:C.text, marginBottom:3, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>
           {project.title || "Sin título"}
         </div>
-        <div style={{ fontSize: "0.6rem", color: C.muted, textTransform: "uppercase", letterSpacing: 0.8 }}>
-          {project.genre || "—"} · {project.format || "—"}
+        <div style={{ fontSize:"0.6rem", color:C.muted, textTransform:"uppercase", letterSpacing:0.8 }}>
+          {project.genre||"—"} · {project.format||"—"}
         </div>
         <div style={{
-          marginTop: 6, display: "inline-block",
-          background: project.status === "playable" ? "rgba(34,197,94,0.15)" : "rgba(124,58,237,0.15)",
-          color: project.status === "playable" ? C.green : "#c084fc",
-          borderRadius: 20, padding: "2px 8px", fontSize: "0.58rem", fontWeight: 700, textTransform: "uppercase"
-        }}>
-          {project.status || "draft"}
-        </div>
+          marginTop:6, display:"inline-block",
+          background: project.status==="playable" ? "rgba(34,197,94,0.15)" : "rgba(124,58,237,0.15)",
+          color: project.status==="playable" ? C.green : "#c084fc",
+          borderRadius:20, padding:"2px 8px", fontSize:"0.58rem", fontWeight:700, textTransform:"uppercase"
+        }}>{project.status||"draft"}</div>
       </div>
     </div>
   );
@@ -59,215 +54,256 @@ function ProjectCard({ project, onClick }) {
 function CharCard({ char }) {
   return (
     <div style={{
-      display: "flex", alignItems: "center", gap: "0.7rem",
-      background: C.card2, borderRadius: 12, padding: "0.7rem",
-      border: "1px solid rgba(124,58,237,0.15)", marginBottom: "0.6rem"
+      display:"flex", alignItems:"center", gap:"0.7rem",
+      background:C.card2, borderRadius:12, padding:"0.7rem",
+      border:`1px solid ${C.border}`, marginBottom:"0.6rem"
     }}>
       <div style={{
-        width: 44, height: 44, borderRadius: "50%", flexShrink: 0,
+        width:44, height:44, borderRadius:"50%", flexShrink:0,
         background: char.concept_image_url
           ? `url(${char.concept_image_url}) center/cover`
           : "linear-gradient(135deg,#7c3aed,#e91e8c)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: "1.3rem", border: "2px solid rgba(124,58,237,0.3)"
+        display:"flex", alignItems:"center", justifyContent:"center",
+        fontSize:"1.3rem", border:"2px solid rgba(124,58,237,0.3)"
       }}>
         {!char.concept_image_url && "👤"}
       </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: "0.82rem", fontWeight: 700, color: C.text }}>{char.name || "Personaje"}</div>
-        <div style={{ fontSize: "0.62rem", color: C.muted, marginTop: 2 }}>{char.archetype || char.gender || "—"}</div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontSize:"0.82rem", fontWeight:700, color:C.text }}>{char.name||"Personaje"}</div>
+        <div style={{ fontSize:"0.62rem", color:C.muted, marginTop:2 }}>{char.archetype||char.gender||"—"}</div>
       </div>
-      <div style={{
-        fontSize: "0.58rem", background: "rgba(0,245,255,0.1)", color: C.cyan,
-        borderRadius: 20, padding: "2px 8px", fontWeight: 700, textTransform: "uppercase"
-      }}>
-        {char.behavior_logic || "npc"}
-      </div>
+      <Pill color="cyan">{char.behavior_logic||"npc"}</Pill>
     </div>
   );
 }
 
-export default function DashboardHome({ onNav, showToast, user }) {
+export default function DashboardHome({ onNav, showToast }) {
   const [projects, setProjects] = useState([]);
   const [chars, setChars] = useState([]);
+  const [voices, setVoices] = useState([]);
+  const [assets, setAssets] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [heroBg, setHeroBg] = useState(null);
 
   useEffect(() => {
     Promise.all([
+      base44.auth.me().catch(() => null),
       base44.entities.GameProject.list("-updated_date", 20),
       base44.entities.GameCharacter.list("-created_date", 10),
-      base44.entities.SuperUserProfile.filter({ email: "sadiagiljoan@gmail.com" }, "-created_date", 1)
-        .catch(() => [])
-    ]).then(([projs, ch, profs]) => {
-      setProjects(projs || []);
-      setChars(ch || []);
-      const p = Array.isArray(profs) ? profs[0] : profs;
-      setProfile(p || null);
-      const hero = (projs || []).find(pr => pr.cover_image_url);
-      if (hero) setHeroBg(hero.cover_image_url);
+      base44.entities.VoiceAsset.list("-created_date", 100).catch(() => []),
+      base44.entities.AssetRepository.list("-created_date", 100).catch(() => []),
+    ]).then(([u, projs, ch, v, a]) => {
+      setUser(u);
+      setProjects(projs||[]);
+      setChars(ch||[]);
+      setVoices(v||[]);
+      setAssets(a||[]);
+      // Intentar cargar perfil del usuario autenticado
+      if (u?.email) {
+        base44.entities.SuperUserProfile.filter({ email: u.email }, "-created_date", 1)
+          .then(p => setProfile(Array.isArray(p) ? p[0] : p))
+          .catch(() => {});
+      }
     }).finally(() => setLoading(false));
   }, []);
 
+  if (loading) return <Spinner />;
+
   const heroProject = projects[0] || null;
   const stats = {
-    assets: profile?.total_assets ?? projects.length,
-    voices: profile?.total_voices ?? chars.length,
+    assets: profile?.total_assets ?? assets.length,
+    voices: profile?.total_voices ?? voices.length,
     revenue: profile?.total_revenue ?? 0,
+    projects: projects.length,
   };
 
-  if (loading) {
-    return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 300, color: C.muted }}>
-        <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "2rem", marginBottom: "0.5rem", animation: "spin 1s linear infinite" }}>⚙️</div>
-          <div style={{ fontSize: "0.75rem", letterSpacing: 2, textTransform: "uppercase" }}>Cargando...</div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ padding: "0 0 1rem" }}>
+    <div style={{ paddingBottom:"1rem" }}>
 
       {/* HERO BANNER */}
       <div style={{
-        height: 200, position: "relative", overflow: "hidden",
-        background: heroBg
-          ? `linear-gradient(to bottom, rgba(15,10,30,0) 0%, rgba(15,10,30,0.9) 100%), url(${heroBg}) center/cover`
+        height:200, position:"relative", overflow:"hidden",
+        background: heroProject?.cover_image_url
+          ? `linear-gradient(to bottom,rgba(15,10,30,0) 0%,rgba(15,10,30,0.92) 100%),url(${heroProject.cover_image_url}) center/cover`
           : "linear-gradient(135deg,#160d2e 0%,#1f1340 100%)",
-        display: "flex", alignItems: "flex-end", padding: "1.2rem"
+        display:"flex", alignItems:"flex-end", padding:"1.2rem"
       }}>
-        {!heroBg && (
-          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "4rem", opacity: 0.15 }}>🎮</div>
+        {!heroProject?.cover_image_url && (
+          <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"5rem", opacity:0.08 }}>🎮</div>
         )}
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: "0.6rem", color: "#c084fc", letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>
-            {heroProject ? `${heroProject.genre || ""} · ${heroProject.format || ""}` : "GCC Studio"}
+        <div style={{ position:"relative", zIndex:1, flex:1 }}>
+          <div style={{ fontSize:"0.6rem", color:"#c084fc", letterSpacing:2, textTransform:"uppercase", marginBottom:4 }}>
+            {heroProject ? `${heroProject.genre||""} · ${heroProject.format||""}` : "GCC Studio"}
           </div>
-          <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 900, color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}>
-            {heroProject?.title || "Bienvenido al Estudio"}
+          <div style={{ fontFamily:"'Orbitron',sans-serif", fontSize:"1.1rem", fontWeight:900, color:"#fff", textShadow:"0 2px 12px rgba(0,0,0,0.8)" }}>
+            {heroProject?.title || `Bienvenido${user?.full_name ? ", "+user.full_name.split(" ")[0] : ""}`}
           </div>
-          {heroProject && (
-            <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.6)", marginTop: 4 }}>
-              {heroProject.description?.substring(0, 80) || ""}
+          {heroProject?.description && (
+            <div style={{ fontSize:"0.65rem", color:"rgba(255,255,255,0.55)", marginTop:4 }}>
+              {heroProject.description.substring(0,80)}...
             </div>
           )}
         </div>
-        <div style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 1 }}>
+        {heroProject?.status && (
           <div style={{
-            background: "rgba(124,58,237,0.25)", border: "1px solid rgba(124,58,237,0.4)",
-            borderRadius: 20, padding: "3px 10px", fontSize: "0.6rem", color: "#c084fc",
-            fontWeight: 700, textTransform: "uppercase", letterSpacing: 1
-          }}>
-            {heroProject?.status || "Studio"}
-          </div>
-        </div>
+            position:"absolute", top:"1rem", right:"1rem",
+            background:"rgba(124,58,237,0.25)", border:"1px solid rgba(124,58,237,0.4)",
+            borderRadius:20, padding:"3px 10px", fontSize:"0.6rem", color:"#c084fc",
+            fontWeight:700, textTransform:"uppercase", letterSpacing:1
+          }}>{heroProject.status}</div>
+        )}
       </div>
 
-      {/* STATS ROW */}
-      <div style={{ padding: "0.8rem 1rem 0" }}>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          <StatCard icon="📦" label="Assets" value={stats.assets} color={C.cyan} />
-          <StatCard icon="🎙️" label="Voices" value={stats.voices} color="#c084fc" />
-          <StatCard icon="💰" label="Revenue" value={stats.revenue ? `$${stats.revenue}` : "$0"} color={C.gold} />
+      {/* STATS */}
+      <div style={{ padding:"0.8rem 1rem 0" }}>
+        <div style={{ display:"flex", gap:"0.5rem" }}>
+          <StatCard icon="🎮" label="Proyectos" value={stats.projects} color={C.cyan} />
+          <StatCard icon="📦" label="Assets" value={stats.assets} color="#c084fc" />
+          <StatCard icon="🎙️" label="Voices" value={stats.voices} color={C.pink} />
+          <StatCard icon="💰" label="Revenue" value={stats.revenue ? `€${stats.revenue}` : "€0"} color={C.gold} />
         </div>
       </div>
 
       {/* QUICK ACTIONS */}
-      <div style={{ padding: "1rem 1rem 0" }}>
-        <div style={{ fontSize: "0.62rem", color: C.muted, letterSpacing: 2, textTransform: "uppercase", marginBottom: "0.6rem" }}>Acciones Rápidas</div>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+      <div style={{ padding:"1rem 1rem 0" }}>
+        <div style={{ fontSize:"0.6rem", color:C.muted, letterSpacing:2, textTransform:"uppercase", marginBottom:"0.6rem" }}>Acciones Rápidas</div>
+        <div style={{ display:"flex", gap:"0.5rem" }}>
           {[
-            { icon: "✏️", label: "Nuevo Juego", tab: "create" },
-            { icon: "👥", label: "Personajes", tab: "chars" },
-            { icon: "📣", label: "Marketing", tab: "marketing" },
+            { icon:"✏️", label:"Nuevo Juego",  tab:"create" },
+            { icon:"👥", label:"Personajes",   tab:"chars" },
+            { icon:"📣", label:"Marketing",    tab:"marketing" },
+            { icon:"▶️", label:"Play & Test",  tab:"test" },
           ].map(a => (
             <button key={a.tab} onClick={() => onNav(a.tab)} style={{
-              flex: 1, background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)",
-              borderRadius: 10, padding: "0.6rem 0.3rem", cursor: "pointer",
-              display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-              color: "#c084fc", fontSize: "0.6rem", fontWeight: 700,
-              letterSpacing: 0.5, textTransform: "uppercase", fontFamily: "inherit"
-            }}>
-              <span style={{ fontSize: "1.2rem" }}>{a.icon}</span>
+              flex:1, background:"rgba(124,58,237,0.1)", border:`1px solid rgba(124,58,237,0.25)`,
+              borderRadius:10, padding:"0.6rem 0.3rem", cursor:"pointer",
+              display:"flex", flexDirection:"column", alignItems:"center", gap:4,
+              color:"#c084fc", fontSize:"0.58rem", fontWeight:700,
+              letterSpacing:0.5, textTransform:"uppercase", fontFamily:"inherit",
+              transition:"all 0.2s"
+            }}
+            onMouseEnter={e => e.currentTarget.style.background="rgba(124,58,237,0.2)"}
+            onMouseLeave={e => e.currentTarget.style.background="rgba(124,58,237,0.1)"}
+            >
+              <span style={{ fontSize:"1.2rem" }}>{a.icon}</span>
               {a.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* PROJECTS HORIZONTAL SCROLL */}
+      {/* PROYECTOS */}
       {projects.length > 0 && (
-        <div style={{ padding: "1rem 0 0" }}>
-          <div style={{ padding: "0 1rem", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
-            <div style={{ fontSize: "0.62rem", color: C.muted, letterSpacing: 2, textTransform: "uppercase" }}>Tus Proyectos</div>
-            <div style={{ fontSize: "0.62rem", color: "#7c3aed", cursor: "pointer" }}>{projects.length} proyectos</div>
+        <div style={{ padding:"1rem 0 0" }}>
+          <div style={{ padding:"0 1rem", display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"0.6rem" }}>
+            <div style={{ fontSize:"0.6rem", color:C.muted, letterSpacing:2, textTransform:"uppercase" }}>Tus Proyectos</div>
+            <div onClick={() => onNav("create")} style={{ fontSize:"0.62rem", color:C.purple, cursor:"pointer" }}>{projects.length} proyectos →</div>
           </div>
-          <div style={{ display: "flex", gap: "0.8rem", overflowX: "auto", padding: "0 1rem 0.5rem" }}>
-            {projects.map(p => (
-              <ProjectCard key={p.id} project={p} onClick={() => onNav("create")} />
-            ))}
+          <div style={{ display:"flex", gap:"0.8rem", overflowX:"auto", padding:"0 1rem 0.5rem" }}>
+            {projects.map(p => <ProjectCard key={p.id} project={p} onClick={() => onNav("create")} />)}
           </div>
         </div>
       )}
 
-      {/* CHARACTERS */}
+      {/* PERSONAJES */}
       {chars.length > 0 && (
-        <div style={{ padding: "1rem 1rem 0" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
-            <div style={{ fontSize: "0.62rem", color: C.muted, letterSpacing: 2, textTransform: "uppercase" }}>Personajes</div>
-            <div onClick={() => onNav("chars")} style={{ fontSize: "0.62rem", color: "#7c3aed", cursor: "pointer" }}>Ver todos →</div>
+        <div style={{ padding:"1rem 1rem 0" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"0.6rem" }}>
+            <div style={{ fontSize:"0.6rem", color:C.muted, letterSpacing:2, textTransform:"uppercase" }}>Personajes</div>
+            <div onClick={() => onNav("chars")} style={{ fontSize:"0.62rem", color:C.purple, cursor:"pointer" }}>Ver todos →</div>
           </div>
-          {chars.slice(0, 4).map(c => <CharCard key={c.id} char={c} />)}
+          {chars.slice(0,4).map(c => <CharCard key={c.id} char={c} />)}
         </div>
       )}
 
       {/* EMPTY STATE */}
       {projects.length === 0 && chars.length === 0 && (
-        <div style={{ textAlign: "center", padding: "3rem 2rem", color: C.muted }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🎮</div>
-          <div style={{ fontSize: "0.9rem", marginBottom: "0.5rem", color: C.text }}>¡Tu estudio está vacío!</div>
-          <div style={{ fontSize: "0.75rem", marginBottom: "1.5rem" }}>Crea tu primer proyecto de juego</div>
-          <button onClick={() => onNav("create")} style={{
-            background: "linear-gradient(135deg,#7c3aed,#e91e8c)", border: "none",
-            borderRadius: 10, padding: "0.7rem 1.5rem", color: "#fff",
-            fontWeight: 700, fontSize: "0.85rem", cursor: "pointer", fontFamily: "inherit"
-          }}>
-            ✏️ Crear Primer Juego
-          </button>
+        <EmptyState icon="🎮" title="¡Tu estudio está vacío!" sub="Crea tu primer proyecto de juego" action="✏️ Crear Primer Juego" onAction={() => onNav("create")} />
+      )}
+
+      {/* ACTIVIDAD */}
+      {projects.length > 0 && (
+        <div style={{ padding:"1rem 1rem 0" }}>
+          <div style={{ fontSize:"0.6rem", color:C.muted, letterSpacing:2, textTransform:"uppercase", marginBottom:"0.6rem" }}>Actividad Reciente</div>
+          {projects.slice(0,4).map((p,i) => (
+            <div key={p.id} onClick={() => onNav("create")} style={{
+              display:"flex", alignItems:"center", gap:"0.7rem",
+              padding:"0.6rem 0", borderBottom:`1px solid rgba(124,58,237,0.1)`,
+              cursor:"pointer"
+            }}>
+              <div style={{ width:8, height:8, borderRadius:"50%", background:i===0 ? C.pink : C.purple, flexShrink:0 }}/>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:"0.75rem", color:C.text }}>{p.title||"Proyecto sin título"}</div>
+                <div style={{ fontSize:"0.6rem", color:C.muted }}>
+                  {p.updated_date ? new Date(p.updated_date).toLocaleDateString("es-ES") : "—"} · {p.status||"draft"}
+                </div>
+              </div>
+              <div style={{ fontSize:"0.8rem" }}>
+                {p.status==="playable" ? "✅" : p.status==="generating" ? "⏳" : "📝"}
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* ACTIVITY FEED */}
-      <div style={{ padding: "1rem 1rem 0" }}>
-        <div style={{ fontSize: "0.62rem", color: C.muted, letterSpacing: 2, textTransform: "uppercase", marginBottom: "0.6rem" }}>Actividad Reciente</div>
-        {[...projects.slice(0, 3)].map((p, i) => (
-          <div key={p.id} style={{
-            display: "flex", alignItems: "center", gap: "0.7rem",
-            padding: "0.6rem 0", borderBottom: "1px solid rgba(124,58,237,0.1)"
+      {/* FOOTER LINKS */}
+      <div style={{
+        margin:"1.5rem 1rem 0",
+        background:C.card2, borderRadius:14,
+        border:`1px solid ${C.border}`,
+        padding:"0.9rem 1rem",
+        display:"flex", alignItems:"center", justifyContent:"space-around", gap:"0.5rem"
+      }}>
+        {/* Instagram */}
+        <a href="https://www.instagram.com/comiccrafter_ai" target="_blank" rel="noreferrer" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, textDecoration:"none" }}>
+          <div style={{
+            width:36, height:36, borderRadius:10,
+            background:"linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)",
+            display:"flex", alignItems:"center", justifyContent:"center"
           }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: i === 0 ? C.pink : "#7c3aed", flexShrink: 0 }} />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: "0.75rem", color: C.text }}>{p.title || "Proyecto sin título"}</div>
-              <div style={{ fontSize: "0.6rem", color: C.muted }}>
-                {p.updated_date ? new Date(p.updated_date).toLocaleDateString("es-ES") : "—"} · {p.status || "draft"}
-              </div>
-            </div>
-            <div style={{ fontSize: "0.8rem" }}>
-              {p.status === "playable" ? "✅" : p.status === "generating" ? "⏳" : "📝"}
-            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" strokeWidth="2"/>
+              <circle cx="12" cy="12" r="5" stroke="white" strokeWidth="2"/>
+              <circle cx="17.5" cy="6.5" r="1.5" fill="white"/>
+            </svg>
           </div>
-        ))}
-        {projects.length === 0 && (
-          <div style={{ fontSize: "0.75rem", color: C.muted, textAlign: "center", padding: "1rem 0" }}>Sin actividad aún</div>
-        )}
+          <span style={{ fontSize:"0.55rem", color:C.muted, letterSpacing:0.5 }}>@comiccrafter_ai</span>
+        </a>
+
+        <div style={{ width:1, height:36, background:C.border }}/>
+
+        {/* Shopify */}
+        <a href="https://comic-crafter.myshopify.com" target="_blank" rel="noreferrer" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, textDecoration:"none" }}>
+          <div style={{
+            width:36, height:36, borderRadius:10,
+            background:"rgba(150,191,72,0.15)", border:"1px solid rgba(150,191,72,0.35)",
+            display:"flex", alignItems:"center", justifyContent:"center"
+          }}>
+            <svg width="20" height="20" viewBox="0 0 109 124" fill="#96bf48">
+              <path d="M74.7 14.8s-.3-1.6-1.3-2.1c-1-.5-2.2.2-2.2.2s-1.3.4-3.4 1c-.4-1.3-1-2.8-1.9-4.3-2.8-5.4-7-8.2-12-8.2-.3 0-.7 0-1 .1-.1-.2-.3-.3-.5-.5-2.3-2.4-5.2-3.5-8.7-3.4-6.8.2-13.5 5.1-19 13.8-3.9 6.1-6.8 13.8-7.7 19.8-7.8 2.4-13.3 4.1-13.4 4.2-4 1.2-4.1 1.3-4.6 5.1C.9 43.3 0 109.5 0 109.5l75.8 13.2V14.6c-.4.1-.8.1-1.1.2zm-22 6.7c-4.6 1.4-9.6 3-14.6 4.5.5-2 1.1-4 2-5.8 1.3-2.5 3.2-4.9 5.5-6.5 2.7 1.4 4.9 4.2 7.1 7.8zm-8.8-16.2c1.8 0 3.3.4 4.6 1.2-2.1 1.1-4.2 2.8-6.1 5-5 5.8-8.9 14.8-10.3 23.4-4.8 1.5-9.4 2.9-13.7 4.3 2.5-11.4 12.3-33.5 25.5-33.9zm-1 98.5l-32.3-8 9.2-20.5 23.1 5.7v22.8zm0-27.7l-21.3-5.3 14-31.2 7.3 2.3v34.2zm0-39.3L34.4 34l8.5-19 2.3.8-.3 21zm4 67v-26l17.6 4.4L44.9 108zm0-30.3V44.2l15.9 5.3-15.9 28.2z"/>
+            </svg>
+          </div>
+          <span style={{ fontSize:"0.55rem", color:C.muted, letterSpacing:0.5 }}>Tienda</span>
+        </a>
+
+        <div style={{ width:1, height:36, background:C.border }}/>
+
+        {/* Web */}
+        <a href="https://comiccrafter.es" target="_blank" rel="noreferrer" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, textDecoration:"none" }}>
+          <div style={{
+            width:36, height:36, borderRadius:10,
+            background:"rgba(124,58,237,0.15)", border:"1px solid rgba(124,58,237,0.35)",
+            display:"flex", alignItems:"center", justifyContent:"center",
+            fontSize:"1.2rem"
+          }}>🌐</div>
+          <span style={{ fontSize:"0.55rem", color:C.muted, letterSpacing:0.5 }}>comiccrafter.es</span>
+        </a>
       </div>
 
-      <style>{`
-        @keyframes spin { 100%{transform:rotate(360deg)} }
-      `}</style>
+      <div style={{ padding:"0.8rem 1rem", textAlign:"center", fontSize:"0.58rem", color:"rgba(90,64,128,0.5)", letterSpacing:2 }}>
+        GCC ENGINE v1.0 · 6-AI CLUSTER
+      </div>
     </div>
   );
 }
