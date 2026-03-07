@@ -147,8 +147,8 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    const file = new File([arenaHtml], 'arena-game.html', { type: 'text/html' });
-    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file });
+    const blob = new Blob([arenaHtml], { type: 'text/html' });
+    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file: blob });
     const arenaUrl = uploadResult.file_url;
 
     const arenaProject = await base44.entities.GameProject.create({
