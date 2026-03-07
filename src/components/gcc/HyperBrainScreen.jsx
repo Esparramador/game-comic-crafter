@@ -82,6 +82,22 @@ function ResultPanel({ result, mode }) {
     </div>
   );
 
+  if (mode === "world") return (
+    <div style={{ display:"flex", flexDirection:"column", gap:"0.6rem" }}>
+      {result.concept_art_url && (
+        <img src={result.concept_art_url} alt="concept" style={{ width:"100%", borderRadius:12, border:`1px solid ${C.border}`, maxHeight:200, objectFit:"cover" }} />
+      )}
+      {result.cover_image_url && (
+        <img src={result.cover_image_url} alt="cover" style={{ width:"100%", borderRadius:12, border:`1px solid ${C.border}`, maxHeight:200, objectFit:"cover" }} />
+      )}
+      <div style={{ background:C.card, borderRadius:12, padding:"0.8rem", border:`1px solid ${C.border}` }}>
+        <div style={{ fontSize:"0.8rem", fontWeight:800, color:"#22c55e", marginBottom:2 }}>{result.title}</div>
+        <div style={{ fontSize:"0.6rem", color:C.muted, marginBottom:6 }}>📍 {result.location?.name}</div>
+        {result.analysis?.narrative && <div style={{ fontSize:"0.68rem", color:C.text, lineHeight:1.5 }}>{result.analysis.narrative}</div>}
+      </div>
+    </div>
+  );
+
   if (mode === "game") return (
     <div style={{ display:"flex", flexDirection:"column", gap:"0.6rem" }}>
       {result.cover_image_url && (
