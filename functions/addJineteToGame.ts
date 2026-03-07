@@ -62,8 +62,8 @@ Deno.serve(async (req) => {
 
     if (!newUrl) return Response.json({ error: 'Upload no devolvió URL', uploadResult }, { status: 500 });
 
-    // 4. Update GameProject
-    await base44.asServiceRole.entities.GameProject.update(PROJECT_ID, { playable_url: newUrl });
+    // 4. Update GameProject — use user-scoped client (RLS: created_by = user)
+    await base44.entities.GameProject.update(PROJECT_ID, { playable_url: newUrl });
 
     return Response.json({ success: true, new_url: newUrl });
 
