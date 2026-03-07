@@ -73,9 +73,8 @@ setInterval(()=>{if(session)document.getElementById('health').textContent='HP: '
 </body>
 </html>`;
 
-    const blob = new Blob([arenaHtml], { type: 'text/html' });
-    const uploadResult = await base44.integrations.Core.UploadFile({ file: blob });
-    const arenaUrl = uploadResult.file_url;
+    // Arena Game se sirve desde la página React
+    const arenaUrl = '/ArenaGame';
 
     // Verificar si Arena Game ya existe
     let arenaProject = null;
