@@ -310,15 +310,15 @@ export default function DashboardHome({ onNav, showToast }) {
               <circle cx="17.5" cy="6.5" r="1.5" fill="white"/>
             </svg>
           </div>
-          <span style={{ fontSize:"0.55rem", color:C.muted, letterSpacing:0.5 }}>@comiccrafter_ai</span>
+          <span style={{ fontSize:"0.65rem", color:C.muted, letterSpacing:0.5 }}>Instagram</span>
         </a>
 
-        <div style={{ width:1, height:36, background:C.border }}/>
+        <div style={{ width:1, height:40, background:C.border }}/>
 
         {/* Shopify */}
-        <a href="https://comic-crafter.myshopify.com" target="_blank" rel="noreferrer" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, textDecoration:"none" }}>
+        <a href="https://comic-crafter.myshopify.com" target="_blank" rel="noreferrer" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6, textDecoration:"none" }}>
           <div style={{
-            width:36, height:36, borderRadius:10,
+            width:44, height:44, borderRadius:12,
             background:"rgba(150,191,72,0.15)", border:"1px solid rgba(150,191,72,0.35)",
             display:"flex", alignItems:"center", justifyContent:"center"
           }}>
