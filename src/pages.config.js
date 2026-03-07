@@ -48,21 +48,21 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import ArenaGame from './pages/ArenaGame';
+import AssetRepository from './pages/AssetRepository';
 import HomeScreen from './pages/HomeScreen';
 import Landing from './pages/Landing';
-import AssetRepository from './pages/AssetRepository';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "ArenaGame": ArenaGame,
+    "AssetRepository": AssetRepository,
     "HomeScreen": HomeScreen,
     "Landing": Landing,
-    "AssetRepository": AssetRepository,
 }
 
 export const pagesConfig = {
-    mainPage: "AssetRepository",
+    mainPage: "Landing",
     Pages: PAGES,
     Layout: __Layout,
 };
