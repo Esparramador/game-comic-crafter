@@ -280,15 +280,15 @@ export default function EditorScreen({ onNav, showToast }) {
     );
   }
 
-  // ─── CREATE ───
+  // ─── CREATE / EDIT ───
   if (view === "create") return (
     <div style={{ padding:"1rem" }}>
-      <button onClick={() => setView("list")} style={{
+      <button onClick={() => { setView(editMode ? "detail" : "list"); setEditMode(false); }} style={{
         background:"transparent", border:"none", color:C.muted,
         fontSize:"0.72rem", cursor:"pointer", fontFamily:"inherit",
         display:"flex", alignItems:"center", gap:4, marginBottom:"0.8rem", padding:0
-      }}>← Volver a Mis Juegos</button>
-      <SectionTitle>✏️ Nuevo Proyecto</SectionTitle>
+      }}>← {editMode ? "Volver al Proyecto" : "Volver a Mis Juegos"}</button>
+      <SectionTitle>{editMode ? "✏️ Editar Proyecto" : "✏️ Nuevo Proyecto"}</SectionTitle>
 
       <div style={{ marginBottom:"0.75rem" }}>
         <label style={labelStyle}>Título del Juego *</label>
