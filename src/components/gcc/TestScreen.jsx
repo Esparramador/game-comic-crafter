@@ -81,6 +81,17 @@ export default function TestScreen({ onNav, showToast }) {
                     borderRadius:6, padding:"0.3rem 0.7rem", color:C.cyan,
                     fontSize:"0.65rem", fontWeight:700, textDecoration:"none"
                   }}>↗ Nueva pestaña</a>
+                  <a href={selected.playable_url} target="_blank" rel="noreferrer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const w = window.open(selected.playable_url, '_blank', 'fullscreen=yes,toolbar=no,menubar=no,scrollbars=no,resizable=yes');
+                      if (w) w.focus();
+                    }}
+                    style={{
+                      background:"linear-gradient(135deg,#7c3aed,#e91e8c)", border:"none",
+                      borderRadius:6, padding:"0.3rem 0.7rem", color:"#fff",
+                      fontSize:"0.65rem", fontWeight:700, textDecoration:"none", cursor:"pointer"
+                    }}>📱 Instalar App</a>
                   <button onClick={() => setFullscreen(!fullscreen)} style={{
                     background:"rgba(124,58,237,0.1)", border:`1px solid ${C.border}`,
                     borderRadius:6, padding:"0.3rem 0.7rem", color:"#c084fc",
