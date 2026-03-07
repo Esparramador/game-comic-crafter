@@ -427,6 +427,19 @@ export default function HyperBrainScreen({ onNav, showToast }) {
           </div>
         )}
 
+        {mode === "arena" && (
+          <div style={{ background:"rgba(239,68,68,0.06)", borderRadius:10, padding:"0.8rem", border:"1px solid rgba(239,68,68,0.2)" }}>
+            <div style={{ fontSize:"0.7rem", color:"#ef4444", marginBottom:"0.6rem" }}>⚔️ Se crearán:</div>
+            <ul style={{ fontSize:"0.65rem", color:C.text, margin:0, paddingLeft:"1.2rem" }}>
+              <li>Juego multijugador online con WebSockets</li>
+              <li>URL jugable desde web inmediatamente</li>
+              <li>Build APK para Android/iOS</li>
+              <li>Todos tus personajes + assets integrados</li>
+            </ul>
+            <div style={{ marginTop:"0.6rem", fontSize:"0.62rem", color:C.muted }}>Procesando...</div>
+          </div>
+        )}
+
         {mode === "game" && (
           <>
             <div style={{ marginBottom:"0.6rem" }}>
