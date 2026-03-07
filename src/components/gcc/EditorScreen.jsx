@@ -66,13 +66,38 @@ export default function EditorScreen({ onNav, showToast }) {
     if (!form.title.trim()) { showToast("⚠️ Escribe un título", "warning"); return; }
     setSaving(true);
     try {
-      const p = await base44.entities.GameProject.create({ ...form, status:"draft" });
-      setProjects(prev => [p, ...prev]);
-      showToast("✅ Proyecto creado", "success");
-      setForm({ title:"", description:"", genre:"RPG", format:"2D", engine:"Phaser.js", style:"Dark Fantasy", atmosphere:"dark", status:"draft" });
-      setView("list");
-    } catch(e) { showToast("❌ Error al crear", "error"); }
+      if (editMode && selected) {
+        const updated = await base44.entities.GameProject.update(selected.id, form);
+        setProjects(prev => prev.map(p => p.id === selected.id ? { ...p, ...form } : p));
+        showToast("✅ Proyecto actualizado", "success");
+        setSelected({ ...selected, ...form });
+        setEditMode(false);
+        setView("detail");
+      } else {
+        const p = await base44.entities.GameProject.create({ ...form, status:"draft" });
+        setProjects(prev => [p, ...prev]);
+        showToast("✅ Proyecto creado", "success");
+        setForm({ title:"", description:"", genre:"RPG", format:"2D", engine:"Phaser.js", style:"Dark Fantasy", atmosphere:"dark", status:"draft" });
+        setView("list");
+      }
+    } catch(e) { showToast("❌ Error al guardar", "error"); }
     setSaving(false);
+  };
+
+  const handleEdit = (project) => {
+    setForm({
+      title: project.title || "",
+      description: project.description || "",
+      genre: project.genre || "RPG",
+      format: project.format || "2D",
+      engine: project.engine || "Phaser.js",
+      style: project.style || "Dark Fantasy",
+      atmosphere: project.atmosphere || "dark",
+      status: project.status || "draft"
+    });
+    setSelected(project);
+    setEditMode(true);
+    setView("create");
   };
 
   const handleDelete = async (id) => {
