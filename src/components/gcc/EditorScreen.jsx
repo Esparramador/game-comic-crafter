@@ -367,7 +367,7 @@ export default function EditorScreen({ onNav, showToast }) {
         border:"none", borderRadius:12, color:"#fff",
         fontWeight:800, fontSize:"0.9rem",
         cursor: saving ? "not-allowed" : "pointer", fontFamily:"inherit", letterSpacing:1
-      }}>{saving ? "Guardando..." : "🎮 Crear Proyecto"}</button>
+      }}>{saving ? "Guardando..." : editMode ? "💾 Guardar Cambios" : "🎮 Crear Proyecto"}</button>
     </div>
   );
 
