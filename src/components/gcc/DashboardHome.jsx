@@ -326,15 +326,15 @@ export default function DashboardHome({ onNav, showToast }) {
               <path d="M74.7 14.8s-.3-1.6-1.3-2.1c-1-.5-2.2.2-2.2.2s-1.3.4-3.4 1c-.4-1.3-1-2.8-1.9-4.3-2.8-5.4-7-8.2-12-8.2-.3 0-.7 0-1 .1-.1-.2-.3-.3-.5-.5-2.3-2.4-5.2-3.5-8.7-3.4-6.8.2-13.5 5.1-19 13.8-3.9 6.1-6.8 13.8-7.7 19.8-7.8 2.4-13.3 4.1-13.4 4.2-4 1.2-4.1 1.3-4.6 5.1C.9 43.3 0 109.5 0 109.5l75.8 13.2V14.6c-.4.1-.8.1-1.1.2zm-22 6.7c-4.6 1.4-9.6 3-14.6 4.5.5-2 1.1-4 2-5.8 1.3-2.5 3.2-4.9 5.5-6.5 2.7 1.4 4.9 4.2 7.1 7.8zm-8.8-16.2c1.8 0 3.3.4 4.6 1.2-2.1 1.1-4.2 2.8-6.1 5-5 5.8-8.9 14.8-10.3 23.4-4.8 1.5-9.4 2.9-13.7 4.3 2.5-11.4 12.3-33.5 25.5-33.9zm-1 98.5l-32.3-8 9.2-20.5 23.1 5.7v22.8zm0-27.7l-21.3-5.3 14-31.2 7.3 2.3v34.2zm0-39.3L34.4 34l8.5-19 2.3.8-.3 21zm4 67v-26l17.6 4.4L44.9 108zm0-30.3V44.2l15.9 5.3-15.9 28.2z"/>
             </svg>
           </div>
-          <span style={{ fontSize:"0.55rem", color:C.muted, letterSpacing:0.5 }}>Tienda</span>
+          <span style={{ fontSize:"0.65rem", color:C.muted, letterSpacing:0.5 }}>Tienda</span>
         </a>
 
-        <div style={{ width:1, height:36, background:C.border }}/>
+        <div style={{ width:1, height:40, background:C.border }}/>
 
         {/* Web */}
-        <a href="https://comiccrafter.es" target="_blank" rel="noreferrer" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4, textDecoration:"none" }}>
+        <a href="https://comiccrafter.es" target="_blank" rel="noreferrer" style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6, textDecoration:"none" }}>
           <div style={{
-            width:36, height:36, borderRadius:10,
+            width:44, height:44, borderRadius:12,
             background:"rgba(124,58,237,0.15)", border:"1px solid rgba(124,58,237,0.35)",
             display:"flex", alignItems:"center", justifyContent:"center",
             fontSize:"1.2rem"
