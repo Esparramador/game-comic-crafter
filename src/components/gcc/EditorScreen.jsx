@@ -252,6 +252,11 @@ export default function EditorScreen({ onNav, showToast }) {
 
             {/* Acciones */}
             <div style={{ display:"flex", gap:"0.5rem" }}>
+              <button onClick={() => handleEdit(selected)} style={{
+                flex:1, background:"rgba(0,245,255,0.08)", border:"1px solid rgba(0,245,255,0.3)",
+                borderRadius:8, padding:"0.55rem", color:C.cyan,
+                fontSize:"0.72rem", fontWeight:700, cursor:"pointer", fontFamily:"inherit"
+              }}>✏️ Editar</button>
               <button onClick={() => { onNav("marketing"); }} style={{
                 flex:1, background:"rgba(233,30,140,0.08)", border:"1px solid rgba(233,30,140,0.3)",
                 borderRadius:8, padding:"0.55rem", color:C.pink,
