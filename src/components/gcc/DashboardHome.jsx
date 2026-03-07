@@ -339,7 +339,7 @@ export default function DashboardHome({ onNav, showToast }) {
             display:"flex", alignItems:"center", justifyContent:"center",
             fontSize:"1.2rem"
           }}>🌐</div>
-          <span style={{ fontSize:"0.55rem", color:C.muted, letterSpacing:0.5 }}>comiccrafter.es</span>
+          <span style={{ fontSize:"0.65rem", color:C.muted, letterSpacing:0.5 }}>Web Oficial</span>
         </a>
       </div>
 
