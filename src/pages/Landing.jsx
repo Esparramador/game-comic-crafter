@@ -12,7 +12,6 @@ export default function Landing() {
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden", fontFamily: "'Inter', sans-serif" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@300;400;600&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         .land-pill {
