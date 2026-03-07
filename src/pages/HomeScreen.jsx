@@ -113,7 +113,8 @@ export default function HomeScreen() {
         ::-webkit-scrollbar-thumb{background:#7c3aed44;border-radius:99px}
         ::-webkit-scrollbar-thumb:hover{background:#7c3aed99}
         @keyframes spin{to{transform:rotate(360deg)}}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .screen-enter{animation:fadeIn 0.25s cubic-bezier(0.22,1,0.36,1)}
         .nav-item{display:flex;align-items:center;gap:0.55rem;padding:0.42rem 0.7rem;border-radius:9px;cursor:pointer;font-size:0.72rem;color:${C.muted};transition:all 0.15s;margin-bottom:2px;border:1px solid transparent;white-space:nowrap}
         .nav-item:hover{background:rgba(124,58,237,0.1);color:#e0e8ff}
         .nav-item.active{background:rgba(124,58,237,0.18);color:#c084fc;border-color:rgba(124,58,237,0.3)}
