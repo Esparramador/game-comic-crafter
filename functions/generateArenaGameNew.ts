@@ -11,138 +11,68 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { characters = [] } = body;
 
+    const gameId = crypto.randomUUID().substring(0, 8);
     const arenaHtml = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Arena Game - Multijugador Online</title>
+  <title>Arena Game ${gameId}</title>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
   <style>
-    body { margin: 0; padding: 0; overflow: hidden; background: #080c1a; font-family: Orbitron, sans-serif; }
-    canvas { display: block; touch-action: none; }
-    #ui { position: absolute; top: 10px; left: 10px; color: #00f5ff; font-size: 12px; z-index: 100; }
-    #players { position: absolute; top: 50px; right: 10px; color: #7c3aed; font-size: 11px; max-width: 200px; z-index: 100; }
-    #status { position: absolute; bottom: 10px; left: 10px; color: #22c55e; font-size: 11px; z-index: 100; }
-    button { background: linear-gradient(135deg,#7c3aed,#e91e8c); border: none; color: #fff; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; }
+    *{margin:0;padding:0;box-sizing:border-box}body{background:#0a0010;font-family:'Orbitron',sans-serif;overflow:hidden;color:#e0e8ff}
+    canvas{display:block;width:100%;height:100%}
+    #hud{position:fixed;top:10px;left:10px;z-index:100;color:#00f5ff;font-size:13px}
+    #info{position:fixed;bottom:10px;left:10px;z-index:100;color:#22c55e;font-size:11px}
+    #players{position:fixed;top:10px;right:10px;z-index:100;color:#c084fc;font-size:11px;text-align:right}
+    .btn{background:linear-gradient(135deg,#7c3aed,#e91e8c);border:none;color:#fff;padding:8px 14px;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:700;margin:5px 0}
+    input{padding:5px;background:#1a0030;border:1px solid #7c3aed;color:#fff;border-radius:4px;font-family:inherit}
   </style>
 </head>
 <body>
-  <div id="ui">
-    <div>🎮 ARENA GAME - MULTIJUGADOR</div>
-    <div id="sessionCode">Session: -</div>
-    <button onclick="createArena()" style="margin-top: 10px;">+ Crear Sala</button>
-    <input type="text" id="joinCode" placeholder="ARENA-XXX" style="padding: 5px; margin-top: 5px; width: 80px;">
-    <button onclick="joinArena()" style="margin-top: 5px;">Unirse</button>
+  <div id="hud">
+    <div>⚔️ ARENA GAME</div>
+    <div id="code" style="margin:5px 0">Session: -</div>
+    <button class="btn" onclick="createSala()">+ Create Room</button>
+    <div style="margin-top:8px">
+      <input type="text" id="joinCode" placeholder="ARENA-XXX">
+      <button class="btn" onclick="joinSala()">Join</button>
+    </div>
+  </div>
+  <div id="info">
+    <div id="status">🟡 Waiting...</div>
+    <div id="health">HP: 100</div>
   </div>
   <div id="players"></div>
-  <div id="status">Status: Esperando...</div>
 
   <script>
-    const API_BASE = '${req.headers.get('origin') || 'http://localhost:5173'}';
-    let currentSession = null;
-    let gameScene = null;
-
-    class ArenaScene extends Phaser.Scene {
-      constructor() { super({ key: 'Arena' }); }
-      create() {
-        this.add.text(16, 16, 'ARENA GAME - Multijugador Online', { fontSize: '24px', fill: '#00f5ff', fontFamily: 'Orbitron' });
-        this.players = {};
-        this.updateGameState();
+    const GAME_ID='${gameId}';let session=null;let scene=null;let player={x:window.innerWidth/2,y:window.innerHeight/2,vx:0,vy:0,hp:100};const keys={};
+    
+    class GameScene extends Phaser.Scene{
+      constructor(){super({key:'Main'})}
+      create(){
+        this.physics.world.setBounds(0,0,this.sys.game.config.width,this.sys.game.config.height);
+        this.cursors=this.input.keyboard.createCursorKeys();
+        this.players={};
+        this.updateLoop();
       }
-      update() {
-        if (currentSession) {
-          this.players = {};
-          currentSession.players?.forEach((p, i) => {
-            const x = p.position?.x || Math.random() * 800;
-            const y = p.position?.y || Math.random() * 600;
-            const key = p.email;
-            if (!this.players[key]) {
-              const circle = this.add.circle(x, y, 15, 0x7c3aed);
-              this.players[key] = { sprite: circle, hp: p.health };
-              this.add.text(x - 25, y - 30, p.email.split('@')[0], { fontSize: '10px', fill: '#fff' });
-            } else {
-              this.players[key].sprite.setPosition(x, y);
-              this.players[key].hp = p.health;
-            }
-          });
-        }
+      update(){
+        if(this.cursors){if(this.cursors.left.isDown)player.vx=-5;if(this.cursors.right.isDown)player.vx=5;if(this.cursors.up.isDown)player.vy=-5;if(this.cursors.down.isDown)player.vy=5;}
+        player.vx*=0.92;player.vy*=0.92;player.x+=player.vx;player.y+=player.vy;
+        player.x=Math.max(15,Math.min(this.sys.game.config.width-15,player.x));player.y=Math.max(15,Math.min(this.sys.game.config.height-15,player.y));
+        Object.entries(this.players).forEach(([e,p])=>{if(p.sprite)p.sprite.setPosition(p.x,p.y);});
+        if(this.players.me)this.players.me.sprite?.setPosition(player.x,player.y);
       }
-      updateGameState() {
-        setInterval(() => {
-          if (currentSession?.session_code) {
-            fetch(API_BASE + '/api/functions/arenaGameMultiplayer', {
-              method: 'POST',
-              body: JSON.stringify({
-                action: 'get_session',
-                session_code: currentSession.session_code
-              })
-            }).then(r => r.json()).then(d => {
-              if (d.session) currentSession = d.session;
-            });
-          }
-        }, 500);
+      updateLoop(){
+        setInterval(()=>{if(session?.session_code)fetch('/api/functions/arenaGameMultiplayer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'update_state',session_code:session.session_code,position:{x:Math.round(player.x),y:Math.round(player.y)},health:player.hp})}).then(r=>r.json()).then(d=>{if(d.players)d.players.forEach((p,i)=>{if(p.email!==session.created_by||i===0){const k=p.email;if(!this.players[k]){this.players[k]={sprite:this.add.circle(p.position.x,p.position.y,12,0x7c3aed),x:p.position.x,y:p.position.y,hp:p.health};this.add.text(p.position.x-20,p.position.y-25,p.email.split('@')[0],{font:'10px Arial',fill:'#fff'});}else{this.players[k].x=p.position.x;this.players[k].y=p.position.y;this.players[k].hp=p.health;}}});});},300);
       }
     }
-
-    async function createArena() {
-      const res = await fetch(API_BASE + '/api/functions/arenaGameMultiplayer', {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'create_session',
-          game_project_id: 'arena-game',
-          max_players: 4,
-          character_id: 'warrior-default'
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        currentSession = data;
-        document.getElementById('sessionCode').textContent = 'Session: ' + data.session_code;
-        document.getElementById('status').textContent = 'Status: Sala creada - Esperando jugadores...';
-        startGame();
-      }
-    }
-
-    async function joinArena() {
-      const code = document.getElementById('joinCode').value;
-      if (!code) return;
-      const res = await fetch(API_BASE + '/api/functions/arenaGameMultiplayer', {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'join_session',
-          session_code: code,
-          character_id: 'warrior-default'
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        currentSession = data.session;
-        document.getElementById('sessionCode').textContent = 'Session: ' + code;
-        document.getElementById('status').textContent = 'Status: Unido a la sala';
-        startGame();
-      } else {
-        alert('Error: ' + data.error);
-      }
-    }
-
-    function startGame() {
-      if (gameScene) return;
-      const config = {
-        type: Phaser.AUTO,
-        width: window.innerWidth,
-        height: window.innerHeight,
-        scene: ArenaScene,
-        physics: { default: 'arcade', arcade: { gravity: { y: 0 }, debug: false } }
-      };
-      const game = new Phaser.Game(config);
-      gameScene = game.scene.scenes[0];
-    }
-
-    window.addEventListener('resize', () => {
-      if (gameScene) gameScene.scale.resize(window.innerWidth, window.innerHeight);
-    });
+    
+    async function createSala(){const r=await fetch('/api/functions/arenaGameMultiplayer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'create_session',game_project_id:GAME_ID,max_players:4,character_id:'warrior'})});const d=await r.json();if(d.success){session=d;document.getElementById('code').textContent='Session: '+d.session_code;document.getElementById('status').textContent='🟢 Room Created';initGame();}else alert('Error: '+d.error);}
+    async function joinSala(){const c=document.getElementById('joinCode').value;if(!c)return;const r=await fetch('/api/functions/arenaGameMultiplayer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'join_session',session_code:c,character_id:'warrior'})});const d=await r.json();if(d.success){session=d.session;document.getElementById('code').textContent='Session: '+c;document.getElementById('status').textContent='🟢 Joined';initGame();}else alert('Error: '+(d.error||'Failed'));}
+    function initGame(){if(scene)return;const cfg={type:Phaser.AUTO,width:window.innerWidth,height:window.innerHeight,physics:{default:'arcade',arcade:{gravity:{y:0},debug:!1}},scene:GameScene,backgroundColor:'#0a0010'};const g=new Phaser.Game(cfg);scene=g.scene.scenes[0];}
+    setInterval(()=>{if(session)document.getElementById('health').textContent='HP: '+Math.max(0,player.hp);},100);
   </script>
 </body>
 </html>`;

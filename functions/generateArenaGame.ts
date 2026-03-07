@@ -58,8 +58,8 @@ const canvas=document.getElementById('arenaCanvas');const ctx=canvas.getContext(
 </body>
 </html>`;
 
-    const file = new File([arenaHTML], 'gcc-arena-game.html', { type: 'text/html;charset=utf-8' });
-    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file });
+    const blob = new Blob([arenaHTML], { type: 'text/html;charset=utf-8' });
+    const uploadResult = await base44.asServiceRole.integrations.Core.UploadFile({ file: blob });
     const newUrl = uploadResult.file_url;
 
     if (!newUrl) {
