@@ -1,5 +1,5 @@
 import { useState, useEffect, Suspense, lazy } from "react";
-import { autoInitKeys, initHyperBrain } from "@/components/gcc/hyperBrainApi";
+// hyperBrainApi loaded via HyperBrainScreen directly
 import Toast from "@/components/gcc/Toast";
 
 export const config = { requiresAuth: true };
@@ -67,10 +67,7 @@ export default function HomeScreen() {
   const [toast, setToast] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    try { autoInitKeys(); } catch(e) { console.warn("initKeys:", e); }
-    try { initHyperBrain(JSON.parse(localStorage.getItem("gcc_api_config")||"{}")); } catch {}
-  }, []);
+  useEffect(() => {}, []);
 
   const showToast = (msg, type="info") => {
     setToast({ msg, type, key: Date.now() });
