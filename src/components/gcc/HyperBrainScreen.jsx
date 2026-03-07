@@ -285,6 +285,15 @@ export default function HyperBrainScreen({ onNav, showToast }) {
           addStep("saved", `💾 Juego guardado en BD — ID: ${created.id.substring(0,8)}...`);
         } catch(e) { addStep("error", `⚠️ No se pudo guardar en BD: ${e.message}`); }
       }
+      else if (mode === "arena") {
+        const characters = await base44.entities.GameCharacter.list('-created_date', 100).catch(() => []);
+        res = await base44.functions.invoke('generateArenaGameNew', { characters });
+        if (res.data?.success) {
+          addStep("done", `✅ Arena Game creado: ${res.data.arena_url}`);
+          setResult(res.data);
+        }
+        return;
+      }
       else if (mode === "marketing") {
         if (!selectedProject) { showToast("⚠️ Selecciona un proyecto", "warning"); setRunning(false); return; }
         res = await HyperBrain.marketingBlitz({ project: selectedProject, onStep });
