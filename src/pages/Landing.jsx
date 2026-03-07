@@ -10,9 +10,10 @@ export default function Landing() {
   const [showLogin, setShowLogin] = useState(false);
 
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden", fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ position: "relative", width: "100%", minHeight: "100vh", overflow: "hidden", fontFamily: "'Inter', sans-serif" }}>
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { overflow-x: hidden; max-width: 100%; }
 
         .land-pill {
           background: rgba(124,58,237,0.18);
