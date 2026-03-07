@@ -47,20 +47,14 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import HomeScreen from './pages/HomeScreen';
-import Landing from './pages/Landing';
-import ArenaGame from './pages/ArenaGame';
-import __Layout from './Layout.jsx';
+import AssetRepository from './pages/AssetRepository';
 
 
 export const PAGES = {
-    "HomeScreen": HomeScreen,
-    "Landing": Landing,
-    "ArenaGame": ArenaGame,
+    "AssetRepository": AssetRepository,
 }
 
 export const pagesConfig = {
-    mainPage: "Landing",
+    mainPage: "AssetRepository",
     Pages: PAGES,
-    Layout: __Layout,
 };
